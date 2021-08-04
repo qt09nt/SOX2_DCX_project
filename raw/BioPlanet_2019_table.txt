@@ -1,0 +1,252 @@
+Term	Overlap	P-value	Adjusted P-value	Old P-value	Old Adjusted P-value	Odds Ratio	Combined Score	Genes									
+Messenger RNA splicing: major pathway	12/68	1.34E-17	3.36E-15	0	0	69.80444965	2711.982994	HNRNPL;CPSF7;HNRNPK;SNRNP70;FUS;SRSF1;HNRNPD;HNRNPU;HNRNPR;HNRNPC;RBMX;SRSF9									
+Messenger RNA processing	14/203	1.71E-14	2.15E-12	0	0	24.78091651	785.5001551	CPSF7;FUS;SRSF1;HNRNPU;HNRNPR;HNRNPAB;HNRNPL;SFPQ;HNRNPK;SNRNP70;HNRNPD;HNRNPC;RBMX;SRSF9									
+Capped intron-containing pre-mRNA processing	12/138	9.19E-14	7.69E-12	0	0	30.91491023	927.9909743	HNRNPL;CPSF7;HNRNPK;SNRNP70;FUS;SRSF1;HNRNPD;HNRNPU;HNRNPR;HNRNPC;RBMX;SRSF9									
+Gene expression	22/968	2.24E-12	1.41E-10	0	0	8.655266758	232.1668878	CPSF7;EIF1AX;FUS;RPL34;SRSF1;HNRNPU;HNRNPR;HIST2H2BE;HNRNPL;HNRNPK;RPL18A;PSMA1;SNRNP70;KHSRP;CLNS1A;HNRNPD;RPL13;RPS20;HNRNPC;RBMX;RAN;SRSF9									
+Spliceosome	9/127	8.69E-10	4.36E-08	0	0	23.60712394	492.5413318	TCERG1;DDX5;HNRNPK;SNRNP70;SRSF1;HNRNPU;HNRNPC;RBMX;SRSF9									
+Disease	11/674	3.12E-05	0.001305789	0	0	5.155062521	53.48192601	RPL18A;PSMA1;RPL34;KHSRP;LMNA;RPL13;RPS20;HIST2H2BE;EPN1;STX1A;RAN									
+Cytoplasmic ribosomal proteins	5/108	4.69E-05	0.001682464	0	0	14.15191319	141.0526675	RPL18A;EIF1AX;RPL34;RPL13;RPS20									
+Cap-dependent translation initiation	4/73	1.47E-04	0.00442896	0	0	16.68388994	147.2418609	RPL18A;EIF1AX;RPL34;RPL13									
+Influenza infection	5/142	1.71E-04	0.00442896	0	0	10.62151138	92.10793252	RPL18A;RPL34;RPL13;RPS20;RAN									
+TNFR1 signaling pathway	30-Mar	1.76E-04	0.00442896	0	0	31.58730159	272.9919365	LMNA;LMNB2;LMNB1									
+Translation	5/151	2.28E-04	0.005205142	0	0	9.962228042	83.53991717	RPL18A;EIF1AX;RPL34;RPL13;RPS20									
+FAS pathway and stress induction of heat shock protein regulation	3/39	3.88E-04	0.00811455	0	0	23.6797619	185.9960727	LMNA;LMNB2;LMNB1									
+Cleavage of growing transcript in the termination region	3/43	5.18E-04	0.009855872	0	0	21.3075	161.185391	CPSF7;SRSF1;SRSF9									
+Chromosome maintenance	4/103	5.50E-04	0.009855872	0	0	11.61059874	87.15012293	RUVBL2;LMNA;HIST2H2BE;LMNB1									
+Apoptotic execution  phase	3/52	9.07E-04	0.015173817	0	0	17.38600583	121.7991697	LMNA;HMGB1;LMNB1									
+Meiotic synapsis	3/55	0.001068072	0.016750581	0	0	16.38049451	112.0737136	LMNA;HIST2H2BE;LMNB1									
+Influenza viral RNA transcription and replication	4/125	0.001134501	0.016750581	0	0	9.489040604	64.35051654	RPL18A;RPL34;RPL13;RPS20									
+HIV-1 Nef as negative effector of Fas and TNF	3/58	0.001246406	0.017302578	0	0	15.48467532	103.5536279	LMNA;LMNB2;LMNB1									
+Caspase cascade in apoptosis	3/59	0.001309757	0.017302578	0	0	15.20739796	100.9453954	LMNA;LMNB2;LMNB1									
+RANKL regulation of apoptosis and immune response	3/74	0.002511598	0.031520553	0	0	11.98551308	71.75530268	ILF3;FUBP1;RPS20									
+BDNF signaling pathway	5/261	0.002657248	0.031760441	0	0	5.649988511	33.50705497	DDX17;SFPQ;LMNA;HMGB3;CSPG4									
+Response to elevated platelet cytosolic calcium	3/83	0.003477555	0.037950704	0	0	10.63232143	60.19410052	TMSB4X;CFL1;KNG1									
+Meiosis	3/83	0.003477555	0.037950704	0	0	10.63232143	60.19410052	LMNA;HIST2H2BE;LMNB1									
+mRNA stability regulation by proteins that bind AU-rich elements	3/86	0.003843332	0.040194851	0	0	10.2464716	56.98488591	PSMA1;KHSRP;HNRNPD									
+Tetrasaccharide linker sequence formation in glycosaminoglycan biosynthesis	26-Feb	0.004035229	0.040513702	0	0	23.36032864	128.7783007	CSPG4;AGRN									
+Transcription	4/181	0.004345208	0.041947971	0	0	6.468517154	35.18020535	CPSF7;SRSF1;HIST2H2BE;SRSF9									
+RNA polymerase II transcription	3/101	0.00601952	0.055503569	0	0	8.671574344	44.33557218	CPSF7;SRSF1;SRSF9									
+Cell cycle	6/453	0.006191633	0.055503569	0	0	3.902634479	19.84316502	PSMA1;RUVBL2;LMNA;MCM6;HIST2H2BE;LMNB1									
+G13 signaling pathway	2/39	0.008923412	0.077233667	0	0	15.14274838	71.45979444	CFL1;PKN1									
+"VEGF, hypoxia, and angiogenesis"	2/42	0.010295787	0.086141414	0	0	14.00492958	64.08684545	EIF1AX;KNG1									
+RhoA signaling pathway	2/45	0.011755407	0.090244705	0	0	13.02587619	57.87972502	CFL1;PKN1									
+Integrin-linked kinase signaling	2/45	0.011755407	0.090244705	0	0	13.02587619	57.87972502	RUVBL2;ILKAP									
+Apoptosis	4/242	0.011864842	0.090244705	0	0	4.795761783	21.26525049	PSMA1;LMNA;HMGB1;LMNB1									
+Chondroitin sulfate/dermatan sulfate metabolism	2/48	0.01330026	0.098187212	0	0	12.17452541	52.59360534	CSPG4;AGRN									
+Diabetes pathways	3/137	0.013796869	0.098943264	0	0	6.330383795	27.11501877	KHSRP;LMNA;STX1A									
+EGF/EGFR signaling pathway	3/141	0.014896089	0.103858841	0	0	6.145652174	25.85264826	CFL1;PEBP1;EPN1									
+Heparan sulfate/heparin glycosaminoglycan (HS-GAG) metabolism	2/52	0.015489228	0.105075576	0	0	11.19830986	46.6701931	CSPG4;AGRN									
+Transport of mature transcript to cytoplasm	2/55	0.017225309	0.105115174	0	0	10.56284879	42.89969558	SRSF1;SRSF9									
+Phospholipase C delta-1 interactions in phospholipid-associated cell signaling	05-Jan	0.018118916	0.105115174	0	0	69.17708333	277.4553644	PLCD1									
+Blockade of neurotransmitter release by botulinum toxin	05-Jan	0.018118916	0.105115174	0	0	69.17708333	277.4553644	STX1A									
+Cycling of Ran in nucleocytoplasmic transport	05-Jan	0.018118916	0.105115174	0	0	69.17708333	277.4553644	RAN									
+EGFR1 pathway	3/152	0.018168743	0.105115174	0	0	5.688782359	22.80093887	PDCD5;HMGB3;HNRNPAB									
+"Activation of mRNA upon binding of the cap-binding complex and eIFs, and subsequent binding to 43S"	2/57	0.018426564	0.105115174	0	0	10.17772087	40.64942979	EIF1AX;RPS20									
+Inositol phosphate metabolism	2/57	0.018426564	0.105115174	0	0	10.17772087	40.64942979	IMPA1;PLCD1									
+Telomere maintenance	2/59	0.019662263	0.109671736	0	0	9.819619471	38.58181556	RUVBL2;HIST2H2BE									
+Licensing factor removal from origins	2/61	0.020931855	0.114215122	0	0	9.485796133	36.67667062	PSMA1;MCM6									
+Telomere extension by telomerase	06-Jan	0.021703663	0.115906795	0	0	55.33888889	211.9631207	RUVBL2									
+Protein metabolism	5/442	0.02269838	0.116318643	0	0	3.279378113	12.41396031	RPL18A;EIF1AX;RPL34;RPL13;RPS20									
+T cell receptor regulation of apoptosis	6/603	0.022707624	0.116318643	0	0	2.899572489	10.97504011	ILF3;PDCD5;PALM;RPS20;HMGB1;PCYOX1									
+Destabilization of mRNA by AUF1 (hnRNP D0)	2/66	0.02425055	0.12173776	0	0	8.742517606	32.51618551	PSMA1;HNRNPD									
+Phosphatidylinositol signaling system	2/78	0.033016304	0.157112832	0	0	7.35767235	25.09520887	IMPA1;PLCD1									
+Unfolded protein response	2/79	0.033795318	0.157112832	0	0	7.261752332	24.59869954	KHSRP;LMNA									
+Apoptotic DNA fragmentation and tissue homeostasis	10-Jan	0.035914031	0.157112832	0	0	30.73765432	102.2527178	HMGB1									
+Ran role in mitotic spindle regulation	10-Jan	0.035914031	0.157112832	0	0	30.73765432	102.2527178	RAN									
+COPI-mediated vesicle transport	10-Jan	0.035914031	0.157112832	0	0	30.73765432	102.2527178	ARCN1									
+Dermatan sulfate biosynthesis	10-Jan	0.035914031	0.157112832	0	0	30.73765432	102.2527178	CSPG4									
+"Platelet activation, signaling and aggregation"	3/205	0.039115448	0.157112832	0	0	4.184936351	13.5643739	TMSB4X;CFL1;KNG1									
+Acetylcholine neurotransmitter release cycle	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	STX1A									
+Serotonin transporter activity	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	STX1A									
+Mechanism of protein import into the nucleus	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	RAN									
+Unwinding of DNA	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	MCM6									
+Norepinephrine neurotransmitter release cycle	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	STX1A									
+p38 gamma/delta MAPK pathway	11-Jan	0.039434695	0.157112832	0	0	27.6625	89.43588521	PKN1									
+"Androgen receptor signaling, proteolysis, and transcription regulation"	2/88	0.041122067	0.158509003	0	0	6.498853587	20.73920915	DSTN;RAN									
+DNA replication pre-Initiation	2/88	0.041122067	0.158509003	0	0	6.498853587	20.73920915	PSMA1;MCM6									
+Thymic stromal lymphopoietin (TSLP) pathway	2/90	0.042824755	0.158509003	0	0	6.350512164	20.00817098	PSMA1;PDCD5									
+Parkin role in the ubiquitin-proteasomal pathway	12-Jan	0.042942678	0.158509003	0	0	25.14646465	79.15828252	UBE2G1									
+Dopamine neurotransmitter release cycle	12-Jan	0.042942678	0.158509003	0	0	25.14646465	79.15828252	STX1A									
+Activation of DNA fragmentation factor	13-Jan	0.046438025	0.164168231	0	0	23.04976852	70.75441406	HMGB1									
+Advanced glycosylation endproduct receptor signaling	13-Jan	0.046438025	0.164168231	0	0	23.04976852	70.75441406	HMGB1									
+Chondroitin sulfate/dermatan sulfate degradation	13-Jan	0.046438025	0.164168231	0	0	23.04976852	70.75441406	CSPG4									
+Intronless pre-mRNA processing	14-Jan	0.049920782	0.174029392	0	0	21.27564103	63.76985959	CPSF7									
+AKAP95 role in mitosis and chromosome dynamics	15-Jan	0.053390992	0.176330775	0	0	19.75496032	57.8842708	DDX5									
+Sema3A/PAK-dependent axon repulsion	15-Jan	0.053390992	0.176330775	0	0	19.75496032	57.8842708	CFL1									
+Spliceosomal assembly	15-Jan	0.053390992	0.176330775	0	0	19.75496032	57.8842708	SNRNP70									
+Coagulation intrinsic pathway	15-Jan	0.053390992	0.176330775	0	0	19.75496032	57.8842708	KNG1									
+Glutamate neurotransmitter release cycle	16-Jan	0.0568487	0.177726932	0	0	18.43703704	52.86565804	STX1A									
+Protein kinase A (PKA) at the centrosome	16-Jan	0.0568487	0.177726932	0	0	18.43703704	52.86565804	PKN1									
+ERBB1 downstream pathway	2/106	0.057347352	0.177726932	0	0	5.369176598	15.34848182	PPP5C;PEBP1									
+ACE inhibitor pathway	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	KNG1									
+SUMOylation by RanBP2 regulates transcriptional repression	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	RAN									
+Cells and molecules involved in local acute inflammatory response	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	KNG1									
+Destabilization of mRNA by KSRP	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	KHSRP									
+"Endocytotic role of NDK, phosphins and dynamin"	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	EPN1									
+Eukaryotic protein translation	17-Jan	0.060293951	0.177726932	0	0	17.28385417	48.54211058	EIF1AX									
+Glycosaminoglycan metabolism	2/110	0.061212169	0.177726932	0	0	5.169274909	14.43990043	CSPG4;AGRN									
+S phase	2/112	0.063177364	0.177726932	0	0	5.074775928	14.01556289	PSMA1;MCM6									
+Botulinum neurotoxicity	18-Jan	0.063726788	0.177726932	0	0	16.26633987	44.78367792	STX1A									
+CDK regulation of DNA replication	18-Jan	0.063726788	0.177726932	0	0	16.26633987	44.78367792	MCM6									
+Nicotinic acetylcholine receptor role in the regulation of apoptosis	18-Jan	0.063726788	0.177726932	0	0	16.26633987	44.78367792	AGRN									
+"GABA biosynthesis, release, reuptake and degradation"	19-Jan	0.067147257	0.185208368	0	0	15.36188272	41.49040526	STX1A									
+Cell cycle checkpoints	2/117	0.068182695	0.186020179	0	0	4.852908757	13.03279939	PSMA1;MCM6									
+Heparan sulfate/heparin glycosaminoglycan (HS-GAG) degradation	20-Jan	0.0705554	0.188397931	0	0	14.55263158	38.58422245	AGRN									
+Chondroitin sulfate biosynthesis	20-Jan	0.0705554	0.188397931	0	0	14.55263158	38.58422245	CSPG4									
+Prion pathway	21-Jan	0.073951262	0.191358421	0	0	13.82430556	36.00331664	GFAP									
+Cytosolic sensors of pathogen-associated DNA	21-Jan	0.073951262	0.191358421	0	0	13.82430556	36.00331664	HMGB1									
+PKC-catalyzed phosphorylation of inhibitory phosphoprotein of myosin phosphatase	21-Jan	0.073951262	0.191358421	0	0	13.82430556	36.00331664	PKN1									
+Interleukin-1 signaling pathway	2/125	0.076452682	0.194110565	0	0	4.535440284	11.66099463	KHSRP;UBE2G1									
+CCR3 signaling in eosinophils	22-Jan	0.077334886	0.194110565	0	0	13.16534392	33.69814743	CFL1									
+TRAF6 mediated NF-kB activation	22-Jan	0.077334886	0.194110565	0	0	13.16534392	33.69814743	HMGB1									
+HIV factor interactions with host	2/128	0.079632621	0.196672674	0	0	4.42678292	11.20122807	PSMA1;RAN									
+Post-elongation processing of intronless pre-mRNA	23-Jan	0.080706316	0.196672674	0	0	12.56628788	31.62857298	CPSF7									
+Rho cell motility signaling pathway	23-Jan	0.080706316	0.196672674	0	0	12.56628788	31.62857298	CFL1									
+Proteasome complex	24-Jan	0.084065595	0.199060985	0	0	12.01932367	29.76174313	PSMA1									
+TAK1 activates NF-kappaB by phosphorylation and activation of IKK complex	24-Jan	0.084065595	0.199060985	0	0	12.01932367	29.76174313	HMGB1									
+Endogenous Toll-like receptor signaling	24-Jan	0.084065595	0.199060985	0	0	12.01932367	29.76174313	HMGB1									
+Mitotic G1-G1/S phases	2/135	0.087209558	0.201289948	0	0	4.192311765	10.22689864	PSMA1;MCM6									
+Regulatory RNA pathways	25-Jan	0.087412766	0.201289948	0	0	11.51793981	28.07053167	RAN									
+C-Myc pathway	25-Jan	0.087412766	0.201289948	0	0	11.51793981	28.07053167	RUVBL2									
+Estrogen receptor transcription factor targets	26-Jan	0.090747873	0.207070146	0	0	11.05666667	26.53235403	DDX5									
+Rev-mediated nuclear export of HIV-1 RNA	27-Jan	0.094070957	0.210819734	0	0	10.63087607	25.12826467	RAN									
+EGFR downregulation	27-Jan	0.094070957	0.210819734	0	0	10.63087607	25.12826467	EPN1									
+Interleukin-5 regulation of apoptosis	2/144	0.097253902	0.212546936	0	0	3.924816505	9.146510818	SFPQ;LMNB1									
+Extension of telomeres	28-Jan	0.097382063	0.212546936	0	0	10.23662551	23.8422601	RUVBL2									
+PERK-regulated gene expression	28-Jan	0.097382063	0.212546936	0	0	10.23662551	23.8422601	KHSRP									
+Integrin beta-2 pathway	29-Jan	0.100681231	0.217853354	0	0	9.870535714	22.66073522	KNG1									
+Activation of the pre-replicative complex	30-Jan	0.103968506	0.219294916	0	0	9.529693487	21.57205509	MCM6									
+Heparan sulfate/heparin glycosaminoglycan (HS-GAG) biosynthesis	30-Jan	0.103968506	0.219294916	0	0	9.529693487	21.57205509	AGRN									
+Interferon-beta enhancer pathway	30-Jan	0.103968506	0.219294916	0	0	9.529693487	21.57205509	HMGB1									
+RNA polymerase I promoter opening	31-Jan	0.107243929	0.222464678	0	0	9.211574074	20.56621472	HIST2H2BE									
+DNA strand elongation	31-Jan	0.107243929	0.222464678	0	0	9.211574074	20.56621472	MCM6									
+Packaging of telomere ends	1/32	0.110507541	0.223688652	0	0	8.913978495	19.63456649	HIST2H2BE									
+Prothrombin activation intrinsic pathway	1/32	0.110507541	0.223688652	0	0	8.913978495	19.63456649	KNG1									
+Fibrin clot formation (clotting cascade)	1/32	0.110507541	0.223688652	0	0	8.913978495	19.63456649	KNG1									
+Syndecan 2 pathway	1/33	0.113759387	0.228428848	0	0	8.634982639	18.76960016	KNG1									
+Toll receptor cascades	2/159	0.11467108	0.228432072	0	0	3.547142729	7.682002395	UBE2G1;HMGB1									
+Induction of apoptosis through DR3 and DR4/5 death receptors	1/34	0.116999506	0.229428719	0	0	8.372895623	17.964764	LMNA									
+Monoamine transport	1/34	0.116999506	0.229428719	0	0	8.372895623	17.964764	STX1A									
+Base excision repair	1/35	0.120227941	0.233931885	0	0	8.12622549	17.2143184	HMGB1									
+SNARE interactions in vesicular transport	1/36	0.123444733	0.236523878	0	0	7.893650794	16.51321534	STX1A									
+Neurotransmitter release cycle	1/36	0.123444733	0.236523878	0	0	7.893650794	16.51321534	STX1A									
+Signal transduction through IL-1R	1/38	0.129843556	0.243214421	0	0	7.466216216	15.24172023	PEBP1									
+Signaling events mediated by HDAC class II	1/38	0.129843556	0.243214421	0	0	7.466216216	15.24172023	RAN									
+Transport of mature mRNAs derived from intronless transcripts	1/38	0.129843556	0.243214421	0	0	7.466216216	15.24172023	RAN									
+Aurora B signaling	1/39	0.133025668	0.247329204	0	0	7.269371345	14.66387168	PEBP1									
+Nuclear signaling by ErbB4	1/40	0.136196302	0.248072555	0	0	7.082621083	14.12032445	GFAP									
+PAC1 receptor pathway	1/40	0.136196302	0.248072555	0	0	7.082621083	14.12032445	PLCD1									
+Alpha-M beta-2 integrin signaling	1/41	0.139355499	0.248072555	0	0	6.905208333	13.60828094	HMGB1									
+Insulin biosynthesis and processing	1/41	0.139355499	0.248072555	0	0	6.905208333	13.60828094	STX1A									
+Bioactive peptide-induced signaling pathway	1/41	0.139355499	0.248072555	0	0	6.905208333	13.60828094	KNG1									
+ERBB1 internalization pathway	1/41	0.139355499	0.248072555	0	0	6.905208333	13.60828094	EPN1									
+Messenger RNA splicing: minor pathway	1/42	0.1425033	0.251889636	0	0	6.736449864	13.12523238	SRSF1									
+G2/M checkpoints	1/43	0.145639745	0.253858166	0	0	6.575727513	12.66892294	MCM6									
+Beta-3 integrin cell surface interactions	1/43	0.145639745	0.253858166	0	0	6.575727513	12.66892294	HMGB1									
+Interactions of HIV Vpr protein with host cellular proteins	1/44	0.148764874	0.255753311	0	0	6.42248062	12.23731909	RAN									
+NCAM1 interactions	1/44	0.148764874	0.255753311	0	0	6.42248062	12.23731909	AGRN									
+TGF-beta regulation of extracellular matrix	4/565	0.15142147	0.255849401	0	0	2.001188354	3.77761952	ILF3;RPL18A;RUVBL2;PEBP1									
+RNA polymerase III transcription	1/45	0.151878728	0.255849401	0	0	6.276199495	11.82858322	SFPQ									
+Deposition of new CENP-A-containing nucleosomes at the centromere	1/45	0.151878728	0.255849401	0	0	6.276199495	11.82858322	HIST2H2BE									
+Actions of nitric oxide in the heart	1/47	0.158072771	0.261028062	0	0	6.002717391	11.07321143	KNG1									
+Agrin in postsynaptic differentiation	1/47	0.158072771	0.261028062	0	0	6.002717391	11.07321143	AGRN									
+Delta Np63 pathway	1/47	0.158072771	0.261028062	0	0	6.002717391	11.07321143	ADRM1									
+Activation of chaperones by IRE1 alpha	1/48	0.161153039	0.264375248	0	0	5.874704492	10.72369034	LMNA									
+FoxO family signaling	1/49	0.164222192	0.267435335	0	0	5.752025463	10.39123496	RAN									
+HIV infection	2/200	0.165633053	0.267435335	0	0	2.806800398	5.046572271	PSMA1;RAN									
+Translation factors	1/50	0.167280269	0.267435335	0	0	5.634353741	10.07470124	EIF1AX									
+Non-coding RNA metabolism	1/50	0.167280269	0.267435335	0	0	5.634353741	10.07470124	CLNS1A									
+Amyloids	1/51	0.170327309	0.270583257	0	0	5.521388889	9.773042438	HIST2H2BE									
+DNA replication	2/207	0.174702721	0.274990669	0	0	2.709996565	4.728048317	PSMA1;MCM6									
+Androgen receptor regulation of biosynthesis and transcription	1/53	0.176388437	0.274990669	0	0	5.30849359	9.210590394	PKN1									
+JNK/MAPK pathway	1/53	0.176388437	0.274990669	0	0	5.30849359	9.210590394	HNRNPK									
+Meiotic recombination	1/54	0.179402602	0.277963291	0	0	5.208071279	8.948106135	HIST2H2BE									
+RNA polymerase I transcription	1/55	0.182405887	0.279169986	0	0	5.111368313	8.697100141	HIST2H2BE									
+Calcineurin-dependent NFAT signaling role in lymphocytes	1/55	0.182405887	0.279169986	0	0	5.111368313	8.697100141	RAN									
+Autodegradation of Cdh1 by Cdh1-APC/C	1/58	0.191350847	0.291085228	0	0	4.841617934	8.006325233	PSMA1									
+ATF2 transcription factor network	1/59	0.194310997	0.293807591	0	0	4.757902299	7.79484911	RUVBL2									
+Interleukin-2 signaling pathway	5/847	0.196578421	0.29545619	0	0	1.666637558	2.711109046	SFPQ;FUBP1;TAGLN2;FLNB;HNRNPAB									
+Actin cytoskeleton regulation	2/226	0.199694587	0.298353223	0	0	2.477741449	3.991557583	TMSB4X;CFL1									
+Proteasome degradation	1/63	0.206045094	0.304924406	0	0	4.450044803	7.029558795	PSMA1									
+Angiotensin II-stimulated signaling through G-proteins and beta-arrestin	1/64	0.208952183	0.304924406	0	0	4.379188713	6.856276122	PLCD1									
+Ubiquitin-mediated degradation of phosphorylated Cdc25A	1/64	0.208952183	0.304924406	0	0	4.379188713	6.856276122	PSMA1									
+Validated nuclear estrogen receptor alpha network	1/64	0.208952183	0.304924406	0	0	4.379188713	6.856276122	DDX17									
+Carbohydrate metabolism	2/235	0.211684089	0.306855401	0	0	2.380946624	3.696801207	CSPG4;AGRN									
+Beta-1 integrin cell surface interactions	1/66	0.2147349	0.306855401	0	0	4.244017094	6.528788087	CSPG4									
+Semaphorin interactions	1/66	0.2147349	0.306855401	0	0	4.244017094	6.528788087	CFL1									
+G1 to S cell cycle control	1/67	0.217610603	0.306855401	0	0	4.179503367	6.373943403	MCM6									
+Telomerase regulation	1/67	0.217610603	0.306855401	0	0	4.179503367	6.373943403	HNRNPC									
+cAMP cell motility pathway inferred from amoeba model	1/67	0.217610603	0.306855401	0	0	4.179503367	6.373943403	PLCD1									
+Activation of NF-kappaB in B cells	1/68	0.220475919	0.308532934	0	0	4.116915423	6.224639435	PSMA1									
+Antiviral mechanism by interferon-stimulated genes	1/70	0.226175537	0.308532934	0	0	3.997181965	5.94158662	FLNB									
+CDC42 signaling events	1/70	0.226175537	0.308532934	0	0	3.997181965	5.94158662	CFL1									
+Signaling events mediated by HDAC class I	1/70	0.226175537	0.308532934	0	0	3.997181965	5.94158662	RAN									
+Complement and coagulation cascades	1/70	0.226175537	0.308532934	0	0	3.997181965	5.94158662	KNG1									
+NCAM signaling for neurite out-growth	1/70	0.226175537	0.308532934	0	0	3.997181965	5.94158662	AGRN									
+Rac1 cell motility signaling pathway	1/71	0.229009913	0.310710746	0	0	3.939880952	5.807345083	CFL1									
+Cyclin A-Cdk2-associated events at S phase entry	1/72	0.231834048	0.312851323	0	0	3.884194053	5.677656463	PSMA1									
+Degradation of beta-catenin by the destruction complex	1/73	0.23464798	0.31495531	0	0	3.830054012	5.552309979	PSMA1									
+Wnt/calcium/cyclic GMP pathway	1/74	0.237451744	0.316819249	0	0	3.77739726	5.431107245	PLCD1									
+"Antigen presentation: folding, assembly, and peptide loading of class I MHC proteins"	2/255	0.238561108	0.316819249	0	0	2.1905027	3.139274663	PSMA1;UBE2G1									
+Arrhythmogenic right ventricular cardiomyopathy (ARVC)	1/75	0.240245378	0.317376789	0	0	3.726163664	5.313861393	LMNA									
+RIG-I/MDA5-mediated induction of interferon-alpha/beta pathways	1/76	0.243028917	0.318789347	0	0	3.676296296	5.200396261	HMGB1									
+Hemostasis pathway	3/468	0.2438548	0.318789347	0	0	1.793732719	2.53128389	TMSB4X;CFL1;KNG1									
+Apoptosis regulation	1/78	0.248565853	0.322639972	0	0	3.58044733	4.984152639	PSMA1									
+FSH regulation of apoptosis	2/263	0.249371134	0.322639972	0	0	2.122497437	2.947752023	AKAP12;YTHDF2									
+Antigen processing: cross presentation	1/79	0.251319322	0.322983089	0	0	3.534366097	4.881068968	PSMA1									
+Apoptosis modulation and signaling	1/80	0.254062839	0.322983089	0	0	3.489451477	4.781154446	HN1									
+Nuclear beta-catenin signaling and target gene transcription regulation	1/80	0.254062839	0.322983089	0	0	3.489451477	4.781154446	RUVBL2									
+Interleukin-4 regulation of apoptosis	2/267	0.254783473	0.322983089	0	0	2.090034547	2.857790391	MCM6;HIST2H2BE									
+APC/C-mediated degradation of cell cycle proteins	1/82	0.25952016	0.324077414	0	0	3.402949246	4.590309328	PSMA1									
+ATM-dependent DNA damage response	1/82	0.25952016	0.324077414	0	0	3.402949246	4.590309328	HMGB1									
+Regular glucocorticoid receptor pathway	1/82	0.25952016	0.324077414	0	0	3.402949246	4.590309328	PPP5C									
+Differentiation pathway in PC12 cells	1/84	0.264938098	0.32758356	0	0	3.320615797	4.410638057	PLCD1									
+ECM-receptor interaction	1/84	0.264938098	0.32758356	0	0	3.320615797	4.410638057	AGRN									
+Myc active pathway	1/85	0.267632386	0.329292789	0	0	3.280919312	4.324714046	RUVBL2									
+HIF-1 degradation in normoxia	1/88	0.275656944	0.337511672	0	0	3.167305236	4.081383649	PSMA1									
+Neural crest differentiation	1/91	0.283594767	0.345545081	0	0	3.061265432	3.85783405	GFAP									
+Signaling by ERBB4	1/93	0.288838921	0.350234634	0	0	2.994414251	3.718721471	GFAP									
+Fc gamma receptor-mediated phagocytosis	1/94	0.291446782	0.351454037	0	0	2.962066906	3.651925938	CFL1									
+G-protein signaling pathways	1/95	0.29404521	0.351454037	0	0	2.930407801	3.586882881	AKAP12									
+"RNA polymerase I, RNA polymerase III, and mitochondrial transcription"	1/95	0.29404521	0.351454037	0	0	2.930407801	3.586882881	HIST2H2BE									
+TSH regulation of gene expression	1/97	0.299213902	0.355936917	0	0	2.869068287	3.461807953	HMGB1									
+Downstream signaling events Of B cell receptor (BCR)	1/98	0.301784233	0.357301144	0	0	2.839347079	3.401659824	PSMA1									
+Granule cell survival pathway	1/99	0.304345266	0.358641605	0	0	2.810232426	3.343031357	PLCD1									
+Dilated cardiomyopathy	1/100	0.306897033	0.35995867	0	0	2.781705948	3.285870637	LMNA									
+MAPK signaling pathway	2/314	0.318313175	0.371612126	0	0	1.77094619	2.02723673	PPP5C;FLNB									
+Axon guidance	2/325	0.333058021	0.386753193	0	0	1.709676013	1.879683746	CFL1;AGRN									
+Signaling by EGFR in cancer	1/111	0.334364314	0.386753193	0	0	2.502146465	2.741161804	EPN1									
+CXCR4 signaling pathway	1/116	0.346491809	0.398942404	0	0	2.392753623	2.536070231	CFL1									
+HIV life cycle	1/118	0.351281554	0.402610366	0	0	2.351614435	2.460181957	RAN									
+Integration of energy metabolism	1/125	0.367774581	0.419597362	0	0	2.218077957	2.218710289	STX1A									
+Parkinson's disease	1/131	0.381581782	0.432658738	0	0	2.115064103	2.037716378	UBE2G1									
+Adipogenesis	1/133	0.386117758	0.432658738	0	0	2.082807239	1.982026202	LMNA									
+Membrane trafficking	1/133	0.386117758	0.432658738	0	0	2.082807239	1.982026202	ARCN1									
+Tight junction	1/133	0.386117758	0.432658738	0	0	2.082807239	1.982026202	EPB41L3									
+Ubiquitin-mediated proteolysis	1/136	0.392860261	0.438257446	0	0	2.036213992	1.902437382	UBE2G1									
+Adrenergic pathway	1/137	0.395091489	0.4387963	0	0	2.021139706	1.876906979	PLCD1									
+Systemic lupus erythematosus	1/139	0.399529711	0.439833147	0	0	1.991646538	1.827270265	HIST2H2BE									
+p53 signaling pathway	1/139	0.399529711	0.439833147	0	0	1.991646538	1.827270265	DDX5									
+Signaling by the B cell receptor (BCR)	1/151	0.42549248	0.466369487	0	0	1.831203704	1.564778221	PSMA1									
+Integrated breast cancer pathway	1/152	0.427605381	0.466647612	0	0	1.818984547	1.545326536	IMPA1									
+Myometrial relaxation and contraction pathways	1/155	0.433898205	0.471465149	0	0	1.783279221	1.488940646	PLCD1									
+Developmental biology	2/420	0.455341657	0.491651413	0	0	1.314711234	1.034292857	CFL1;AGRN									
+Protein processing in the endoplasmic reticulum	1/166	0.456393543	0.491651413	0	0	1.663468013	1.304823992	UBE2G1									
+Interferon signaling	1/168	0.460387811	0.493834789	0	0	1.643379907	1.274746914	FLNB									
+Calcium signaling pathway	1/178	0.479929022	0.512605041	0	0	1.549748901	1.137697101	PLCD1									
+Immune system	4/998	0.497525811	0.529148215	0	0	1.10419036	0.770843949	PSMA1;FLNB;UBE2G1;HMGB1									
+Transmission across chemical synapses	1/190	0.502458889	0.532140004	0	0	1.450470312	0.998273799	STX1A									
+Peptide G-protein coupled receptors	1/192	0.506119101	0.533764262	0	0	1.435136707	0.977304072	KNG1									
+Amino acid metabolism	1/195	0.511559679	0.537244684	0	0	1.412729095	0.946939635	PSMA1									
+G alpha (i) signaling events	1/199	0.518721925	0.54249668	0	0	1.38390853	0.908380023	KNG1									
+Endocytosis	1/201	0.522264103	0.543934813	0	0	1.369930556	0.889882057	EPN1									
+Gastrin-CREB signaling pathway via PKC and MAPK	1/206	0.531007444	0.550755655	0	0	1.336178862	0.845773478	KNG1									
+Focal adhesion	1/233	0.57556377	0.594512371	0	0	1.179058908	0.65131833	FLNB									
+"Immune system signaling by interferons, interleukins, prolactin, and growth hormones"	1/280	0.643381742	0.661839415	0	0	0.978096376	0.431357171	FLNB									
+Neuronal system	1/283	0.6473277	0.663180623	0	0	0.967543341	0.420787136	STX1A									
+Adaptive immune system	2/606	0.653362431	0.666642155	0	0	0.901175264	0.383561171	PSMA1;UBE2G1									
+Innate immune system	1/319	0.691448854	0.702646407	0	0	0.856437806	0.315996512	HMGB1									
+Signal transduction	3/1020	0.72649272	0.735280938	0	0	0.796881584	0.254625036	EPN1;KNG1;GFAP									
+GPCR ligand binding	1/410	0.780148723	0.786414978	0	0	0.662795436	0.164552692	KNG1									
+Metabolism	4/1615	0.850919227	0.854322904	0	0	0.659091931	0.106402529	IMPA1;CSPG4;AGRN;PLCD1									
+Signaling by GPCR	1/977	0.974339036	0.974339036	0	0	0.269680669	0.007010605	KNG1									
