@@ -1,6 +1,6 @@
-#Data downloaded from https://www.brainspan.org/static/download.html RNA-Seq Gencode v10 summarized to genes
+#Allen Human Brain Atlas Developmental Transcriptome RNA Seq data Analysis 
 
-#SOX2 and GABA 1 receptor ie. GABRA1 in Allen Human Brain Atlas RNA Seq data
+#Data downloaded from https://www.brainspan.org/static/download.html RNA-Seq Gencode v10 summarized to genes
 
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Allen Brain Atlas/BrainSpan/data/developmental transcriptome dataset/genes_matrix_csv_2")
 
@@ -30,10 +30,10 @@ data <- data[2:525]
 #source: https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html
 
 
+# A different RNA seq unit is TPM, which represents the number of transcripts of feature 
+#found in a total number of one million transcripts
 
-#TPM represents the number of transcripts of feature found in a total number of one million transcripts
-
-#Convert from RPKM to TPM (transcripts per kilobase million) by dividing each feature 
+#To convert from RPKM to TPM (transcripts per kilobase million), divide each feature 
 #(gene expression value in RNA seq RPKM) by the sum of the RPKM values of all features (genes) in the sample
 #and multiplying by one million. 
 #
@@ -46,15 +46,6 @@ RPKM_sums <- colSums(data)
 
 #make a copy of data
 TPM <- data
-
-#for loop takes a long time to run (longer than 15 minutes), try to do this with purr::map function to
-#optimize for efficiency:
-# for (c in 1:ncol(data)){
-#   for (r in 1:nrow(data)){
-#     TPM[r,c]<-(data[r, c])/(RPKM_sums[c])*10^6
-#   }
-# }
-
 
 #function for finding sum of sample column:
 RPKM_sum <- function(column){
@@ -115,11 +106,44 @@ row.names(RUVBL2) <- row.names(columns_meta)
 #combine RUVBL2 expression data with meta data
 combined <- cbind(RUVBL2, columns_meta)
 
+##############################################
+#re-plot RUVBL2 for cortex and ganglionic eminences for prenatal 8pcw to 24 pcw:
+
+#keep only cortex and ganglionic eminence samples:
+RUVBL2 <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
+
+#set age as a factor
+RUVBL2$age <- as.factor(RUVBL2$age)
+
+#filter for prenatal data 8pcw to 24 pcw:
+RUVBL2_prenatal <- RUVBL2[RUVBL2$age %in% c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"),]
+
+#specify the order of ages:
+RUVBL2_prenatal$age <- ordered(RUVBL2_prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"))
+
+ggplot(data = RUVBL2_prenatal, aes(x = structure_name,  y = RUVBL2, group = structure_name, colour = structure_name)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+  facet_wrap(~ age) +  #separate the boxplots by age
+  theme_bw() + #set the background to white
+  theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()
+        ) +
+  labs(title = 'BrainSpan Transcriptome Dataset',
+       subtitle='RUVBL2 in ganglionic eminences and cortex at 8pcw to 24 pcw',
+       x = 'structure',
+       y = 'RUVBL2 expression - RNA Seq (TPM)')
+
+########################
+
+
 
 #extract the RNA expression data for the other genes of interest:
 genes <- TPM[TPM$gene_symbol %in% c("SOX2","GABRA1", "PAX6", "MAP2", "DCX", "SRSF9", "TCERG1", "HNRNPD", "CPSF7"),]
-
-
 
 row.names(genes) <- genes$gene_symbol
 genes <- genes[,1:524]
@@ -451,7 +475,7 @@ cortex$age <- ordered(cortex$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pc
                                              "25 pcw", "26 pcw", "35 pcw", "37 pcw", "4 mos",  "10 mos", "1 yrs", "2 yrs","3 yrs",
                                              "4 yrs", "8 yrs", "11 yrs", "13 yrs", "15 yrs", "18 yrs", "19 yrs", "21 yrs", "23 yrs", 
                                              "30 yrs", "36 yrs", "37 yrs","40 yrs"))
-
+#GABRA1 in cortex all time points
 ggplot(data = cortex, aes(x = structure_name,  y = GABRA1, colour = structure_name)) +
     geom_boxplot() +
     geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
@@ -493,3 +517,67 @@ plotting_cortex(dataframe = cortex, "DCX")
 plotting_cortex(dataframe = cortex, "BCL11B")
 plotting_cortex(dataframe = cortex, "RBFOX3")
 colnames(cortex)
+
+#############plot RUVBL2 expression over all prenatal time points (8pcw to 24 pcw) for all brain structures
+
+#filter for prenatal time points (8pcw to 24 pcw):
+prenatal <- combined[1:215,]
+
+prenatal$age <- as.factor(prenatal$age)
+
+#specify the order of ages:
+prenatal$age <- ordered(prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw",
+                                             "25 pcw"))
+
+gene_name = "RUVBL2"
+ggplot(data = prenatal, aes(x = structure_name,  y = RUVBL2, colour = structure_name)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+  facet_wrap(~ age) +  #separate the boxplots by age
+  theme_bw() + #set the background to white
+  theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  labs(title = 'BrainSpan Transcriptome Dataset',
+       subtitle=paste0(gene_name, ' expression in all brain structures from 8pcw to 24 pcw'),
+       x = 'structure',
+       y = paste0(gene_name,' expression (TPM)'))
+
+##################### plot RUVBL2 expression in all available time points from 8pcw to 40 years for ganglionic eminences
+# and all cortex regions
+
+#convert age to factor
+combined$age <- as.factor(combined$age)
+
+#keep only cortex and ganglionic eminence samples:
+ge_cortex_RUVBL2 <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
+
+#specify the order of ages:
+ge_cortex_RUVBL2$age <- ordered(ge_cortex_RUVBL2$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw",
+                                             "25 pcw", "26 pcw", "35 pcw", "37 pcw", "4 mos",  "10 mos", "1 yrs", "2 yrs","3 yrs",
+                                             "4 yrs", "8 yrs", "11 yrs", "13 yrs", "15 yrs", "18 yrs", "19 yrs", "21 yrs", "23 yrs", 
+                                             "30 yrs", "36 yrs", "37 yrs","40 yrs"))
+
+ggplot(data = ge_cortex_RUVBL2, aes(x = structure_name,  y = RUVBL2, colour = structure_name)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+  facet_wrap(~ age) +  #separate the boxplots by age
+  theme_bw() + #set the background to white
+  theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  labs(title = 'BrainSpan Transcriptome Dataset',
+       subtitle=paste0('RUVBL in ganglionic eminences and cortex over time'),
+       x = 'structure',
+       y = paste0('RUVBL2 expression (TPM)'))
+
+################
+
+# Save an object to a file
+saveRDS(TPM, file = "TPM.rds")
