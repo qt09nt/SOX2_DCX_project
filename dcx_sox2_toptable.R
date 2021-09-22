@@ -1,13 +1,17 @@
 #this code is for finding the genes which are upregulated in SOX2 and the ones upregulated in DCX
-#based on the DCX vs SOX2 volcano plot cutoff
+#based on the DCX vs SOX2 volcano plot cutoffs
 
-setwd("/Users/queenietsang/Desktop/UHN Technical Analyst/Kevin_Sangster_2021-06-29_AIM1_Analysis_Queenie/")
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Kevin Sangster code/2021-06-29_AIM1_Analysis_Queenie/2021-06-29_AIM1_Analysis_Queenie/")
+
+library(dplyr)
 
 # run code containing additional functions I made
 source("perseus_functions.R")
 source("main_analysis_functions.R")
 
 DCX_SOX2_top_table = read.table("results/DCX_vs_SOX2_top_table.txt", sep = "\t", quote = "")
+
+data <- read.table("data/working_matrix.txt", sep = "\t", header= T, quote = "")
 
 #DCX was set as the control when getting the top table
 
@@ -20,23 +24,50 @@ DCX_SOX2_top_table = read.table("results/DCX_vs_SOX2_top_table.txt", sep = "\t",
 #                       colAlpha = 1.0)
 #   pdf(paste("figures/", title, "volcano.pdf"), width = 8, height = 8)
 #   print(v)
-  
+
+#make a copy of DCX_SOX2_top_table  
 top_table <- DCX_SOX2_top_table
 
-top_table$differentially_expressed <- "NA"
-
+#create a new column in top_table called DE (differentially expressed) and fill in with values of 
+#DCX or SOX2 depending on the cutoff values used for the volcano plots
 top_table<-top_table %>% mutate(DE = case_when(
   logFC > 1.333 & adj.P.Val < 0.1 ~ "DCX",
   logFC < 1.333 & adj.P.Val < 0.1 ~ "SOX2"
 ))
 
-top_table$differentially_expressed <- NULL
 
-newdata <- mydata[ which(mydata$gender=='F' 
-                         & mydata$age > 65), ]
-
+#subset the rows of the top table for SOX2 and DCX in their own separate tables
 SOX2 <- top_table[which(top_table$DE == "SOX2"), ]
 DCX <- top_table[which(top_table$DE == "DCX"), ]  
 
 write.table(SOX2, "SOX2.txt", sep= "\t")
 write.table(DCX, "DCX.txt", sep="\t")
+
+#get list of SOX2 genes
+SOX2_genes <-row.names(SOX2)
+class(SOX2_genes)
+
+#get list of DCX genes
+DCX_genes <- row.names(DCX)
+
+#subset working matrix for SOX2 expressed genes
+SOX2_DE <- subset(data, Gene.names %in% SOX2_genes)
+
+#subset working matrix for DCX expressed genes
+DCX_DE <- subset(data, Gene.names %in% DCX_genes)
+
+#include up to AR on working matrix which is Unique Peptides
+
+#remove AP ('Peptides') and AQ ('Razor + unique peptides') from matrix
+SOX2_DE$Peptides <- NULL
+DCX_DE$Peptides <- NULL
+SOX2_DE$`Razor...unique.peptides` <- NULL
+DCX_DE$`Razor...unique.peptides` <- NULL
+
+#keeping just columns from AI(GOBP name) to AR:
+SOX2_AI_AR <- SOX2_DE[,c(35:53)]
+DCX_AI_AR <- DCX_DE[,c(35:53)]
+
+#remove columns AS(Sequence coverage [%])  to AY (MS/MS count)
+SOX2_AI_AR[,c(9:15)] <- NULL
+DCX_AI_AR[,c(9:15)] <- NULL
