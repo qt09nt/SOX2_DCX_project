@@ -15,6 +15,10 @@ library(ggpubr)
 library(broom)
 library(AICcmodavg)
 
+#this is the gene expression data in TPM format (no need to re-run the calculations for generating the TPM values below
+#if it can load the TPM data here)
+TPM2 <-readRDS("TPM.rds")
+
 # data <- read.table("expression_matrix.txt", header=T, row.names=1, sep ="\t")
 data <- read.csv(file = 'expression_matrix.csv', header=F)  #expression values in RPKM
 columns_meta <- read.csv(file = 'columns_metadata.csv', header = T)
@@ -442,6 +446,7 @@ plotting(dataframe = ge_cortex_all, gene = "SRSF9")
 plotting(dataframe = ge_cortex_all, gene = "TCERG1")
 plotting(dataframe = ge_cortex_all, gene = "HNRNPD")
 
+
 #########################################################
 
 
@@ -530,6 +535,10 @@ prenatal$age <- ordered(prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "1
                                              "25 pcw"))
 
 gene_name = "RUVBL2"
+
+#make sure the gene expression column is numeric, otherwise the y-axis labels will just be a blur together!!!
+prenatal$RUVBL2<- as.numeric(prenatal$RUVBL2)
+
 ggplot(data = prenatal, aes(x = structure_name,  y = RUVBL2, colour = structure_name)) +
   geom_boxplot() +
   geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
@@ -543,8 +552,15 @@ ggplot(data = prenatal, aes(x = structure_name,  y = RUVBL2, colour = structure_
         axis.ticks.x = element_blank()) +
   labs(title = 'BrainSpan Transcriptome Dataset',
        subtitle=paste0(gene_name, ' expression in all brain structures from 8pcw to 24 pcw'),
-       x = 'structure',
+       x = '',
        y = paste0(gene_name,' expression (TPM)'))
+
+# p +  theme(axis.text.y = element_text(face="bold", color="black", 
+#                                       size=8),
+#            axis.text.y = element_blank())
+p +  theme(axis.text.y = element_blank())
+
+
 
 ##################### plot RUVBL2 expression in all available time points from 8pcw to 40 years for ganglionic eminences
 # and all cortex regions
@@ -581,3 +597,5 @@ ggplot(data = ge_cortex_RUVBL2, aes(x = structure_name,  y = RUVBL2, colour = st
 
 # Save an object to a file
 saveRDS(TPM, file = "TPM.rds")
+
+
