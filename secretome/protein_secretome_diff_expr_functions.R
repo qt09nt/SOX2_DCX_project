@@ -107,6 +107,7 @@ calcDiffExpr2<-function(label.g1, label.g2){
   g2<-prot[,grepl(label.g2,colnames(prot))]
   
   prot.sel<-cbind(g1, g2)
+  
   group<-c(rep(label.g1, ncol(g1)), rep(label.g2, ncol(g2)))
   
   res_anova<-apply(prot.sel, 1, function(x){
@@ -137,10 +138,11 @@ calcDiffExpr2<-function(label.g1, label.g2){
   
   df$pval.adj.bonferroni <- p.adjust(df$pval, method="bonferroni")
   
-  df.sel <- df[df$pval<0.1 & abs(df$fold.change)>0.5,]
+  #filter for significantly different 
+  #df.sel <- df[df$pval<0.1 & abs(df$fold.change)>0.5,]
   
   #get rid of rows where the gene column is NA
-  df.sel_no_NAs <- df.sel %>% drop_na(gene)
+  df_no_NAs <- df %>% drop_na(gene)
   
   ####adjust p.values to correct for multiple testing
   
@@ -151,20 +153,105 @@ calcDiffExpr2<-function(label.g1, label.g2){
   #ascending array and multiplied by m/k where k is the position of a P value in the sorted vector and m is 
   #the number of independent tests. 
   
-  df.sel_no_NAs$pval.adj.fdr <- p.adjust(df.sel_no_NAs$pval, method="fdr")
-  df.sel_no_NAs <- df.sel_no_NAs
+  df_no_NAs$pval.adj.fdr <- p.adjust(df_no_NAs$pval, method="fdr")
   
   #fname.out<-file.path(dir.results, "04_diff_gene_expression",paste0("diff_",label.g1,"_",label.g2,".csv"))
   
   #remove the genes which have "-Inf" in the fold.change column
-  df_final <-df.sel_no_NAs[!(df.sel_no_NAs$fold.change == "-Inf"),]
+  df_final <-df_no_NAs[!(df_no_NAs$fold.change == "-Inf"),]
   
-  saveRDS(df_final, file = paste0("diff_expr_padj_0.10_all",label.g1,"_",label.g2,".rds"))
-  fname.out<-file.path(dir.results, paste0("diff_expr_padj_0.10_all",label.g1,"_",label.g2,".csv"))
+  #remove genes which have NaN in fold.change column
+  df_final <-df_final[!(df_final$fold.change == "NaN"),]
   
+  #write this final dataframe into the global environment
+  df_final <<- df_final
+  
+  #save as RDS file
+  setwd(dir.results)
+  saveRDS(df_final, file = paste0("diff_expr_padj_all_",label.g1,"_",label.g2,".rds"))
+  
+  fname.out<-file.path(dir.results, paste0("diff_expr_padj_all_",label.g1,"_",label.g2,".csv"))
   write.csv(df_final, file=fname.out,row.names=FALSE, quote = FALSE)
+  
+  
 }
 
+
+#CalcDiffExpr3 alternative function where you remove "-Inf" values before  doing ANOVA or Log2FC calculations
+calcDiffExpr3<-function(label.g1, label.g2){
+  message("calcDiffExpr: ",label.g1,"|",label.g2)
+  g1<-prot[,grepl(label.g1,colnames(prot))]
+  g2<-prot[,grepl(label.g2,colnames(prot))]
+  
+  prot.sel<-cbind(g1, g2)
+  
+  #group<-c(rep(label.g1, ncol(g1)), rep(label.g2, ncol(g2)))
+  
+  res_anova<-apply(prot.sel, 1, function(x){
+    pval=doANOVA(group=group, data.row=x)
+    return(data.frame(pval=pval))
+  })
+  
+  res_logfc <- apply(prot.sel, 1, function(x){
+    mean.g1=mean(x[group==unique(group)[1]])
+    mean.g2=mean(x[group==unique(group)[2]])
+    fold.change<-(2^mean.g1-2^mean.g2) / 2^mean.g1 # expression values in log scale
+    return(data.frame(fold.change=fold.change))
+  })
+  
+  df_anova <- data.frame(gene=rownames(prot.sel), bind_rows(res_anova))
+  df_logfc <- data.frame(gene=rownames(prot.sel), bind_rows(res_logfc))
+  # 
+  df <- cbind(df_anova, df_logfc)
+  
+  #get rid of duplicate gene column
+  df[,3]<-NULL
+  
+  #Bonferroni multiple testing adjustment
+  #multiplies the raw P values by the number of tests m (i.e. length of the vector P_values). Using the p.adjust 
+  #function and the 'method' argument set to "bonferroni", we get a vector of same length but with adjusted P values.
+  #This adjustment approach corrects according to the family-wise error rate of at least one false positive
+  #(FamilywiseErrorRate (FWER)=Probability (FalsePositive???1))
+  
+  df$pval.adj.bonferroni <- p.adjust(df$pval, method="bonferroni")
+  
+  #filter for significantly different 
+  #df.sel <- df[df$pval<0.1 & abs(df$fold.change)>0.5,]
+  
+  #get rid of rows where the gene column is NA
+  df_no_NAs <- df %>% drop_na(gene)
+  
+  ####adjust p.values to correct for multiple testing
+  
+  #Benjamini-Hochberg/FDR
+  #false discovery rate (FalseDiscoveryRate (FDR)=Expected (FalsePositive/ (FalsePositive+TruePositive))). 
+  #In other words, FDR is the expected proportion of false positives among all positives which rejected 
+  #the null hypothesis and not among all the tests undertaken. In the FDR method, P values are ranked in an 
+  #ascending array and multiplied by m/k where k is the position of a P value in the sorted vector and m is 
+  #the number of independent tests. 
+  
+  df_no_NAs$pval.adj.fdr <- p.adjust(df_no_NAs$pval, method="fdr")
+  
+  #fname.out<-file.path(dir.results, "04_diff_gene_expression",paste0("diff_",label.g1,"_",label.g2,".csv"))
+  
+  #remove the genes which have "-Inf" in the fold.change column
+  df_final <-df_no_NAs[!(df_no_NAs$fold.change == "-Inf"),]
+  
+  #remove genes which have NaN in fold.change column
+  df_final <-df_final[!(df_final$fold.change == "NaN"),]
+  
+  #write this final dataframe into the global environment
+  df_final <<- df_final
+  
+  #save as RDS file
+  setwd(dir.results)
+  saveRDS(df_final, file = paste0("diff_expr_padj_all_",label.g1,"_",label.g2,".rds"))
+  
+  fname.out<-file.path(dir.results, paste0("diff_expr_padj_all_",label.g1,"_",label.g2,".csv"))
+  write.csv(df_final, file=fname.out,row.names=FALSE, quote = FALSE)
+  
+  
+}
 
 #function for plotting ANOVA and log 2 Fold Change values on a volcano plot
 
@@ -174,9 +261,16 @@ volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
     theme_minimal() +
     geom_text_repel() +    
     scale_color_manual(values=c("#F68D91",  "#4E80A5", "grey", "#A4D49C", "orange")) +
-    geom_vline(xintercept=c(-1, 1), col="red") +
+    #geom_vline(xintercept=(0), col="red", linetype="dotted") +
     geom_hline(yintercept=-log10(p_value_cutoff), col="red") +
     labs(title = 'Organoid Protein Secretome dataset',
          subtitle=paste0(subtitle, " p. adj. value cut-off = ", p_value_cutoff),
          x = 'log2 Fold Change')
 }
+
+
+
+
+
+
+
