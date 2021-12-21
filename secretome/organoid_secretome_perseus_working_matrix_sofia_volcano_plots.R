@@ -46,14 +46,13 @@ annotations[,1] <- NULL
 row.names(annotations)<- annotations$sample 
 annotations$timepoints <- as.factor(annotations$timepoints)
 
+#match the sample names between working_data & annotation
+annotations$sample <- colnames(working_data)
 
 ############# do differential expression analysis between time points - includes all cell types 
 
 unique(annotations$timepoints)
 #"Week 4"  "Week 8"  "Week 12" "Week 16" "Week 10" "Week 15" "Week 6" 
-
-#match the sample names between working_data & annotation
-annotations$sample <- colnames(working_data)
 
 #####comparing week 4 protein expression to week 6  - (all cell types at week 4 vs all cell types at week 6)
 week4_vs_week6_meta <- annotations[annotations$timepoints == "Week 4" | annotations$timepoints == "Week 6", ]
@@ -73,24 +72,34 @@ week_4_vs_week_6_top_table = get_top_table(week4_vs_week6_expr, design)
 write.table(week_4_vs_week_6_top_table, "week_4_vs_week_6_top_table.txt", sep = "\t", quote = F, row.names = T, col.names = T)
 print(volcano_plot(week_4_vs_week_6_top_table, "Organoid Protein Secretome - All Cell Types - Week 4 vs Week 6"))
 
-########## write this into a function:
+########## Comparison of all cell types to all cell types (time point 1 vs timepoint 2) 
+#get the differentially expressed proteins and produce a top table with logFC, pvalues, t, and adj.P.val
+#then plot volcano plot
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types")
+comparisons <- c("Week 6", "Week 8", "Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints(annotations, working_data, timepoint1 = "Week 4", timepoint2 = i)
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("all_cell_types", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
 
-get_timepoints(annotations, working_data, timepoint1 = "Week 4", "Week 8")
-get_timepoints(annotations, working_data, timepoint1 = "Week 4", "Week 10")
-get_timepoints(annotations, working_data, timepoint1 = "Week 4", "Week 12")
-get_timepoints(annotations, working_data, timepoint1 = "Week 4", "Week 15")
+comparisons <- c("Week 8", "Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints(annotations, working_data, timepoint1 = "Week 6", timepoint2 = i)
+}
 
-get_timepoints(annotations, working_data, timepoint1 = "Week 6", "Week 8")
-get_timepoints(annotations, working_data, timepoint1 = "Week 6", "Week 10")
-get_timepoints(annotations, working_data, timepoint1 = "Week 6", "Week 12")
-get_timepoints(annotations, working_data, timepoint1 = "Week 6", "Week 15")
+comparisons <- c("Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints(annotations, working_data, timepoint1 = "Week 8", timepoint2 = i)
+}
 
-get_timepoints(annotations, working_data, timepoint1 = "Week 8", "Week 10")
-get_timepoints(annotations, working_data, timepoint1 = "Week 8", "Week 12")
-get_timepoints(annotations, working_data, timepoint1 = "Week 8", "Week 15")
-
-get_timepoints(annotations, working_data, timepoint1 = "Week 10", "Week 12")
-get_timepoints(annotations, working_data, timepoint1 = "Week 10", "Week 15")
+comparisons <- c("Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints(annotations, working_data, timepoint1 = "Week 10", timepoint2 = i)
+}
 
 ############################
 
@@ -111,12 +120,14 @@ get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX
                                      timepoint1 = "Week 4",  timepoint2 = "Week 12", cell_type = "SOX2")
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
                                      timepoint1 = "Week 4",  timepoint2 = "Week 16", cell_type = "SOX2")
+
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
                                      timepoint1 = "Week 6",  timepoint2 = "Week 8", cell_type = "SOX2")
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
                                      timepoint1 = "Week 6",  timepoint2 = "Week 12", cell_type = "SOX2")
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
                                      timepoint1 = "Week 6",  timepoint2 = "Week 16", cell_type = "SOX2")
+
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
                                      timepoint1 = "Week 8",  timepoint2 = "Week 12", cell_type = "SOX2")
 get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
@@ -125,5 +136,86 @@ get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX
                                      timepoint1 = "Week 12",  timepoint2 = "Week 16", cell_type = "SOX2")
 
 
-##########
+############################# get expression data for just DCX cell types
+
+DCX_meta <- annotations[annotations$cell_type == "DCX", ]
+
+#get expression data for just DCX samples:
+DCX_samples <- c(DCX_meta$sample)
+DCX_expr <- working_data[,DCX_samples]
+
+#see what unique time points are available:
+unique(DCX_meta$timepoints)
+# Week 4  Week 6  Week 8  Week 10 Week 12 Week 15
+
+
+get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 4", timepoint2="Week 6", cell_type="DCX")
+get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 4", timepoint2="Week 8", cell_type="DCX")
+get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 4", timepoint2="Week 12", cell_type="DCX")
+get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 4", timepoint2="Week 15", cell_type="DCX")
+
+#comparison of DCX week 6 to other individual DCX  time points 
+comparisons <- c("Week 8", "Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 6", timepoint2=i, cell_type="DCX")
+}
+
+#comparison of DCX week 8 to other individual DCX  time points 
+comparisons <- c("Week 10", "Week 12", "Week 15")
+comparisons
+for (i in comparisons){
+  get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                       timepoint1= "Week 8", timepoint2=i, cell_type="DCX")
+}
+
+comparisons <- c("Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                       timepoint1= "Week 10", timepoint2=i, cell_type="DCX")
+}
+
+get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 12", timepoint2="Week 15", cell_type="DCX")
+
+
+######################## comparison of timepoints for SYN cell type only:
+
+#keep just SYN cells from annotation:
+SYN_meta <- annotations[annotations$cell_type == "SYN",]
+
+#SYN expression data
+SYN_samples <- c(SYN_meta$sample)    #get sample names for SYN cell types
+SYN_expr <- working_data[,SYN_samples]
+
+#comparison of timepoints for SYN cell type:
+unique(SYN_meta$timepoints)
+#Week 8  Week 10 Week 12 Week 15
+
+#comparison of week 8 to all other time points:
+comparisons <- c("Week 10", "Week 12", "Week 15")
+
+for (i in comparisons){
+  get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
+                                       timepoint1 = "Week 8", timepoint2=i, cell_type="SYN")
+}
+
+#comparison of week 10 SYN to all other time points:
+comparisons <- c("Week 12", "Week 15")
+for (i in comparisons){
+  get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
+                                       timepoint1 = "Week 10", timepoint2=i, cell_type="SYN")
+}
+
+#comparison of SYN week 12 to SYN week 15
+get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
+                                     timepoint1 = "Week 12", timepoint2="Week 15", cell_type="SYN")
+
+
+
+
 
