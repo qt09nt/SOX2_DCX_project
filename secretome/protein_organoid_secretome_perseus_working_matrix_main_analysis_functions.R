@@ -69,13 +69,14 @@ volcano_plot = function(top_table, title){
                       col = c("grey30", "#A4D49C", "#4E80A5", "#F68D91"),
                       colAlpha = 1.0)
   #pdf(paste("../figures/", title, "volcano.pdf"), width = 8, height = 8)
-  pdf(paste("figures/", title, "volcano.pdf"), width = 8, height = 8)
+  pdf(paste("figures/DCX/", title, "volcano.pdf"), width = 8, height = 8)
   print(v)
   dev.off()
   return(v)
 }
 
 #function for comparing timepoints while including all cell types
+#annotations is the meta data file, working_data is the working matrix processed from Perseus
 get_timepoints <- function(annotations, working_data, timepoint1, timepoint2){
   tp_meta <- annotations[annotations$timepoint == timepoint1 | annotations$timepoints == timepoint2, ]
   
@@ -88,8 +89,11 @@ get_timepoints <- function(annotations, working_data, timepoint1, timepoint2){
   tp1_vs_tp_2_top_table = get_top_table(subset_expr, design)
   
   #save results
-  write.table(tp1_vs_tp_2_top_table, paste0("results/", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
-  print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid Protein Secretome - All Cell Types - ", timepoint1, " vs ", timepoint2) ))
+  
+  #comment this out for now since don't have to resave top tables
+  #write.table(tp1_vs_tp_2_top_table, paste0("results/", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
+  #print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid Protein Secretome - All Cell Types - ", timepoint1, " vs ", timepoint2) ))
+
 }
 
 #function for 
@@ -104,7 +108,7 @@ get_timepoints_individual_cell_types <- function(annotations, working_data, time
   design = cbind(control=1, difference = difference)
   tp1_vs_tp_2_top_table = get_top_table(subset_expr, design)
   
-  write.table(tp1_vs_tp_2_top_table, paste0("results/", cell_type, "_", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
+  write.table(tp1_vs_tp_2_top_table, paste0("results/SYN_only/", cell_type, "_", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
   print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid Protein Secretome -", cell_type, "_", timepoint1, " vs ", timepoint2) ))
 }
 
