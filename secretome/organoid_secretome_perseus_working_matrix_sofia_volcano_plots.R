@@ -75,10 +75,17 @@ print(volcano_plot(week_4_vs_week_6_top_table, "Organoid Protein Secretome - All
 ########## Comparison of all cell types to all cell types (time point 1 vs timepoint 2) 
 #get the differentially expressed proteins and produce a top table with logFC, pvalues, t, and adj.P.val
 #then plot volcano plot
+
+#make sure to uncomment the save top tables & print volcano plot lines within the get_timepoints function if
+#running for the first time, otherwise can comment that part out if re-running
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types")
-comparisons <- c("Week 6", "Week 8", "Week 10", "Week 12", "Week 15")
+
+#
+comparisons <- c("Week 6", "Week 8", "Week 10", "Week 12", "Week 15", "Week 16")
 for (i in comparisons){
-  get_timepoints(annotations, working_data, timepoint1 = "Week 4", timepoint2 = i)
+  timepoint1="Week 4"
+  timepoint2=i
+  tp1_vs_tp_2_top_table = get_timepoints(annotations, working_data, timepoint1= "Week 4", timepoint2 = i)
   
   ####### make pscore and FC tables for GSEA
   pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
@@ -86,20 +93,60 @@ for (i in comparisons){
               sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
-comparisons <- c("Week 8", "Week 10", "Week 12", "Week 15")
+comparisons <- c("Week 8", "Week 10", "Week 12", "Week 15", "Week 16")
 for (i in comparisons){
   get_timepoints(annotations, working_data, timepoint1 = "Week 6", timepoint2 = i)
+  timepoint1="Week 6"
+  timepoint2=i
+  tp1_vs_tp_2_top_table = get_timepoints(annotations, working_data, timepoint1= "Week 6", timepoint2 = i)
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("all_cell_types", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
-comparisons <- c("Week 10", "Week 12", "Week 15")
+comparisons <- c("Week 10", "Week 12", "Week 15", "Week 16")
 for (i in comparisons){
+  timepoint1="Week 8"
+  timepoint2=i
   get_timepoints(annotations, working_data, timepoint1 = "Week 8", timepoint2 = i)
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("all_cell_types", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
-comparisons <- c("Week 12", "Week 15")
+comparisons <- c("Week 12", "Week 15", "Week 16")
 for (i in comparisons){
+  timepoint1="Week 10"
+  timepoint2=i
   get_timepoints(annotations, working_data, timepoint1 = "Week 10", timepoint2 = i)
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("all_cell_types", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
+
+
+####NOTE: Comparison of Week 16 to everything else: 
+#Note Week 16 will show up on the right hand side of the volcano plot because it is timepoint 1
+#similarly for the p ranking tables, the positive values will be for Week 16, and negative ranked values 
+#will be for the earlier time points
+comparisons <- c("Week 4", "Week 6", "Week 8", "Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  timepoint1="Week 16"
+  timepoint2=i
+  tp1_vs_tp_2_top_table = get_timepoints(annotations, working_data, timepoint1 = "Week 16", timepoint2 = i)
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("all_cell_types", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
+
 
 ############################
 
@@ -112,28 +159,47 @@ SOX2_meta <- annotations[annotations$cell_type == "SOX2",]
 SOX2_samples <- c(SOX2_meta$sample)
 SOX2_expr <- working_data[,SOX2_samples]
 
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 4",  timepoint2 = "Week 6", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 4",  timepoint2 = "Week 8", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 4",  timepoint2 = "Week 12", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 4",  timepoint2 = "Week 16", cell_type = "SOX2")
+#plot volcano plots, get top table and also get p rank table for GSEA
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/SOX2_only")
 
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 6",  timepoint2 = "Week 8", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 6",  timepoint2 = "Week 12", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 6",  timepoint2 = "Week 16", cell_type = "SOX2")
+comparisons <- c("Week 6","Week 8", "Week 12", "Week 16")
+for (i in comparisons){
+  timepoint1 = "Week 4"
+  timepoint2 = i
+  tp1_vs_tp_2_top_table = get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
+                                       timepoint1 = timepoint1,  timepoint2 = i, cell_type = "SOX2")
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("SOX2", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+  
+}
 
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 8",  timepoint2 = "Week 12", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 8",  timepoint2 = "Week 16", cell_type = "SOX2")
-get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
-                                     timepoint1 = "Week 12",  timepoint2 = "Week 16", cell_type = "SOX2")
+
+comparisons <- c("Week 8", "Week 12", "Week 16")
+for (i in comparisons){
+  timepoint1 = "Week 6"
+  timepoint2 = i
+  tp1_vs_tp_2_top_table = get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
+                                     timepoint1 = "Week 6",  timepoint2 = i, cell_type = "SOX2")
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("SOX2", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
+
+comparisons <- c("Week 12", "Week 16")
+for (i in comparisons){
+  timepoint1 = "Week 8"
+  timepoint2 = i
+  tp1_vs_tp_2_top_table = get_timepoints_individual_cell_types(annotations = SOX2_meta, working_data = SOX2_expr, 
+                                     timepoint1 = "Week 8",  timepoint2 = i, cell_type = "SOX2")
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("SOX2", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
 
 
 ############################# get expression data for just DCX cell types
@@ -148,35 +214,60 @@ DCX_expr <- working_data[,DCX_samples]
 unique(DCX_meta$timepoints)
 # Week 4  Week 6  Week 8  Week 10 Week 12 Week 15
 
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/DCX_only")
 
-get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
-                                     timepoint1= "Week 4", timepoint2="Week 6", cell_type="DCX")
-get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
-                                     timepoint1= "Week 4", timepoint2="Week 8", cell_type="DCX")
-get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
-                                     timepoint1= "Week 4", timepoint2="Week 12", cell_type="DCX")
-get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
-                                     timepoint1= "Week 4", timepoint2="Week 15", cell_type="DCX")
+#comparison of DCX week 4 to other individual time points
+comparisons <- c("Week 6", "Week 8", "Week 10", "Week 12", "Week 15")
+for (i in comparisons){
+  timepoint1= "Week 4"
+  timepoint2 = i
+  get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+                                     timepoint1= "Week 4", timepoint2=i, cell_type="DCX")
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("DCX", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
 
 #comparison of DCX week 6 to other individual DCX  time points 
 comparisons <- c("Week 8", "Week 10", "Week 12", "Week 15")
 for (i in comparisons){
+  timepoint1= "Week 6"
+  timepoint2 = i
   get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
                                      timepoint1= "Week 6", timepoint2=i, cell_type="DCX")
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("DCX", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
 #comparison of DCX week 8 to other individual DCX  time points 
 comparisons <- c("Week 10", "Week 12", "Week 15")
 comparisons
 for (i in comparisons){
+  timepoint1 = "Week 8"
+  timepoint2 = i
   get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
                                        timepoint1= "Week 8", timepoint2=i, cell_type="DCX")
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("DCX", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
 comparisons <- c("Week 12", "Week 15")
 for (i in comparisons){
-  get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
+  timepoint1= "Week 10"
+  timepoint2 = i
+  tp1_vs_tp_2_top_table = get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
                                        timepoint1= "Week 10", timepoint2=i, cell_type="DCX")
+  
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("DCX", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
 }
 
 get_timepoints_individual_cell_types(annotations = DCX_meta, working_data = DCX_expr,
@@ -199,23 +290,42 @@ unique(SYN_meta$timepoints)
 #comparison of week 8 to all other time points:
 comparisons <- c("Week 10", "Week 12", "Week 15")
 
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/SYN_only")
 for (i in comparisons){
-  get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
+  timepoint1 = "Week 8"
+  timepoint2 = i
+  tp1_vs_tp_2_top_table = get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
                                        timepoint1 = "Week 8", timepoint2=i, cell_type="SYN")
-}
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("SYN", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)  
+
+  
+  }
 
 #comparison of week 10 SYN to all other time points:
 comparisons <- c("Week 12", "Week 15")
 for (i in comparisons){
+  timepoint1 = "Week 10"
+  timepoint2 = i
   get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
                                        timepoint1 = "Week 10", timepoint2=i, cell_type="SYN")
+  ####### make pscore and FC tables for GSEA
+  pscore_table = get_pscore_table(tp1_vs_tp_2_top_table)
+  write.table(pscore_table, paste("SYN", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+              sep = "\t", col.names = F, row.names = F, quote = F)  
+  
 }
 
 #comparison of SYN week 12 to SYN week 15
-get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
+timepoint1 = "Week 12"
+timepoint2 = "Week 15"
+SYN_week12_v_SYN_week15_top_table = get_timepoints_individual_cell_types(annotations = SYN_meta, working_data = SYN_expr, 
                                      timepoint1 = "Week 12", timepoint2="Week 15", cell_type="SYN")
 
-
-
+pscore_table = get_pscore_table(SYN_week12_v_SYN_week15_top_table)
+write.table(pscore_table, paste("SYN", timepoint1, timepoint2, "pscore.rnk", sep = "_"),
+            sep = "\t", col.names = F, row.names = F, quote = F)  
 
 
