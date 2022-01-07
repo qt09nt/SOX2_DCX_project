@@ -160,14 +160,16 @@ plot_gsea_timepoints <- function(gsea_report_na_pos, gsea_report_for_na_neg, tim
   #filter the GSEA results dataframe to keep just the pathways which have a NOM p-value of less than 0.07 and a 
   #FDR q values less than 0.1
   filtered <- timepoint1_vs_timepoint2_na_pos_gsea[timepoint1_vs_timepoint2_na_pos_gsea$`NOM.p.val` <= 0.07, ]
-  filtered <- timepoint1_vs_timepoint2_na_pos_gsea[timepoint1_vs_timepoint2_na_pos_gsea$`FDR.q.val` <= 0.5, ]
+  filtered <- timepoint1_vs_timepoint2_na_pos_gsea[timepoint1_vs_timepoint2_na_pos_gsea$`FDR.q.val` <= 0.3, ]
+  filtered<- filtered[,1:11]
   filtered$timepoint <- timepoint1
   filtered <<- filtered
   # #load in the gsea report for na_neg (negative enrichment for week 4 compared to week 6)
   timepoint1_vs_timepoint2_na_neg_gsea <- read.table(file = gsea_report_for_na_neg, sep = '\t', header = TRUE, fill=TRUE)
   colnames(timepoint1_vs_timepoint2_na_neg_gsea)[1] <- "Pathways"   ##rename first column of GSEA pos results to "Pathways"
   filtered_timepoint_2 <- timepoint1_vs_timepoint2_na_neg_gsea[timepoint1_vs_timepoint2_na_neg_gsea$`NOM.p.val` <= 0.07,]
-  filtered_timepoint_2 <- filtered_timepoint_2[timepoint1_vs_timepoint2_na_neg_gsea$`FDR.q.val` <= 0.5, ]
+  filtered_timepoint_2 <- filtered_timepoint_2[timepoint1_vs_timepoint2_na_neg_gsea$`FDR.q.val` <= 0.7, ]
+  filtered_timepoint_2<- filtered_timepoint_2[,1:11] #keep columns 1 to 12 only
   filtered_timepoint_2$timepoint <- timepoint2
   filtered_timepoint_2<<- filtered_timepoint_2 
   
@@ -184,7 +186,7 @@ plot_gsea_timepoints <- function(gsea_report_na_pos, gsea_report_for_na_neg, tim
   setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
   
   #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
-  png(filename=paste0(timepoint1, "_vs_", timepoint2,"_gsea_plot.png"), width=2650, height=2000, res=300)
+  png(filename=paste0(timepoint1, "_vs_", timepoint2,"_gsea_plot.pdf"), width=3000, height=3000, res=300)
   
   #function that makes the plot
   plot(p)
