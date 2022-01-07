@@ -126,6 +126,77 @@ volcano_plot = function(top_table, title){
   return(v)
 }
 
+
+#function for taking a dataframe of GSEA enriched annotations (ie. gsea_report_for_na_pos_1641334710091.tsv) 
+#function requires as input the GSEA pre-ranked results (both positive NES (enriched in the first timepoint) and negative
+#NES (enriched in the samples in the second timepoint being compared)
+#which contains the enriched pathways and creates a plot of the enrichment scores between 2 different timepoints
+#output is the scatterplot of the pathway annotations and their FDR q. value and NES score
+
+library("ggplot2")
+library("dplyr")
+library("viridis")
+
+# #Plot FDR.q.val (different colour scale), and NES score (different size of dots)
+#  <- function(gsea_results)
+
+#function to process the GSEA pre-ranked results & plot as scatterplot
+#input gsea_report_na_pos is the filename for the positive gsea report results (showing enrichment of pathways in first timepoint )
+#timepoint1 is the string name of timepoint 1 ie. "week 4"
+
+#for fdr q value cut off, adjust as necessary:
+# If there aren't any interesting pathways
+# you should use less stringent cut off
+# if there are a lot of pathways you should use more stringent
+# the idea is to make a good story
+# remember that statistical significance is not necessarily representative of biological importance, take a transcription factor a small change in abundance can have very small significance statistically but a very big change biologically due to amplification steps in transcription, translation and post translational modificiation
+
+#https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideTEXT.htm#_False_Discovery_Rate
+plot_gsea_timepoints <- function(gsea_report_na_pos, gsea_report_for_na_neg, timepoint1, timepoint2){
+  
+  #fill = TRUE parameter is added to add "NA" values if there are missing cells within the GSEA file result
+  timepoint1_vs_timepoint2_na_pos_gsea <-read.table(file = gsea_report_na_pos, sep = '\t', header = TRUE, fill = TRUE)
+  colnames(timepoint1_vs_timepoint2_na_pos_gsea)[1] <-"Pathways"     #rename first column of GSEA pos results to "Pathways"
+  #filter the GSEA results dataframe to keep just the pathways which have a NOM p-value of less than 0.07 and a 
+  #FDR q values less than 0.1
+  filtered <- timepoint1_vs_timepoint2_na_pos_gsea[timepoint1_vs_timepoint2_na_pos_gsea$`NOM.p.val` <= 0.07, ]
+  filtered <- timepoint1_vs_timepoint2_na_pos_gsea[timepoint1_vs_timepoint2_na_pos_gsea$`FDR.q.val` <= 0.5, ]
+  filtered$timepoint <- timepoint1
+  filtered <<- filtered
+  # #load in the gsea report for na_neg (negative enrichment for week 4 compared to week 6)
+  timepoint1_vs_timepoint2_na_neg_gsea <- read.table(file = gsea_report_for_na_neg, sep = '\t', header = TRUE, fill=TRUE)
+  colnames(timepoint1_vs_timepoint2_na_neg_gsea)[1] <- "Pathways"   ##rename first column of GSEA pos results to "Pathways"
+  filtered_timepoint_2 <- timepoint1_vs_timepoint2_na_neg_gsea[timepoint1_vs_timepoint2_na_neg_gsea$`NOM.p.val` <= 0.07,]
+  filtered_timepoint_2 <- filtered_timepoint_2[timepoint1_vs_timepoint2_na_neg_gsea$`FDR.q.val` <= 0.5, ]
+  filtered_timepoint_2$timepoint <- timepoint2
+  filtered_timepoint_2<<- filtered_timepoint_2 
+  
+  # #merge the GSEA positive and negative dataframes together
+  merged <- rbind(filtered, filtered_timepoint_2)
+  # plot the NES scores and
+  p <- ggplot(merged, aes(x = timepoint, y = Pathways, size = NES, color = FDR.q.val )) +
+    geom_point(alpha = 0.7) + #scatterplot
+    scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
+    scale_color_viridis(discrete = FALSE)
+  
+  plot(p)
+  #function for saving figures as pdf, png or jpg
+  setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
+  
+  #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
+  png(filename=paste0(timepoint1, "_vs_", timepoint2,"_gsea_plot.png"), width=2650, height=2000, res=300)
+  
+  #function that makes the plot
+  plot(p)
+  dev.off()
+  
+  
+}  
+  
+  
+  
+
+
 #function to fill out diffexpressed top table, which is used for labelling volcano plots
 #pvalue can be 0.05 or 0.10
 get_diffexpressed <- function(top_table, p_value, condition1, condition2){
