@@ -365,27 +365,38 @@ ggplot(merged, aes(x = timepoint, y = Pathways, size = NES, color = FDR.q.val ))
 
 #GSEA plot of Week 4 vs Week 6 comparisons
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types_week_4_vs_week_6.GseaPreranked.1640185266242")
+#week 4 FDR.q.val` <= 0.5
+#week 6 FDR.q.val` <= 0.5
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1640185266242.tsv',  
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1640185266242.tsv',
                      timepoint1 = "week 4", timepoint2 = "week 6")
 
 #GSEA plot of Week 4 vs Week 8 comparisons
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_4_vs_week_8.GseaPreranked.1641340848426")
+#week 4 FDR. q. val <= `FDR.q.val` <= 0.5
+#week 8 FDR. q. val <= `FDR.q.val` <= 0.40
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641340848426.tsv',
     gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641340848426.tsv', timepoint1 = "week 4", timepoint2 = "week 8")
 
 #week 4 vs week 10
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_4_vs_week_10.GseaPreranked.1641341772629")
+#week 4 FDR.q.val` <= 0.5
+#week 10 FDR.q.val` <= 0.45
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641341772629.tsv',
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641341772629.tsv', timepoint1 = "week 4", timepoint2 = "week 10")
 
 #week 4 vs week 12
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_4_vs_week_12.GseaPreranked.1641344672042")
+#week 4 `FDR.q.val` <= 0.5
+#week 12 FDR.q.val` <= 0.6
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641344672042.tsv',
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641344672042.tsv', timepoint1 = "week 4", timepoint2 = "week 12")
 
 #week 4 vs week 15
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_4_vs_week_15.GseaPreranked.1641346821324")
+#version 2
+#week 4 FDR.q.val <= 0.5
+#week 15 FDR.q.val <= 0.7
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641346821324.tsv',
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641346821324.tsv',
                      timepoint1 = "week 4", timepoint2 = "week 15")
@@ -516,8 +527,8 @@ plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641395478737.
 
 #week 16 vs week 10
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_10.GseaPreranked.1641395645362")
-#week 16 is gsea_na_pos; `FDR.q.val` <= 0.7
-#week 10 gsea_na_neg; `FDR.q.val` <= 0.7
+#week 16 is gsea_na_pos; `FDR.q.val` <= 0.75
+#week 10 gsea_na_neg; `FDR.q.val` <= 0.8
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641395645362.tsv',
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641395645362.tsv',
                      timepoint1 = "week 16", timepoint2 = "week 10")
@@ -534,7 +545,7 @@ plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641395689502.
 #week 16 vs week 15
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_15.GseaPreranked.1641395866989")
 #week 16 is gseas_na_pos; `FDR.q.val` <= 0.3
-##week 12 is gsea_na_neg `FDR.q.val` <= 0.7
+##week 15 is gsea_na_neg `FDR.q.val` <= 0.7
 plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641395866989.tsv',
                      gsea_report_for_na_neg = 'gsea_report_for_na_neg_1641395866989.tsv',
                      timepoint1 = "week 16", timepoint2 = "week 15")
