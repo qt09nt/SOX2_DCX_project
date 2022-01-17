@@ -152,6 +152,7 @@ library("viridis")
 # remember that statistical significance is not necessarily representative of biological importance, take a transcription factor a small change in abundance can have very small significance statistically but a very big change biologically due to amplification steps in transcription, translation and post translational modificiation
 
 #https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideTEXT.htm#_False_Discovery_Rate
+
 plot_gsea_timepoints <- function(gsea_report_na_pos, gsea_report_for_na_neg, timepoint1, timepoint2){
   
   #fill = TRUE parameter is added to add "NA" values if there are missing cells within the GSEA file result
@@ -195,9 +196,53 @@ plot_gsea_timepoints <- function(gsea_report_na_pos, gsea_report_for_na_neg, tim
   
 }  
   
-  
-  
+#function written by Brian Lam
+#used to get the NOM.P.val < cutoff value
+process.csv <- function(x,filter=TRUE,cutoff=0.1){
+  #'process.csv
+  #'
+  #'This function takes a csv file with separators values and creates a dataframe
+  #'
+  #'@param x this is the input for a csv file to be converted into a dataframe
+  #'@param cutoff this is an optional cutoff value. The default is 0.1.
+  #process the csv file
+  csvfile <- read.table(x,header=TRUE, sep = '\t', fill = TRUE)
+  #create a vector using booleans to identify the elements of NOM.p.val that are < cutoff.
+  if (filter == TRUE) {
+    boolean.greater <- csvfile[(csvfile$`NOM p-val`<cutoff),]
+    return(boolean.greater)
+  } else {
+    return(csvfile)
+  }
+  #returns the complete dataframe with the values spliced out according to the cutoff.
+}
 
+
+process.csv2 <- function(x,filter=TRUE,FDRqvalcutoff=0.15){
+  #'process.csv
+  #'
+  #'This function takes a csv file with separators values and creates a dataframe
+  #'
+  #'@param x this is the input for a csv file to be converted into a dataframe
+  #'@param cutoff this is an optional cutoff value. The default is 0.1.
+  #process the csv file
+  csvfile <- read.table(x,header=TRUE, sep = '\t', fill = TRUE)
+  #keep just the pathways (rows) where NOM p. value < 0.1, and FDR q.value < 0.15
+  filtered <- csvfile[csvfile$`NOM.p.val` <= 0.07, ]
+  filtered <- filtered[filtered$`FDR.q.val` <= FDRqvalcutoff, ]
+  #return(filtered)
+}
+
+#function to save processed/filtered GSEA files:
+save_processed_csv <- function(gsea_pos, gsea_neg, timepoint1, timepoint2, processed_results_directory, timepoint_comparisons){
+  tp1 <- as.data.frame(process.csv2(gsea_pos))
+  tp2 <- as.data.frame(process.csv2(gsea_neg))
+  results.folder <-dir.create(paste0(processed_results_directory, timepoint_comparisons))
+  setwd(paste0(processed_results_directory, timepoint_comparisons))
+  write.csv(tp1, paste0(timepoint1, ".csv"))
+  write.csv(tp2, paste0(timepoint2, ".csv"))
+            
+}
 
 #function to fill out diffexpressed top table, which is used for labelling volcano plots
 #pvalue can be 0.05 or 0.10
