@@ -206,6 +206,34 @@ plot_NES <-function(cell_type, filtered_df){
   plot(p)
   dev.off()
 }  
+
+#function for plotting merged SOX2 & DCX gsea pathways 
+plot_NES_merged <- function(filtered_df){
+  
+  filtered_df %>%
+    mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val))) %>%
+    ggplot(aes(x = cell_type, y = Pathways, size = NES, color = FDR.q.val )) +
+      geom_point(alpha = 0.7) + #scatterplot
+      scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
+      scale_color_viridis(discrete = FALSE)
+  
+  #plot(p)
+  #function for saving figures as pdf, png or jpg
+  #set directory for saving GSEA results comparing organoid secretome timepoints
+  #setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
+  
+  #set directory for GSEA results for comparing organoid DCX vs SOX2 pathways
+  setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/pathway analysis/figures/")
+  
+  
+  #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
+  png(filename=paste0( "DCX_vs_SOX2_gsea_plot.pdf"), width=3000, height=3000, res=300)
+  
+  #function that makes the plot
+  plot(p)
+  dev.off()
+}  
+
   
 #function written by Brian Lam
 #used to get the NOM.P.val < cutoff value
@@ -253,6 +281,67 @@ save_processed_csv <- function(gsea_pos, gsea_neg, timepoint1, timepoint2, proce
   write.csv(tp1, paste0(timepoint1, ".csv"))
   write.csv(tp2, paste0(timepoint2, ".csv"))
             
+}
+
+process.csv <- function(x,filter=TRUE,cutoff=0.1){
+  #'process.csv
+  #'
+  #'This function takes a csv file with separators values and creates a dataframe
+  #'
+  #'@param x this is the input for a csv file to be converted into a dataframe
+  #'@param cutoff this is an optional cutoff value. The default is 0.1.
+  #process the csv file
+  csvfile <- read.csv(x,header=TRUE)
+  #create a vector using booleans to identify the elements of NOM.p.val that are < cutoff.
+  if (filter == TRUE) {
+    boolean.greater <- csvfile[(csvfile[,"NOM.p.val"]<cutoff),]
+    return(boolean.greater)
+  } else {
+    return(csvfile)
+  }
+  #returns the complete dataframe with the values spliced out according to the cutoff.
+}
+
+unique.comparisons <- function(dataframe1,dataframe2){
+  #'unique.comparisons
+  #'
+  #'This function takes two vectors as inputs and returns the elements in
+  #'vector1 that are unique to both cases
+  #'
+  #'@param dataframe1 this is the first vector to be compared to the second vector1
+  #'@param dataframe2 this is the second vector to be compared
+  #splice out the names of the processes or whatever is being compared.
+  #this was originally designed to compare targets in GSEA
+  vector1 <- dataframe1[,'Pathways']
+  vector2 <- dataframe2[,'Pathways']
+  #generates a vector of booleans that show elements that are unique to vector1
+  #when compared to each of the other vectors
+  # boolean.comparison1 <- (!(vector1 %in% vector2) & !(vector1 %in% vector3)
+  #                         & !(vector1 %in% vector4) & !(vector1 %in% vector5))
+  
+  boolean.comparison1 <- (!(vector1 %in% vector2))
+  #gets only the rows that are in unique from the original dataframe of vector1
+  unique.dataframe <- dataframe1[boolean.comparison1,]
+  #returns the dataframe for future use
+  return(unique.dataframe)
+}
+
+common.comparisons <- function(dataframe1,dataframe2){
+  #'Common.comparisons
+  #'
+  #'This function takes two vectors as inputs and returns the elements in
+  #'vector1 that are common to both cases
+  #'
+  #'@param dataframe1 this is the first vector to be compared to the second vector1
+  #'@param dataframe2 this is the second vector to be compared
+  #splice out the names of the processes or whatever is being compared.
+  #this was originally designed to compare targets in GSEA
+  vector1 <- dataframe1[,'Pathways']
+  vector2 <- dataframe2[,'Pathways']
+  #gets only the rows that are in common
+  common.dataframe <- dataframe1[vector1 %in% vector2,]
+  #returns the dataframe for future use
+  return(common.dataframe)
 }
 
 #function to fill out diffexpressed top table, which is used for labelling volcano plots
