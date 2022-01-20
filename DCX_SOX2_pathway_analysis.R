@@ -343,6 +343,8 @@ saveRDS(DCX_merged, "DCX_merged.rds")
 
 
 ########### read in the filtered dataframes for DCX and SOX2 gsea pathways (filtered for FDR qvalue & NOM pvalue)
+
+
 filtered_DCX <- readRDS("results/filtered_DCX.rds")
 filtered_SOX2<- readRDS("results/filtered_SOX2.rds")
 
@@ -365,20 +367,94 @@ merge_SOX2_DCX$cell_type <- factor(merge_SOX2_DCX$cell_type, levels = c("SOX2", 
 #order the dots by ascending FDR.q value (lower FDR q value is higher on plot)
 merge_SOX2_DCX_reordered <- merge_SOX2_DCX %>% mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val)))
 
+
+#order the pathways on the y-axis so that the SOX2 pathways are together, and DCX pathways are together
+merge_SOX2_DCX_reordered$Pathways <- factor(merge_SOX2_DCX_reordered$Pathways, levels = c("GOCC_SITE_OF_POLARIZED_GROWTH", "GOCC_MICROTUBULE_ASSOCIATED_COMPLEX",
+                                                        "GOCC_DISTAL_AXON",
+                                                        "GOCC_AXON",
+                                                        "GOBP_REGULATION_OF_SYNAPTIC_PLASTICITY",
+                                                        "GOBP_NEURON_PROJECTION_GUIDANCE",
+                                                        "GOBP_CELL_MORPHOGENESIS_INVOLVED_IN_NEURON_DIFFERENTIATION",
+                                                        "GOBP_AXON_EXTENSION",
+                                                        "GOBP_AXON_DEVELOPMENT", 
+                                                        "GOBP_AXO_DENDRITIC_TRANSPORT",
+                                                        "GOMF_STRUCTURAL_CONSTITUENT_OF_CYTOSKELETON", 
+                                                        "GOBP_NEURON_DEVELOPMENT",
+                                                        "GOBP_AXONAL_TRANSPORT",
+                                                        "GOBP_REGULATION_OF_TRANS_SYNAPTIC_SIGNALING",
+                                                        "GOMF_MICROTUBULE_BINDING", 
+                                                        "GOCC_CYTOPLASMIC_REGION",
+                                                        "GOCC_POLYMERIC_CYTOSKELETAL_FIBER",
+                                                        "GOBP_REGULATION_OF_EXTENT_OF_CELL_GROWTH",
+                                                        "GOBP_CYTOSKELETON_DEPENDENT_INTRACELLULAR_TRANSPORT",
+                                                        "GOBP_REGULATION_OF_MICROTUBULE_POLYMERIZATION_OR_DEPOLYMERIZATION",
+                                                        "GOBP_REGULATION_OF_AXONOGENESIS",
+                                                        "GOCC_PLASMA_MEMBRANE_REGION",
+                                                        "GOBP_IMPORT_INTO_CELL", 
+                                                        "GOBP_CELL_PROJECTION_ORGANIZATION",
+                                                        "GOBP_TRANSPORT_ALONG_MICROTUBULE", 
+                                                        "GOBP_NEURON_DIFFERENTIATION",
+                                                        "GOBP_REGULATION_OF_CELLULAR_COMPONENT_SIZE",
+                                                        "GOBP_NEUROGENESIS",
+                                                        "GOBP_ORGANIC_ACID_TRANSPORT", 
+                                                        "GOBP_CELL_JUNCTION_ORGANIZATION",
+                                                        "GOBP_TAXIS", 
+                                                        "GOBP_NEGATIVE_REGULATION_OF_NEURON_PROJECTION_DEVELOPMENT",
+                                                        "GOBP_LOCOMOTION", 
+                                                        "GOBP_CELL_RECOGNITION", 
+                                                        "GOBP_NEGATIVE_REGULATION_OF_SUPRAMOLECULAR_FIBER_ORGANIZATION",
+                                                        "GOCC_CELL_BODY",  
+                                                        "GOBP_REGULATION_OF_CELL_SIZE",  
+                                                        "GOCC_CILIUM",
+                                                        "GOBP_ACTIN_FILAMENT_BUNDLE_ORGANIZATION",
+                                                        "GOCC_ACTIN_BASED_CELL_PROJECTION",
+                                                        "GOBP_REGULATION_OF_AUTOPHAGY", 
+                                                        "GOBP_MEMBRANE_FUSION", 
+                                                        "GOBP_REGULATION_OF_CELL_SUBSTRATE_JUNCTION_ORGANIZATION",
+                                                        "GOCC_FILOPODIUM",
+                                                        "GOBP_NEURON_MIGRATION",
+                                                        "GOBP_SPLICEOSOMAL_COMPLEX_ASSEMBLY",
+                                                        "GOCC_SM_LIKE_PROTEIN_FAMILY_COMPLEX", 
+                                                        "GOCC_SPLICEOSOMAL_SNRNP_COMPLEX",
+                                                        "GOCC_NUCLEAR_PROTEIN_CONTAINING_COMPLEX",
+                                                        "GOCC_U2_TYPE_CATALYTIC_STEP_2_SPLICEOSOME",
+                                                        "GOBP_RNA_SPLICING_VIA_TRANSESTERIFICATION_REACTIONS",
+                                                        "GOCC_NUCLEAR_CHROMOSOME",
+                                                        "GOBP_MRNA_SPLICE_SITE_SELECTION",
+                                                        "GOBP_DNA_DEPENDENT_DNA_REPLICATION",
+                                                        "GOBP_CHROMATIN_REMODELING",
+                                                        "GOBP_PROTEIN_DNA_COMPLEX_SUBUNIT_ORGANIZATION", 
+                                                        "GOCC_MICROBODY",
+                                                        "GOBP_NUCLEOSOME_ORGANIZATION",
+                                                        "GOCC_ATPASE_COMPLEX", 
+                                                        "GOBP_NUCLEOSIDE_MONOPHOSPHATE_BIOSYNTHETIC_PROCESS",
+                                                        "GOBP_MODULATION_BY_HOST_OF_SYMBIONT_PROCESS",
+                                                        "GOBP_DNA_REPAIR",
+                                                        "GOMF_ATP_DEPENDENT_ACTIVITY_ACTING_ON_DNA",
+                                                        "GOMF_DNA_HELICASE_ACTIVITY", 
+                                                        "GOMF_CATALYTIC_ACTIVITY_ACTING_ON_DNA",
+                                                        "GOBP_RESPONSE_TO_NUTRIENT", 
+                                                        "GOBP_BIOLOGICAL_PROCESS_INVOLVED_IN_INTERACTION_WITH_SYMBIONT",
+                                                        "GOBP_IMPORT_INTO_NUCLEUS", 
+                                                        "GOBP_CELLULAR_RESPONSE_TO_DNA_DAMAGE_STIMULUS",
+                                                        "GOBP_FATTY_ACID_CATABOLIC_PROCESS", 
+                                                        "GOBP_GLYCOSYL_COMPOUND_METABOLIC_PROCESS",
+                                                        "GOBP_LIPID_MODIFICATION",
+                                                        "GOBP_LIPID_OXIDATION",
+                                                        "GOBP_CELLULAR_AMINO_ACID_CATABOLIC_PROCESS", 
+                                                        "GOMF_NADP_BINDING",
+                                                        "GOBP_CHROMOSOME_ORGANIZATION"))
+
 ggplot(merge_SOX2_DCX_reordered, aes(x = cell_type, y = Pathways, size = NES, color = FDR.q.val )) +
   geom_point(alpha = 0.7) + #scatterplot
   scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
-  scale_color_viridis(discrete = FALSE)
+  scale_color_viridis(discrete = FALSE) 
 
 
 
 
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
 
