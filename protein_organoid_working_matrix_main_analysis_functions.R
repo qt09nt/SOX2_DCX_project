@@ -210,14 +210,14 @@ plot_NES <-function(cell_type, filtered_df){
 #function for plotting merged SOX2 & DCX gsea pathways 
 plot_NES_merged <- function(filtered_df){
   
-  filtered_df %>%
+   p <- filtered_df %>%
     mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val))) %>%
     ggplot(aes(x = cell_type, y = Pathways, size = NES, color = FDR.q.val )) +
       geom_point(alpha = 0.7) + #scatterplot
       scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
       scale_color_viridis(discrete = FALSE)
   
-  #plot(p)
+  plot(p)
   #function for saving figures as pdf, png or jpg
   #set directory for saving GSEA results comparing organoid secretome timepoints
   #setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
@@ -227,7 +227,11 @@ plot_NES_merged <- function(filtered_df){
   
   
   #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
-  png(filename=paste0( "DCX_vs_SOX2_gsea_plot.pdf"), width=3000, height=3000, res=300)
+  #png(filename=paste0( "DCX_vs_SOX2_GOBP_gsea_plot.pdf"), width=3000, height=3000, res=300)
+  
+  #width and height input is in inches
+  pdf(file="DCX_vs_SOX2_GOBP_gsea_plot.pdf", width=13, height=13)
+  
   
   #function that makes the plot
   plot(p)
