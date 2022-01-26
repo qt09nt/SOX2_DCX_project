@@ -331,7 +331,7 @@ write.table(pscore_table, paste("SYN", timepoint1, timepoint2, "pscore.rnk", sep
             sep = "\t", col.names = F, row.names = F, quote = F)  
 
 
-##########Visualizing the GSEA results for timepoint comparisons (includes all cell types: SYN, SOX2 and DCX)
+##########  Visualizing the GSEA results for timepoint comparisons (includes all cell types: SYN, SOX2 and DCX)
 
 #GSEA pre-ranked was conducted on the proteome secretome timepoint comparisons p rank score files
 #with databases searched in Human_AllPathways_June_01_2017_symbol.gmt, Hallmarks(ha.lla.v7.4.symbols.gmt), 
@@ -552,6 +552,123 @@ plot_gsea_timepoints(gsea_report_na_pos = 'gsea_report_for_na_pos_1641395866989.
 
 
 
+##################### Investigate which proteins in secretome dataset is found in enriched pathways in GSEA results
+
+#here the results from the timepoint comparisons of GSEA pathways analysis for the secretome data is read into R
+#then filter the pathways for the given NOM p value cut off points and FDR q value cut offs, keeping only the pathwways
+#which pass the cut offs. 
+#The end result is a csv file which lists the pathways enriched for timepoint 1 in comparison to time point 2; and
+# a second csv file which has pathways enriched for timepoint 2 in comparison to timepoint 1
+
+######### week 6 vs week 15:
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_6_vs_week_15.GseaPreranked.1641350895168")
+#get the pathways enriched in week 6:
+week_6_pathways <- process.csv2("gsea_report_for_na_pos_1641350895168.tsv")
+#`NOM.p.val` <= 0.07
+#FDRqvalcutoff=0.15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/week6_vs_week15/week 6")
+write.csv(week_6_pathways, "week_6_pathways.csv")
+
+#week 15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_week_6_vs_week_15.GseaPreranked.1641350895168")
+week_15_pathways <- process.csv2("gsea_report_for_na_neg_1641350895168.tsv")
+#NOM p. value < 0.1, and FDR q.value < 0.15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/week6_vs_week15")
+write.csv(week_15_pathways, "week_15_pathways.csv")
+
+
+
+############# week 8 vs week 10
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_10.GseaPreranked.1641393881666")
+#week 8
+week_8_pathways <- process.csv2("gsea_report_for_na_pos_1641393881666.tsv")
+#NOM p. value < 0.1, and FDR q.value < 0.15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/week_8_vs_week_10")
+write.csv(week_8_pathways, "week_8_pathways.csv")
+
+
+#week 10
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_10.GseaPreranked.1641393881666")
+week_10_pathways <- process.csv2("gsea_report_for_na_neg_1641393881666.tsv")
+write.csv(week_10_pathways, "week_10_pathways.csv")
+
+######################## week 8 vs week 12
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_12.GseaPreranked.1641394091767")
+#week 8
+week_8_pathways <- process.csv2("gsea_report_for_na_pos_1641394091767.tsv")
+
+save_processed_csv(original_gsea_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_12.GseaPreranked.1641394091767",
+                   gsea_pos="gsea_report_for_na_pos_1641394091767.tsv", gsea_neg="gsea_report_for_na_neg_1641394091767.tsv",
+                   timepoint1="week_8", timepoint2 = "week_12", 
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/", 
+                   timepoint_comparisons="week_8_vs_week_12")
+
+###################  week 8 vs week 15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_15.GseaPreranked.1641394576860")
+save_processed_csv(original_gsea_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_8_Week_15.GseaPreranked.1641394576860",
+                   gsea_pos="gsea_report_for_na_pos_1641394576860.tsv", gsea_neg="gsea_report_for_na_neg_1641394576860.tsv",
+                   timepoint1="week_8", timepoint2 = "week_15", 
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/", 
+                   timepoint_comparisons="week_8_vs_week_15")
+
+############### week 10 vs week 12
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_10_Week_12.GseaPreranked.1641394862016")
+save_processed_csv(gsea_pos="gsea_report_for_na_pos_1641394862016.tsv", gsea_neg="gsea_report_for_na_neg_1641394862016.tsv",
+                   timepoint1="week_10", timepoint2 = "week_12", 
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/", 
+                   timepoint_comparisons="week_10_vs_week_12")
+
+#week 10 vs week 15   #ERROR
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/\all_cell_types_Week_10_Week_15.GseaPreranked.1641395126881")
+save_processed_csv(gsea_pos = "gsea_report_for_na_pos_1641395126881.tsv", gsea_neg = "gsea_report_for_na_neg_1641395126881.tsv",
+                   timepoint1="week_10", timepoint2 = "week_15",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_10_vs_week_15")
+
+#week 16 vs week 4  #ERROR
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_4.GseaPreranked.1641395284942")
+save_processed_csv(gsea_pos = "gsea_report_for_na_pos_1641395284942.tsv", gsea_neg = "gsea_report_for_na_neg_1641395284942_removed_missing.tsv",
+                   timepoint1="week_16", timepoint2 = "week_4",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_4")
+
+#week 16 vs week 6
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_6.GseaPreranked.1641395346683")
+save_processed_csv(gsea_pos = "gsea_report_for_na_pos_1641395346683.tsv", gsea_neg = "gsea_report_for_na_neg_1641395346683_no_missing_value.tsv",
+                   timepoint1="week_16", timepoint2 = "week_6",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_6")
+
+#week 16 vs week 8
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_8.GseaPreranked.1641395478737")
+save_processed_csv(gsea_pos = "gsea_report_for_na_pos_1641395478737.tsv", gsea_neg = "gsea_report_for_na_neg_1641395478737_missing_removed.tsv",
+                   timepoint1="week_16", timepoint2 = "week_8",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_8")
+
+#week 16 vs week 10  #error
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_10.GseaPreranked.1641395645362")
+save_processed_csv(gsea_pos = "gsea_report_for_na_pos_1641395645362.tsv", gsea_neg = "gsea_report_for_na_neg_1641395645362.tsv",
+                   timepoint1="week_16", timepoint2 = "week_10",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_10")
+
+#week 16 vs week 12
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_12.GseaPreranked.1641395689502")
+save_processed_csv(gsea_pos ="gsea_report_for_na_pos_1641395689502.tsv",  gsea_neg = "gsea_report_for_na_neg_1641395689502.tsv",
+                   timepoint1 ="Week_16", timepoint2="week_12",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_12")
+
+#week 16 vs week 15
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/all_cell_types_Week_16_Week_15.GseaPreranked.1641395866989")
+save_processed_csv(gsea_pos ="gsea_report_for_na_pos_1641395866989.tsv",  gsea_neg = "gsea_report_for_na_neg_1641395866989.tsv",
+                   timepoint1 ="Week_16", timepoint2="week_15",
+                   processed_results_directory="C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/all_cell_types/processed_GSEA/",
+                   timepoint_comparisons ="week_16_vs_week_15")
+
+#################
 ################trying to write a  loop to plot NES automatically 
 #but file names not consistently named enough to work
 
@@ -575,5 +692,158 @@ for (i in file_list){
   timepoint2 <- substr(name, 26, 32)       
   
   plot_gsea_timepoints(gsea_report_na_pos = my_files[na_pos_report_index], gsea_report_for_na_neg = my_files[na_neg_report_index])
-                       
+  
 }
+
+
+
+
+##########################
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_6/pathways_higher_in_week_4")
+
+#Pathways enriched in week 4 compared to week 6
+#compare genes in pathway to the proteins which are found in proteome secretome dataset
+
+KEGG_complement_coagulation_cascade <- read.csv("KEGG_Complement_and_coagulation_cascades_Homo_sapiens_(human).csv")
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+#split gene symbols column by ";" delimiter into 2 separate columns: gene_symbol and gene_name
+KEGG_complement_coagulation_cascade[1]<-NULL
+colnames(KEGG_complement_coagulation_cascade)<- "KEGG_gene"
+
+KEGG_complement_coagulation_cascade <- str_split_fixed(KEGG_complement_coagulation_cascade$KEGG_gene, ";", 2)
+colnames(KEGG_complement_coagulation_cascade)[1]<-'KEGG_gene_symbol'
+colnames(KEGG_complement_coagulation_cascade)[2]<-'KEGG_gene_name'
+
+#compare the proteins in Sofia's organoid proteome dataset to the KEGG pathways genes:
+kegg <- as.vector(KEGG_complement_coagulation_cascade[,1])
+secretome <- as.vector(row.names(working_data))
+
+common <- kegg[kegg %in% secretome]
+
+common
+length(common)
+
+#save the common genes into the dataframe column:
+KEGG_complement_coagulation_cascade <- as.data.frame(KEGG_complement_coagulation_cascade)
+
+write.csv(KEGG_complement_coagulation_cascade, "KEGG_complement_coagulation_cascade.csv")
+
+############
+
+#week 4
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_6/pathways_higher_in_week_4")
+GO_signal_release_synapse <- read.csv("GO_term_summary_20220124_170114_signal_release_from_syn.csv")
+
+#get pathway genes
+GOBP_signal_release_genes <- as.vector(GO_signal_release_synapse[,2])
+
+#convert to Upper case to better commpare with secretome gene symbols
+GOBP_signal_release_genes <- toupper(GOBP_signal_release_genes)
+
+#compare them to proteome secretome genes
+secretome <- as.vector(row.names(working_data))
+common_genes <-  GOBP_signal_release_genes[GOBP_signal_release_genes %in% secretome]
+
+common_genes
+
+#### regulation of secretion by cell
+GO_regulation_secretion <- read.csv ("GO_term_summary_20220125_095831_regulation of secretion.csv")
+GO_regulation_secretion_genes <- toupper(as.vector(GO_regulation_secretion[,2]))
+
+GO_BP_regulation_secretion_common_genes<- get_common_genes(GO_BP_pathways = "GO_term_summary_20220125_095831_regulation of secretion.csv",
+                                            working_data)
+
+#GO BP Pattern Recognition Signaling Pathway
+
+GO_term_summary_pattern_recognition_receptor_signaling_common_genes <- get_common_genes(GO_BP_pathways = "GO_term_summary_pattern_recognition_receptor_signaling.csv",
+                                                                                        working_data)
+
+#GOBP Negative Regulation of Transport
+GOBP_Negative_Regulation_Transport_common_genes <- get_common_genes(GO_BP_pathways = "GO_term_summary_negative_regulation_of_transport.csv", working_data)
+
+
+################ pathways enriched in week 6 compared to week 4:
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_6/pathways_higher_in_week_6")
+
+#skip the first line after the gene pathway header, which is the description of pathway
+hallmark_glycolysis <- read.delim("hallmark_glycolysis_geneset.txt", header = TRUE, sep = "\t", skip = 1)
+
+#genes in proteome organoid
+hallmark_glycolysis_common_genes <- get_common_hallmark_genes(hallmark_pathways = "hallmark_glycolysis_geneset.txt", working_data)
+
+
+hallmark_fatty_acid_metabolism_common_genes <- get_common_hallmark_genes(hallmark_pathways = "hallmark_fatty_acid_metabolism_geneset.txt", working_data)
+hallmark_fatty_acid_metabolism_common_genes
+
+#GO Carbohydrate derivative Metabolic process
+GO_carbohydrate_derivative_genes <- get_common_genes(GO_BP_pathways = "GO_term_summary_carbohydrate_derivative_metabolic_process.csv", working_data)
+
+
+############### pathways enriched in week 4 compared to week 8:
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_8/gene_pathways_higher_in_week_4")
+GO_term_summary_hormone_transport <-get_common_genes("GO_term_summary_hormone_transport.csv", working_data)
+
+
+#week 8 enriched pathways
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_8/gene_pathways_higher_in_week_8")
+#Reactome Apoptosis
+reactome_apoptosis <-read.csv("Reactome_apoptosis_Participating_Molecules.tsv", sep = " ")
+reactome_apoptosis[1] <-gsub("\t","",as.character(reactome_apoptosis[,1]))
+reactome_apoptosis_genes <-as.vector(reactome_apoptosis[,1])
+
+common_genes_apoptosis <- secretome[secretome %in% reactome_apoptosis_genes]
+common_genes_apoptosis2 <- reactome_apoptosis_genes[reactome_apoptosis_genes %in% secretome]
+
+
+#GO Cellular Response to Organic Cyclic Compound
+cell_response_organic_genes <-get_common_genes(GO_BP = 
+                       "GO_cellular_response_to_organic_cyclic_compound.csv", working_data)
+
+
+# week 4 vs week 10
+#enriched in week 4
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_10/pathways_higher_in_week_4")
+
+GO_terpenoid_metabolic_genes <- get_common_genes("GO_terpenoid_metabolic_process.csv", working_data)
+GO_tumor_necrosis_factor_genes <- get_common_genes("GO_response_to_tumor_necrosis_factor.csv", working_data)
+GO_isoprenoid_metabolic_process <- get_common_genes("GO_isoprenoid_metabolic_process.csv", working_data)
+
+GO_isoprenoid_metabolic_process
+
+
+#week 4 vs week 12 
+#enriched in week 4 
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/all cell types/GSEA/database pathway genesets/week_4_vs_week_12/pathways_enriched_in_week_4")
+
+#https://www.dataquest.io/blog/r-api-tutorial/
+  
+#install.packages(c("httr", "jsonlite"))
+
+#gettin pathway information for wikipathways from Mayaan Lab API:
+library(jsonlite)
+library(httr)
+
+res_Wikipathways_selenium_micronutrients <- GET("https://maayanlab.cloud/Harmonizome/api/1.0/gene_set/Selenium+Micronutrient+Network%28Homo+sapiens%29/Wikipathways+Pathways")
+res_Wikipathways_selenium_micronutrients
+
+#convert the raw Unicode into a character vector that resembles the JSON format shown above
+wikipathways_selenium_data = fromJSON(rawToChar(res_Wikipathways_selenium_micronutrients$content))
+
+names(wikipathways_selenium_data)
+
+wikipathways_associations <-wikipathways_selenium_data$associations
+wikipathways_associations[,1]
+write.csv(wikipathways_associations, "wikipathways_selenium_micronutrients.csv")
+wikipathways_selenium <- read.csv("wikipathways_selenium_micronutrients.csv")
+
+#extract just the genes which make up the Wikipathways selenium micronutrients pathway
+wiki_genes <- as.vector(wikipathways_selenium[,2])
+
+#compare wikipathways to secretome genes
+common_organoid_wiki_genes <- secretome[secretome %in% wiki_genes]
