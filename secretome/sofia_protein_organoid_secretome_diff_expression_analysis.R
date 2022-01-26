@@ -11,6 +11,9 @@ library(readxl)
 library(dplyr)
 library(tidyr)
 
+library(ggplot2)
+library(ggrepel)
+
 #load functions for analysis:
 source("protein_secretome_diff_expr_functions.R")
 
@@ -95,8 +98,7 @@ immature_pheno1_top_table <-readRDS("results/diff_expr_padj_Immature_Pheno1.rds"
 immature_pheno2_top_table <- readRDS("results/diff_expr_padj_Immature_Pheno2.rds")
 pheno1_pheno2_top_table <- readRDS("results/diff_expr_padj_Pheno1_Pheno2.rds")
 
-library(ggplot2)
-library(ggrepel)
+
 
 ###############plot volcano plots of significantly different proteins/genes
 volcano_ggplot(immature_pheno1_top_table, 0.05, "Immature versus Pheno1")
@@ -192,22 +194,103 @@ res_logfc_no_inf <- apply(immature_pheno1, 1, function(x){
 
 df_logfc <- data.frame(gene=rownames(immature_pheno1), bind_rows(res_logfc_no_inf))
 
+write.csv(df_logfc, "results/ANOVA_pvalue_0.10/full list/immature_pheno1_log2fc_removed_negative_infinities.csv")
 
 
 
 
 
+#####################################
+
+#test out removing -Inf values in CalcDiffExpr function:
+
+dir.results <- ("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/ANOVA_pvalue_0.10/full list/removed_negative_infinity_zeros")
+
+#remove -Inf in ANOVA function as well:
+res_anova_no_inf <-apply(immature_pheno1, 1, function(x){
+  keep_values <- data.frame(x)         
+  keep_values$sample <- row.names(keep_values)                 #create a column to store the sample name
+  keep <- data.frame(keep_values[!(keep_values$x) == - Inf,])  #filter out -Inf values
+  group <<-substr(row.names(keep), start = 1, stop = 6)
+  x <-keep[,1, drop=FALSE]              #keep just the expression data & row.names(sample names)
+  x<<-data.frame(t(x))
+  
+  pval=doANOVA(group=group, data.row=x)
+  return(data.frame(pval=pval))
+})
+
+df_anova_no_inf <- data.frame(gene=rownames(immature_pheno1), bind_rows(res_anova_no_inf))
+
+#calculate differential expression between Immature and Phenol1:
+label.g1 <-"Immature"
+label.g2 <-"Pheno1"
+
+calcDiffExpr3(label.g1, label.g2)
+
+#comparison of Phenol1 to Phenol2:
+label.g1 = "Pheno1"
+label.g2 = "Pheno2"
+
+calcDiffExpr3(label.g1, label.g2)
+
+#comparison of Immature to Phenol2:
+label.g1 = "Immature"
+label.g2 = "Pheno2"
+
+calcDiffExpr3(label.g1, label.g2)
+
+
+######## Re-plot volcano plots after removing negative infinity/zero values:
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/results/ANOVA_pvalue_0.10/full list/removed_negative_infinity_zeros")
 
 
 
+###############plot volcano plots of significantly different proteins/genes
+
+
+#testing out how changing the LOG 2FC denominator affects the volcano plot
+
+#test out different denominator (total of mean group 1 + mean of group 2)
+immature_pheno1 <- readRDS("diff_expr_padj_all_no_negative_inf_denominator_total_meanImmature_Pheno1.rds")
+immature_pheno2<-readRDS("diff_expr_padj_all_no_negative_inf_denominator_total_meanImmature_Pheno2.rds")
+pheno1_pheno2<-readRDS("diff_expr_padj_all_no_negative_inf_denominator_total_meanPheno1_Pheno2.rds")
+
+volcano_ggplot(immature_pheno1, 0.1, "Immature versus Pheno1")
+volcano_ggplot(immature_pheno2, 0.1, "Immature versus Pheno2")
+volcano_ggplot(pheno1_pheno2, 0.1, "Pheno1 versus Pheno2")
 
 
 
+########################### function for finding common genes between enriched GOBP pathways and proteins
+# within the organoid secretome proteome dataset
+#expected input GO_BP_pathways is the csv file of the genes which are found within the GO BP pathway
+#working_data is the working matrix of proteins/genes of the organoid secretome proteome (output of 
+#processing in Perseus)
+get_common_genes <- function(GO_BP_pathways, working_data){
+  GO_BP <<-read.csv(GO_BP_pathways)
+  
+  GO_BP_genes <- as.vector(GO_BP[,2]) # take the genes from column 2 of the GO BP file
+  GO_BP_genes <- toupper(GO_BP_genes)
+  
+  #compare to proteome secretome genes in working_data file
+  secretome <- as.vector(row.names(working_data))
+  common_genes <- GO_BP_genes[GO_BP_genes %in% secretome]
+  
+  return(common_genes)
+}
+
+#get common genes between Hallmark pathway and the genes in organoid secretome dataset
+get_common_hallmark_genes <- function(hallmark_pathways, working_data){
+  hallmark_genes <- read.delim(hallmark_pathways, header = TRUE, sep = "\t", skip = 1)
+  hallmark_genes <- as.vector(hallmark_genes[,1])
+  #compare to proteome secretome genes in working_data file
+  secretome <- as.vector(row.names(working_data))
+  common_genes <- hallmark_genes[hallmark_genes %in% secretome]
+  
+  return(common_genes)
+}
 
 
 
-
-
-
-########################################assign a very low number to 0 values to later log transform the data:
 
