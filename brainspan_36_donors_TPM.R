@@ -94,21 +94,51 @@ TPM <- read.csv(file = 'TPM.csv', header = T)
 #filter for RUVBL2
 RUVBL2 <- TPM[TPM$gene_symbol == "RUVBL2",]
 
+#check for GFAP expression
+GFAP <- TPM2[TPM2$gene_symbol == "GFAP", ]
+
+#Oct 20, 2022 filter for FABP7, FABP3, FABP5, VRK1
+FABP7 <-TPM[TPM$gene_symbol == "FABP7", ]
+
 #keep just the columns with RNA expression data values 
 RUVBL2 <- RUVBL2[,2:525]
 RUVBL2 <- t(RUVBL2)
+
+GFAP <- GFAP[,2:525]
+GFAP <- t(GFAP)
+
+FABP7 <- FABP7[,3:526]
+FABP7 <- t(FABP7)
 
 #remove the "V" from row names in data dataframe:
 row.names(RUVBL2) <- row.names(RUVBL2) %>% str_replace("V","")
 RUVBL2 <- as.data.frame(RUVBL2)
 colnames(RUVBL2)[1] <- "RUVBL2"
 
+#remove the "V" from row names in data dataframe:
+row.names(GFAP) <- row.names(GFAP) %>% str_replace("X","")
+GFAP <- as.data.frame(GFAP)
+colnames(GFAP)[1] <- "GFAP"
+
+##remove the "X" from row names in data dataframe:
+row.names(FABP7) <- row.names(FABP7) %>% str_replace("X","")
+FABP7 <- as.data.frame(FABP7)
+colnames(FABP7)[1] <- "FABP7"
+
 #convert the row names of RUVBL2 data frame to same row names (sample numbers) as those in column_meta data frame
 #so that they would match in order to merge the 2 data frames
 row.names(RUVBL2) <- row.names(columns_meta)
 
+row.names(GFAP) <- row.names(columns_meta)
+
+row.names(FABP7) <- row.names(columns_meta)
+
 #combine RUVBL2 expression data with meta data
 combined <- cbind(RUVBL2, columns_meta)
+
+combined <- cbind(GFAP, columns_meta)
+
+combined <- cbind(FABP7, columns_meta)
 
 ##############################################
 #re-plot RUVBL2 for cortex and ganglionic eminences for prenatal 8pcw to 24 pcw:
@@ -116,14 +146,29 @@ combined <- cbind(RUVBL2, columns_meta)
 #keep only cortex and ganglionic eminence samples:
 RUVBL2 <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
 
+GFAP <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
+
+FABP7 <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
+
 #set age as a factor
 RUVBL2$age <- as.factor(RUVBL2$age)
 
+GFAP$age <- as.factor(GFAP$age)
+FABP7$age <- as.factor(FABP7$age)
+
 #filter for prenatal data 8pcw to 24 pcw:
 RUVBL2_prenatal <- RUVBL2[RUVBL2$age %in% c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"),]
+GFAP_prenatal <- GFAP[GFAP$age %in% c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"),]
 
+GFAP_adult <- GFAP[GFAP$age %in% c("18 yrs", "19 yrs", "21 yrs", "23 yrs", "30 yrs", "36 yrs", "37 yrs", "40 yrs"),]
+  
+  
 #specify the order of ages:
 RUVBL2_prenatal$age <- ordered(RUVBL2_prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"))
+GFAP_prenatal$age <- ordered(GFAP_prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw"))
+
+GFAP_adult$age <- ordered(GFAP_adult$age, levels = c("18 yrs", "19 yrs", "21 yrs", "23 yrs", "30 yrs", "36 yrs", "37 yrs", "40 yrs"))
+
 
 ggplot(data = RUVBL2_prenatal, aes(x = structure_name,  y = RUVBL2, group = structure_name, colour = structure_name)) +
   geom_boxplot() +
@@ -141,6 +186,42 @@ ggplot(data = RUVBL2_prenatal, aes(x = structure_name,  y = RUVBL2, group = stru
        subtitle='RUVBL2 in ganglionic eminences and cortex at 8pcw to 24 pcw',
        x = 'structure',
        y = 'RUVBL2 expression - RNA Seq (TPM)')
+
+
+ggplot(data = GFAP_prenatal, aes(x = structure_name,  y = GFAP, group = structure_name, colour = structure_name)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+  facet_wrap(~ age) +  #separate the boxplots by age
+  theme_bw() + #set the background to white
+  theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()
+  ) +
+  labs(title = 'BrainSpan Transcriptome Dataset',
+       subtitle='GFAP in ganglionic eminences and cortex at 8pcw to 24 pcw',
+       x = 'structure',
+       y = 'GFAP expression - RNA Seq (TPM)')
+
+
+ggplot(data = GFAP_adult, aes(x = structure_name,  y = GFAP, group = structure_name, colour = structure_name)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+  facet_wrap(~ age) +  #separate the boxplots by age
+  theme_bw() + #set the background to white
+  theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()
+  ) +
+  labs(title = 'BrainSpan Transcriptome Dataset',
+       subtitle='GFAP in ganglionic eminences and cortex from 18 years to 40 years',
+       x = 'structure',
+       y = 'GFAP expression - RNA Seq (TPM)')
 
 ########################
 
@@ -536,7 +617,7 @@ prenatal$age <- ordered(prenatal$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "1
 
 gene_name = "RUVBL2"
 
-#make sure the gene expression column is numeric, otherwise the y-axis labels will just be a blur together!!!
+#NOTE: make sure the gene expression column is numeric, otherwise the y-axis labels will just be a blur together!!!
 prenatal$RUVBL2<- as.numeric(prenatal$RUVBL2)
 
 ggplot(data = prenatal, aes(x = structure_name,  y = RUVBL2, colour = structure_name)) +
@@ -599,3 +680,80 @@ ggplot(data = ge_cortex_RUVBL2, aes(x = structure_name,  y = RUVBL2, colour = st
 saveRDS(TPM, file = "TPM.rds")
 
 
+
+####  Oct 20 2022  FABP7 in BrainSpan dataset over all ages; RNA expression in TPM 
+
+#combined is the dataframe containing FABP7 expression, merged with columns_meta, then filtered for cortex and ganglionic eminences
+
+#specify the order of ages:
+FABP7$age <- ordered(FABP7$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw",
+                                             "25 pcw", "26 pcw", "35 pcw", "37 pcw", "4 mos",  "10 mos", "1 yrs", "2 yrs","3 yrs",
+                                             "4 yrs", "8 yrs", "11 yrs", "13 yrs", "15 yrs", "18 yrs", "19 yrs", "21 yrs", "23 yrs", 
+                                             "30 yrs", "36 yrs", "37 yrs","40 yrs"))
+
+#dataframe should be combined RNA expression in TPM values combined with columns meta and filtered for 
+#ganglionic eminences and cortex
+plotting_ge_cortex <- function(dataframe, gene){
+  gene_name <- toString(gene)
+  gene <- dataframe %>%    #extract the relevant column of RNA seq TPM values for that gene
+    pull(gene)
+  ggplot(data = dataframe, aes(x = structure_name,  y = gene, colour = structure_name)) +
+    geom_boxplot() +
+    geom_jitter(width = 0.10) +      #show the separate data points using jitter to slightly separate the points to visualize easier
+    facet_wrap(~ age) +  #separate the boxplots by age
+    theme_bw() + #set the background to white
+    theme(panel.grid.major.x = element_blank(),  #removing the grey grid lines
+          panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank()) +
+    labs(title = 'BrainSpan Transcriptome Dataset',
+         subtitle=paste0(gene_name, ' expression in cortex and ganglionic eminences at 8pcw to 40 years'),
+         x = 'structure',
+         y = paste0(gene_name,' expression (TPM)'))
+}
+
+plotting_ge_cortex(dataframe = FABP7, "FABP7")
+
+#make the same plot for FABP3, FABP5 and VRK1
+#extract the rows for these genes in the TPM expression df
+FABP <- TPM[TPM$gene_symbol %in% c("FABP3", "FABP5","VRK1"),]
+
+#keep only expression rows
+FABP<- FABP[,2:526]
+
+FABP<-t(FABP)                            
+
+#set the gene names as column names
+colnames(FABP)<-FABP[1,]
+
+#remove redundant gene_symbol row
+FABP<-FABP[2:525,]
+
+##remove the "X" from row names in data dataframe:
+row.names(FABP) <- row.names(FABP) %>% str_replace("X","")
+
+#combine RNA TPM expression with meta data
+combined <- cbind(FABP, columns_meta)
+
+#keep only cortex and ganglionic eminence samples:
+combined <- dplyr::filter(combined, grepl('ganglionic eminence|cortex', structure_name))
+
+#set age as factor
+combined$age <- as.factor(combined$age)
+
+#specify the order of ages:
+combined$age <- ordered(combined$age, levels = c("8 pcw", "9 pcw",  "12 pcw", "13 pcw", "16 pcw", "17 pcw", "19 pcw", "21 pcw", "24 pcw",
+                                           "25 pcw", "26 pcw", "35 pcw", "37 pcw", "4 mos",  "10 mos", "1 yrs", "2 yrs","3 yrs",
+                                           "4 yrs", "8 yrs", "11 yrs", "13 yrs", "15 yrs", "18 yrs", "19 yrs", "21 yrs", "23 yrs", 
+                                           "30 yrs", "36 yrs", "37 yrs","40 yrs"))
+
+#convert the gene expression columns to numeric first to make sure the y-labels aren't jumbled together
+combined$FABP3 <- as.numeric(combined$FABP3)
+combined$FABP5 <- as.numeric(combined$FABP5)
+combined$VRK1 <- as.numeric(combined$VRK1)
+
+plotting_ge_cortex(dataframe = combined, "FABP3")
+plotting_ge_cortex(dataframe = combined, "FABP5")
+plotting_ge_cortex(dataframe = combined, "VRK1")
