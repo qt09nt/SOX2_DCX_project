@@ -62,36 +62,54 @@ get_tp_top_table = function(data, groups, cell_type, timepoint){
 
 
 #volcano plot where p. value cut off is 0.1
-volcano_plot = function(top_table, title){
+volcano_plot = function(top_table, title, pCutoff_value){
   v = EnhancedVolcano(top_table, x="logFC", y= "adj.P.Val", lab=row.names(top_table), title = title,
-                      pCutoff = 0.1, FCcutoff = 1.333, 
+                      pCutoff = pCutoff_value, FCcutoff = 1.333, 
                       ylim = c(0, max(-log10(top_table$adj.P.Val), na.rm=TRUE)),
                       col = c("grey30", "#A4D49C", "#4E80A5", "#F68D91"),
                       colAlpha = 1.0)
   #pdf(paste("../figures/", title, "volcano.pdf"), width = 8, height = 8)
-  pdf(paste("figures/timepoints comparison/", title, "volcano.pdf"), width = 8, height = 8)
+  pdf(paste("figures/", title, "volcano.pdf"), width = 12, height = 12)
   print(v)
   dev.off()
   return(v)
 }
 
+
 #function for comparing timepoints while including all cell types
 #annotations is the meta data file, working_data is the working matrix processed from Perseus
 #timepoint1 is the first time point to compare; timepoint2 is the second timepoint to compare
+# get_timepoints <- function(annotations, working_data, timepoint1, timepoint2){
+#   tp_meta <- annotations[annotations$timepoint == timepoint1 | annotations$timepoints == timepoint2, ]
+#   
+#   #get specific samples for the 2 time points
+#   subset_samples <-c(tp_meta$sample)          #copy sample names into a vector
+#   subset_expr <- working_data %>%             #subset just the sample columns
+#     select(subset_samples)
+#   difference = ifelse(tp_meta$timepoint == timepoint1, 1, 0)
+#   design = cbind(control=1, difference = difference)
+#   tp1_vs_tp_2_top_table = get_top_table(subset_expr, design)
+#   
+#   #save results
+#   write.table(tp1_vs_tp_2_top_table, paste0("results/", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
+#   print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid Protein Secretome - All Cell Types - ", timepoint1, " vs ", timepoint2) ))
+#   return(tp1_vs_tp_2_top_table)
+# }
+
 get_timepoints <- function(annotations, working_data, timepoint1, timepoint2){
-  tp_meta <- annotations[annotations$timepoint == timepoint1 | annotations$timepoints == timepoint2, ]
+  tp_meta <- annotations[annotations$tp == timepoint1 | annotations$tp == timepoint2, ]
   
   #get specific samples for the 2 time points
   subset_samples <-c(tp_meta$sample)          #copy sample names into a vector
   subset_expr <- working_data %>%             #subset just the sample columns
-    select(subset_samples)
-  difference = ifelse(tp_meta$timepoint == timepoint1, 1, 0)
+    select(all_of(subset_samples))
+  difference = ifelse(tp_meta$tp == timepoint1, 1, 0)
   design = cbind(control=1, difference = difference)
   tp1_vs_tp_2_top_table = get_top_table(subset_expr, design)
   
   #save results
-  write.table(tp1_vs_tp_2_top_table, paste0("results/", timepoint1, "_vs_", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
-  print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid Protein Secretome - All Cell Types - ", timepoint1, " vs ", timepoint2) ))
+  write.table(tp1_vs_tp_2_top_table, paste0("results/DCX tp", timepoint1, "_vs_tp", timepoint2, "_top_table.txt"), sep = "\t", quote = F, row.names = T, col.names = T)
+  print(volcano_plot(tp1_vs_tp_2_top_table, paste0("Organoid DCX Samples Timepoint ", timepoint1, " vs Timepoint", timepoint2, ", adj.pvalue = 0.1")))
   return(tp1_vs_tp_2_top_table)
 }
 
@@ -113,14 +131,15 @@ get_timepoints_individual_cell_types <- function(annotations, working_data, time
   return(tp1_vs_tp_2_top_table)
 }
 
-#volcano plot where p value cutoff is 0.05
+
+#volcano plot where p value cutoff is 0.05 or 0.01
 volcano_plot = function(top_table, title){
   v = EnhancedVolcano(top_table, x="logFC", y= "adj.P.Val", lab=row.names(top_table), title = title,
-                      pCutoff = 0.05, FCcutoff = 1.333, 
+                      pCutoff = 0.1, FCcutoff = 1.333, 
                       ylim = c(0, max(-log10(top_table$adj.P.Val), na.rm=TRUE)),
                       col = c("grey30", "#A4D49C", "#4E80A5", "#F68D91"),
                       colAlpha = 1.0)
-  pdf(paste("../figures/", title, "volcano.pdf"), width = 8, height = 8)
+  pdf(paste("figures/", title, "volcano.pdf"), width = 8, height = 8)
   print(v)
   dev.off()
   return(v)
@@ -149,20 +168,22 @@ library("viridis")
 # you should use less stringent cut off
 # if there are a lot of pathways you should use more stringent
 # the idea is to make a good story
-# remember that statistical significance is not necessarily representative of biological importance, take a transcription factor a small change in abundance can have very small significance statistically but a very big change biologically due to amplification steps in transcription, translation and post translational modificiation
+# remember that statistical significance is not necessarily representative of biological importance,
+#take a transcription factor a small change in abundance can have very small significance statistically but a very big 
+#change biologically due to amplification steps in transcription, translation and post translational modificiation
 
 #https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideTEXT.htm#_False_Discovery_Rate
 
 #function for filtering GSEA results for DCX and SOX2 
-filter_gsea <- function(gsea_report_na_pos, gsea_report_for_na_neg, cell_type1, cell_type2){
+filter_gsea <- function(gsea_report_na_pos, gsea_report_for_na_neg, cell_type1, cell_type2, cell_type1_pvalue, cell_type2_pvalue){
   
   #fill = TRUE parameter is added to add "NA" values if there are missing cells within the GSEA file result
   DCX_gsea <-read.table(file = gsea_report_na_pos, sep = '\t', header = TRUE, fill = TRUE)
   colnames(DCX_gsea)[1] <-"Pathways"     #rename first column of GSEA pos results to "Pathways"
   #filter the GSEA results dataframe to keep just the pathways which have a NOM p-value of less than 0.07 and a 
   #FDR q values less than 0.1
-  filtered_DCX <- DCX_gsea[DCX_gsea$`NOM.p.val` <= 0.25, ]
-  filtered_DCX <- filtered_DCX[filtered_DCX$`FDR.q.val` <= 0.25, ]
+  filtered_DCX <- DCX_gsea[DCX_gsea$`NOM.p.val` <= cell_type1_pvalue, ]
+  filtered_DCX <- filtered_DCX[filtered_DCX$`FDR.q.val` <= cell_type1_pvalue, ]
   filtered_DCX <- filtered_DCX[,1:11]
   filtered_DCX$cell_type <- cell_type1
   filtered_DCX$NES <- as.numeric(filtered_DCX$ES)
@@ -172,31 +193,90 @@ filter_gsea <- function(gsea_report_na_pos, gsea_report_for_na_neg, cell_type1, 
   # #load in the gsea report for na_neg (negative enrichment for DCX compared to SOX2)
   SOX2_gsea <- read.table(file = gsea_report_for_na_neg, sep = '\t', header = TRUE, fill=TRUE)
   colnames(SOX2_gsea)[1] <- "Pathways"   ##rename first column of GSEA pos results to "Pathways"
-  filtered_SOX2 <- SOX2_gsea[SOX2_gsea$`NOM.p.val` <= 0.5,]
-  filtered_SOX2 <- filtered_SOX2[filtered_SOX2$`FDR.q.val` <= 0.5, ]
+  filtered_SOX2 <- SOX2_gsea[SOX2_gsea$`NOM.p.val` <= cell_type2_pvalue,]
+  filtered_SOX2 <- filtered_SOX2[filtered_SOX2$`FDR.q.val` <= cell_type2_pvalue, ]
   filtered_SOX2 <- filtered_SOX2[,1:11] #keep columns 1 to 12 only
   filtered_SOX2$cell_type <- cell_type2
   filtered_SOX2$NES <- as.numeric(filtered_SOX2$ES)
   filtered_SOX2$NOM.p.val<- as.numeric( filtered_SOX2$NOM.p.val)
   filtered_SOX2 <<- filtered_SOX2 
 }  
+
+#function for filtering GSEA results for DCX timepoint comparisons
+filter_gsea_DCX_tps <- function(gsea_report_na_pos, gsea_report_for_na_neg, timepoint1, timepoint2){
+  
+  #fill = TRUE parameter is added to add "NA" values if there are missing cells within the GSEA file result
+  DCX_gsea <-read.table(file = gsea_report_na_pos, sep = '\t', header = TRUE, fill = TRUE)
+  colnames(DCX_gsea)[1] <-"Pathways"     #rename first column of GSEA pos results to "Pathways"
+  #filter the GSEA results dataframe to keep just the pathways which have a NOM p-value of less than 0.07 and a 
+  #FDR q values less than 0.1
+  
+  #DCX_gsea[,3]<- NULL
+  filtered_DCX <- DCX_gsea[DCX_gsea$`NOM.p.val` <= 0.1, ]
+  filtered_DCX <- filtered_DCX[filtered_DCX$`FDR.q.val` <= 0.1, ]
+  filtered_DCX <- filtered_DCX[,1:11]
+  filtered_DCX$timepoint <- timepoint1
+  filtered_DCX$NES <- as.numeric(filtered_DCX$ES)
+  filtered_DCX$NOM.p.val<- as.numeric( filtered_DCX$NOM.p.val)
+  filtered_DCX <<- filtered_DCX
+  
+  # #load in the gsea report for na_neg (negative enrichment for second DCX timepoint in comparison)
+  DCX_gsea2 <- read.table(file = gsea_report_for_na_neg, sep = '\t', header = TRUE, fill=TRUE)
+  colnames(DCX_gsea2)[1] <- "Pathways"   ##rename first column of GSEA pos results to "Pathways"
+  filtered_DCX2 <- DCX_gsea2[DCX_gsea2$`NOM.p.val` <= 0.05,]
+  filtered_DCX2 <- filtered_DCX2[filtered_DCX2$`FDR.q.val` <= 0.05, ]
+  filtered_DCX2 <- filtered_DCX2[,1:11] #keep columns 1 to 12 only
+  filtered_DCX2$timepoint <- timepoint2
+  filtered_DCX2$NES <- as.numeric(filtered_DCX2$ES)
+  filtered_DCX2$NOM.p.val<- as.numeric( filtered_DCX2$NOM.p.val)
+  filtered_DCX2 <<- filtered_DCX2 
+}  
+
+#function for filtering GSEA results for DCX and SOX2 
+filter_media_gsea <- function(gsea_report_na_pos, gsea_report_for_na_neg, media_type1, media_type2){
+  
+  #fill = TRUE parameter is added to add "NA" values if there are missing cells within the GSEA file result
+  GSC_gsea <-read.table(file = gsea_report_na_pos, sep = '\t', header = TRUE, fill = TRUE)
+  colnames(GSC_gsea)[1] <-"Pathways"     #rename first column of GSEA pos results to "Pathways"
+  #filter the GSEA results dataframe to keep just the pathways which have a NOM p-value of less than 0.07 and a 
+  #FDR q values less than 0.1
+  filtered_GSC <- GSC_gsea[GSC_gsea$`NOM.p.val` <= 0.57, ] 
+  filtered_GSC <- filtered_GSC[filtered_GSC$`FDR.q.val` <= 0.57, ]
+  filtered_GSC <- filtered_GSC[,1:11]
+  filtered_GSC$media_type <- media_type1
+  filtered_GSC$NES <- as.numeric(filtered_GSC$ES)
+  filtered_GSC$NOM.p.val<- as.numeric( filtered_GSC$NOM.p.val)
+  filtered_GSC <<- filtered_GSC
+  
+  # #load in the gsea report for na_neg (negative enrichment for DCX compared to SOX2)
+  NEG_gsea <- read.table(file = gsea_report_for_na_neg, sep = '\t', header = TRUE, fill=TRUE)
+  colnames(NEG_gsea)[1] <- "Pathways"   ##rename first column of GSEA pos results to "Pathways"
+  filtered_NEG <- NEG_gsea[NEG_gsea$`NOM.p.val` <= 0.6,]
+  filtered_NEG <- filtered_NEG[filtered_NEG$`FDR.q.val` <= 0.6, ]
+  filtered_NEG <- filtered_NEG[,1:11] #keep columns 1 to 12 only
+  filtered_NEG$media_type <- media_type2
+  filtered_NEG$NES <- as.numeric(filtered_NEG$ES)
+  filtered_NEG$NOM.p.val<- as.numeric( filtered_NEG$NOM.p.val)
+  filtered_NEG <<- filtered_NEG 
+}  
+
   
 # function to plot the NES scores for DCX GSEA and SOX2 GSEA pathways on separate plots
 #cell_type is a string specifying cell type ie. "DCX" or "SOX2"
 #filtered_df is the filtered gsea results dataframe (filtered by NOM pvalue and FDR q value)
-plot_NES <-function(plottitle, filtered_df){
+plot_NES <-function(filtered_df, plottitle){
   p <- ggplot(filtered_df, aes(x = cell_type, y = Pathways, size = NES, color = FDR.q.val )) +
     geom_point(alpha = 0.7) + #scatterplot
     scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
     scale_color_viridis(discrete = FALSE)
-  
-  plot(p)
+  plot(p) +
+    ggtitle = "Ramos et al (2022) dataset - Control vs Schizophrenia Organoids GSEA Pathway Analysis"
   #function for saving figures as pdf, png or jpg
   #set directory for saving GSEA results comparing organoid secretome timepoints
   #setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
   
   #set directory for GSEA results for comparing organoid DCX vs SOX2 pathways
-  setwd("/Users/queenietsang/Desktop/schizophrenia pathways/figures/")
+  setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/pathway analysis/figures/")
   
   
   #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
@@ -207,33 +287,40 @@ plot_NES <-function(plottitle, filtered_df){
   dev.off()
 }  
 
-#function for plotting merged SOX2 & DCX gsea pathways 
-plot_NES_merged <- function(plottitle,filtered_df){
+#function for plotting merged SOX2 & DCX gsea pathways
+#filtered_df is the dataframe containing DCX and SOX2 pathways, GO_db is the name of the Gene Ontology database
+#ie. GOCC, GOBP, GOMF
+#for SOX2 and DCX comparison, ggplot argument: x = cell_type;
+#July 13, 2022 modified for DCX timepoint comparisons: ggplot argument: x = timepoint
+#firsttimepoint is the first timepoint you are comparing
+#secondtimepoint is the other timempoint you are comparing
+plot_NES_merged <- function(filtered_df, GO_db, firsttimepoint, secondtimepoint){
   
-   p <- filtered_df %>%
-    #mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val))) %>%
-    ggplot(aes(x = cell_type, y = Pathways, size = NES, color = FDR.q.val )) +
+   #re-order Pathways by descending FDR.q value # currently commented out:
+   # p <- filtered_df %>%
+   #  mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val))) %>%
+   p <- ggplot(filtered_df, aes(x = timepoint, y = Pathways, size = NES, color = FDR.q.val )) +
       geom_point(alpha = 0.7) + #scatterplot
       scale_size(range = c(2, 5), name = "NES") +  #change the size of the points and create a name for the size legend
-      scale_color_viridis(discrete = FALSE)+
-      ggtitle(plottitle)
+      scale_color_viridis(discrete = FALSE) +
+      #theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +   #angle is for tiltling x axis label at an angle
+     theme(axis.text.x = element_text( vjust = 1, hjust=1))+
+      ggtitle(paste0(" GSEA Pathway Analysis ", GO_db, " - DCX timepoint ", firsttimepoint, " vs DCX timepoint ", secondtimepoint))
   
-  plot(p) +
-    theme(plot.title = element_text(hjust = 0))
+  plot(p)
   #function for saving figures as pdf, png or jpg
   #set directory for saving GSEA results comparing organoid secretome timepoints
   #setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/prot_org_secr/figures/timepoint comparisons GSEA")
   
-  setwd("/Users/queenietsang/Desktop/schizophrenia pathways/figures/")
+  #set directory for GSEA results for comparing organoid DCX vs SOX2 pathways
+  setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/pathway analysis/figures/")
   
-  #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
-  png(filename=paste0(plottitle, "_gsea_plot.pdf"), width=3000, height=3000, res=300)
   
   #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
   #png(filename=paste0( "DCX_vs_SOX2_GOBP_gsea_plot.pdf"), width=3000, height=3000, res=300)
   
   #width and height input is in inches
-  #pdf(file="_gsea_plot.pdf", width=13, height=13)
+  pdf(file=paste0("Organoid DCX Samples GSEA ",GO_db, firsttimepoint, " vs ", secondtimepoint, " width_gsea_plot.pdf"), width=10, height=13)
   
   
   #function that makes the plot
@@ -351,6 +438,45 @@ common.comparisons <- function(dataframe1,dataframe2){
   return(common.dataframe)
 }
 
+#function for filtering the GSEA results to extract only one particular Gene Ontology database ie. GOCC only
+#input GO_db is the name of the Gene Ontology database ie. "GOCC", "GOBP", "GOMF"
+#input filtered_DCX is the dataframe containg DCX results filtered by NOM.p.value and FDR.q.value
+#input filtered_SOX2 is the dataframe SOX2 results filtered by NOM.p.value and FDR.q.value
+extract_specific_GO_db <-function(filtered_DCX, filtered_SOX2, GO_db, celltype1, celltype2){
+  DCX_GO <- filter(filtered_DCX, grepl(GO_db, filtered_DCX$Pathways))
+  SOX2_GO <- filter(filtered_SOX2, grepl(GO_db, filtered_SOX2$Pathways))
+  
+  GO_merged <- rbind(DCX_GO, SOX2_GO)
+  #order so SOX2 appears on left and DCX on right 
+  GO_merged$cell_type <- factor(GO_merged$cell_type, levels = c(celltype1, celltype2))
+  
+  #order the dots by ascending FDR.q value (lower FDR q value is higher on plot)
+  GO_merged <- GO_merged %>% mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val)))
+  return(GO_merged)
+}
+
+#modified version of function to extract specific GO databases results
+#for DCX time point comparisons
+#filtered_DCX is the GSEA results for the first DCX timepoint being compared, after filtering for NOM.pvalue and FDR.q.value
+#filtered_DCX2 is the GSEA results for the firstsecond DCX timepoint being compared, after filtering for NOM.pvalue and FDR.q.value
+#GO_db is the specific database to filter for ie. GOCC, GOMF, or GOBP
+extract_specific_GO_DCX <-function(filtered_DCX, filtered_DCX2, GO_db, timepoint1, timepoint2){
+  DCX_GO <<- filter(filtered_DCX, grepl(GO_db, filtered_DCX$Pathways))
+  DCX2_GO <<- filter(filtered_DCX2, grepl(GO_db, filtered_DCX2$Pathways))
+  
+  GO_merged <- rbind(DCX_GO, DCX2_GO)
+  #get rid of column 3 which does not contain any info
+  GO_merged[,3]<-NULL
+  #order so SOX2 appears on left and DCX on right
+  #GO_merged$timepoint <- factor(GO_merged$timepoint, levels = c("timepoint 2", "timepoint 3"))
+  GO_merged$timepoint <- factor(GO_merged$timepoint, levels = c(timepoint1, timepoint2))
+  
+  #order the dots by ascending FDR.q value (lower FDR q value is higher on plot)
+  GO_merged <- GO_merged %>% mutate(Pathways = fct_reorder(Pathways, desc(FDR.q.val)))
+  GO_merged <<- GO_merged
+  return(GO_merged)
+}
+
 #function to fill out diffexpressed top table, which is used for labelling volcano plots
 #pvalue can be 0.05 or 0.10
 get_diffexpressed <- function(top_table, p_value, condition1, condition2){
@@ -373,22 +499,25 @@ get_diffexpressed <- function(top_table, p_value, condition1, condition2){
 }
 
 #function to fill out diffexpressed top table, but don't highlight <-3 log2FC and >3 log2FC:
+#log2FC cutoff set to 1.5 for previous analysis (GLICOs experiment)
+#log2FC cutoff set to 1.33 for DCX timepoint 1 vs DCX timepoint 3 analysis 
 get_diffexpressed_modified <- function(top_table, p_value, condition1, condition2){
   #if log2FoldChange > 1.5 and pvalue <0.1 set as "UP in GLICO"
-  top_table$diffexpressed[top_table$logFC > 1.5 & top_table$adj.P.Val < p_value] <- paste0("UP in ", condition1)
+  top_table$diffexpressed[top_table$logFC > 1.33 & top_table$adj.P.Val < p_value] <- paste0("UP in ", condition1)
   
   #if log2FoldChange < -1.5 and pvalue < 0.1, set as "UP in monolayer"
-  top_table$diffexpressed[top_table$logFC < -1.5 & top_table$adj.P.Val < p_value] <- paste0("UP in ", condition2)
+  top_table$diffexpressed[top_table$logFC < -1.33 & top_table$adj.P.Val < p_value] <- paste0("UP in ", condition2)
   
   #if log2FoldChange < -1.5 and pvalue > 0.1 set up as Log2FC:
-  top_table$diffexpressed[top_table$logFC < -1.5 & top_table$adj.P.Val > p_value] <- paste0("Log2FC")
-  top_table$diffexpressed[top_table$logFC > 1.5 & top_table$adj.P.Val > p_value] <- paste0("Log2FC")
+  top_table$diffexpressed[top_table$logFC < -1.33 & top_table$adj.P.Val > p_value] <- paste0("Log2FC")
+  top_table$diffexpressed[top_table$logFC > 1.33 & top_table$adj.P.Val > p_value] <- paste0("Log2FC")
   
   # Now write down the name of genes beside the points...
   # Create a new column "delabel" to de, that will contain the name of genes differentially expressed (NA in case they are not)
-  top_table$delabel <- NA
-  top_table$delabel[top_table$diffexpressed != "NO"] <- top_table$gene[top_table$diffexpressed != "NO"]
-  
+  top_table$gene <-row.names(top_table)
+  #top_table$delabel <- NA
+  #top_table$delabel[top_table$diffexpressed != "NO"] <- top_table$gene[top_table$diffexpressed != "NO"]
+  #top_table$delabel[top_table$diffexpressed != "NA" ] <- top_table$gene[top_table$diffexpressed != "NA"]
   top_table <<- top_table
 }
 
@@ -403,7 +532,8 @@ volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
     theme_minimal() +
     geom_text_repel() +    
     scale_color_manual(values=c("#F68D91",  "#4E80A5", "grey", "#A4D49C", "orange")) +
-    geom_vline(xintercept=c(-1.5, 1.5), col="red") +
+    #geom_vline(xintercept=c(-1.5, 1.5), col="red") +
+    geom_vline(xintercept=c(-1.333, 1.333), col="red") +
     geom_hline(yintercept=-log10(p_value_cutoff), col="red") +
     labs(title = 'GLICOs dataset',
          subtitle=paste0(subtitle, " p. adj. value cut-off = ", p_value_cutoff),
@@ -412,7 +542,7 @@ volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
 
 #version 2 - colour in data which pass log2FC cutoff
 modified_volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
-  ggplot(data=top_table, aes(x=logFC, y=-log10(adj.P.Val), col=diffexpressed, label=delabel)) +
+  ggplot(data=top_table, aes(x=logFC, y=-log10(adj.P.Val), col=diffexpressed, label=diffexpressed)) +
     geom_point() + 
     theme_minimal() +
     geom_text_repel(    #if top_table$genelabels = TRUE, label the gene with the gene name from top_table$gene
@@ -428,9 +558,10 @@ modified_volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
           plot.subtitle = element_text(color = "black", size = 12),
           axis.text=element_text(size=12),
           axis.title=element_text(size=14,face="bold")) + 
-    scale_color_manual(values=c("#A4D49C", "grey", "red", "blue","orange")) +
-    geom_vline(xintercept=c(-1.5, 1.5), col="red") +
-    labs(title = 'GLICOs dataset', 
+    #scale_color_manual(values=c("#A4D49C", "grey", "red", "blue","orange")) +
+    scale_color_manual(values=c("#A4D49C", "red", "blue")) +
+    geom_vline(xintercept=c(-1.333, 1.333), col="red") +
+    labs(title = 'Organoid DCX dataset', 
          subtitle=paste0(subtitle, " p. adj. value cut-off = ", p_value_cutoff),
          x = 'log2 Fold Change')
 }
