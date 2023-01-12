@@ -56,7 +56,12 @@ combined <-cbind(FABP7_t, metadata_pos)
 
 colnames(combined)[1]<- "FABP7"
 
-combined$tp <- factor(combined$tp, levels = c('1', '2', '3'))
+#replace time point 1, 2, 3 with week 4, 6, and 8
+combined[combined == 1 ] <- "Week 4"
+combined[combined == 2 ] <- "Week 6"
+combined[combined == 3 ] <- "Week 8"
+  
+combined$tp <- factor(combined$tp, levels = c("Week 4", "Week 6", "Week 8"))
 
 combined$FABP7 <- as.numeric(combined$FABP7)
 
