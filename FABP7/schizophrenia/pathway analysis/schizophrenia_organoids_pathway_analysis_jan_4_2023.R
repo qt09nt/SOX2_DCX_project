@@ -335,3 +335,184 @@ GOBP$Pathways <- factor(GOBP$Pathways, levels = c(
  "GOBP_U2_TYPE_PRESPLICEOSOME_ASSEMBLY"))      
 
 plot_NES(filtered_df = GOBP, plottitle = "Ramos et al (2022) dataset - Control vs Schizophrenia Organoids")  
+
+
+###### filter for Gene Ontology Cell Components (GOCC) enriched pathways
+
+#filter for GOBP only 
+GOCC <-extract_specific_GO_db(filtered_DCX = filtered_CTR, filtered_SOX2=filtered_SCZ, "GOCC", celltype1= "CTR", celltype2="SCZ")
+
+GOCC_CTR <- GOCC[GOCC$cell_type == "CTR", ]
+GOCC_SCZ <- GOCC[GOCC$cell_type == "SCZ",]
+
+#filter out redundant pathways to make plot more legible
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_CLATHRIN_COATED_VESICLE_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_SIDE_OF_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_CYTOPLASMIC_SIDE_OF_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_EXTRINSIC_COMPONENT_OF_CYTOPLASMIC_SIDE_OF_PLASMA_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_EXTRINSIC_COMPONENT_OF_PLASMA_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_PLASMA_MEMBRANE_REGION",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_INTERMEDIATE_FILAMENT_CYTOSKELETON",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_ACTIN_FILAMENT",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways !="GOCC_CORTICAL_ACTIN_CYTOSKELETON",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_FICOLIN_1_RICH_GRANULE_LUMEN",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_VESICLE_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_TRANSPORT_VESICLE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_COATED_VESICLE_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_ENDOSOME_MEMBRANE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_EXTERNAL_ENCAPSULATING_STRUCTURE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_SECRETORY_GRANULE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_VACUOLE",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_AUTOPHAGOSOME",]
+GOCC_CTR<- GOCC_CTR[GOCC_CTR$Pathways != "GOCC_PHAGOCYTIC_VESICLE",]
+
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_POLYSOMAL_RIBOSOME",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_SMALL_RIBOSOMAL_SUBUNIT",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_CYTOSOLIC_LARGE_RIBOSOMAL_SUBUNIT",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_RIBOSOME",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_CYTOSOLIC_SMALL_RIBOSOMAL_SUBUNIT",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_INTRINSIC_COMPONENT_OF_ORGANELLE_MEMBRANE",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_ENVELOPE",]
+GOCC_SCZ<- GOCC_SCZ[GOCC_SCZ$Pathways != "GOCC_INTRINSIC_COMPONENT_OF_ORGANELLE_MEMBRANE",]
+
+
+GOCC_combined<- rbind(GOCC_CTR, GOCC_SCZ)
+
+#order pathways so that CTR pathways are together and SCZ pathways are together
+
+GOCC_combined$Pathways <- factor(GOCC_combined$Pathways, levels = c(
+    
+  "GOCC_ACTIN_CYTOSKELETON",                      
+  "GOCC_PODOSOME",                      
+  "GOCC_ENDOPEPTIDASE_COMPLEX",        
+  "GOCC_PROTEASOME_COMPLEX",   
+  "GOCC_ACTOMYOSIN",                    
+  "GOCC_CELL_CORTEX",                             
+  "GOCC_ACTIN_FILAMENT_BUNDLE",      
+  "GOCC_LAMELLIPODIUM",                   
+  "GOCC_FICOLIN_1_RICH_GRANULE",                  
+  "GOCC_CONTRACTILE_FIBER",           
+  "GOCC_CORTICAL_CYTOSKELETON",   
+  "GOCC_SUPRAMOLECULAR_POLYMER",                  
+  "GOCC_MEMBRANE_COAT",        
+  "GOCC_UBIQUITIN_LIGASE_COMPLEX",  
+  "GOCC_CELL_LEADING_EDGE",                       
+  "GOCC_VESICLE_LUMEN",       
+  "GOCC_PEPTIDASE_COMPLEX",        
+  "GOCC_TRANSPORT_VESICLE_MEMBRANE",    
+  "GOCC_VESICLE_COAT",             
+  "GOCC_GABA_ERGIC_SYNAPSE",            
+  "GOCC_INTERCELLULAR_BRIDGE",                    
+  "GOCC_POSTSYNAPTIC_MEMBRANE",      
+  "GOCC_CYTOPLASMIC_SIDE_OF_PLASMA_MEMBRANE",     
+  "GOCC_CLATHRIN_COATED_PIT",                     
+  "GOCC_SITE_OF_DOUBLE_STRAND_BREAK",  
+  "GOCC_POLYMERIC_CYTOSKELETAL_FIBER",      
+  "GOCC_CELL_DIVISION_SITE",                      
+  "GOCC_INTERMEDIATE_FILAMENT",        
+  "GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX",
+  "GOCC_NUCLEAR_PORE",                            
+  "GOCC_LATE_ENDOSOME",                 
+  "GOCC_RUFFLE_MEMBRANE",                    
+  "GOCC_PROTEASOME_ACCESSORY_COMPLEX",            
+  "GOCC_SYNAPTIC_MEMBRANE",             
+  "GOCC_MYELIN_SHEATH",  
+  "GOCC_CYTOSOLIC_RIBOSOME",                                    
+  "GOCC_RIBOSOMAL_SUBUNIT",                                    
+  "GOCC_LARGE_RIBOSOMAL_SUBUNIT",                               
+  "GOCC_RIBONUCLEOPROTEIN_COMPLEX",                            
+  "GOCC_MITOCHONDRIAL_PROTEIN_CONTAINING_COMPLEX",              
+  "GOCC_ORGANELLE_INNER_MEMBRANE",                             
+  "GOCC_INNER_MITOCHONDRIAL_MEMBRANE_PROTEIN_COMPLEX",          
+  "GOCC_NUCLEOLUS",                                            
+  "GOCC_RESPIRASOME",                                           
+  "GOCC_MITOCHONDRIAL_ENVELOPE",                               
+  "GOCC_CATALYTIC_STEP_2_SPLICEOSOME",                          
+  "GOCC_SPLICEOSOMAL_COMPLEX",                                 
+  "GOCC_POLYSOME",                                              
+  "GOCC_NUCLEAR_SPECK",                                        
+  "GOCC_CAJAL_BODY",                                            
+  "GOCC_INTRINSIC_COMPONENT_OF_PLASMA_MEMBRANE",               
+  "GOCC_INTRINSIC_COMPONENT_OF_ENDOPLASMIC_RETICULUM_MEMBRANE", 
+  "GOCC_NUCLEAR_BODY",                                         
+  "GOCC_TRANSPORTER_COMPLEX",                                   
+  "GOCC_U2_TYPE_SPLICEOSOMAL_COMPLEX",                         
+  "GOCC_U2_SNRNP",                                              
+  "GOCC_PRECATALYTIC_SPLICEOSOME",                             
+  "GOCC_PRESYNAPTIC_ACTIVE_ZONE",                               
+  "GOCC_CHROMOSOME"))
+
+plot_NES(filtered_df = GOCC_combined, plottitle = "Ramos et al (2022) dataset - Control vs Schizophrenia Organoids - Gene Ontology Cell Components")  
+
+
+#filter for Gene Ontology Molecular Functions (GoMF) pathways
+GOMF <-extract_specific_GO_db(filtered_DCX = filtered_CTR, filtered_SOX2=filtered_SCZ, "GOMF", celltype1= "CTR", celltype2="SCZ")
+
+GOMF_CTR <- GOMF[GOMF$cell_type=="CTR",]
+GOMF_SCZ <- GOMF[GOMF$cell_type=="SCZ",]
+
+
+
+GOMF_CTR<- GOMF_CTR[GOMF_CTR$Pathways != "GOMF_OXIDOREDUCTASE_ACTIVITY_ACTING_ON_THE_ALDEHYDE_OR_OXO_GROUP_OF_DONORS_NAD_OR_NADP_AS_ACCEPTOR",]
+
+
+
+GOMF_combined <- rbind(GOMF_CTR, GOMF_SCZ)
+
+GOMF_combined$Pathways<- factor(GOMF_combined$Pathways, levels =c(
+"GOMF_OXIDOREDUCTASE_ACTIVITY_ACTING_ON_THE_ALDEHYDE_OR_OXO_GROUP_OF_DONORS",                        
+"GOMF_GTPASE_ACTIVITY",                                                                              
+"GOMF_PROTEASE_BINDING",                                                                             
+"GOMF_GUANYL_NUCLEOTIDE_BINDING",                                                                    
+"GOMF_ACTIN_BINDING",                                                                                
+"GOMF_CARBOXYLIC_ACID_BINDING",                                                                      
+"GOMF_STRUCTURAL_CONSTITUENT_OF_CYTOSKELETON",                                                       
+"GOMF_PROTEIN_HOMODIMERIZATION_ACTIVITY",                                                            
+"GOMF_PEPTIDASE_REGULATOR_ACTIVITY",                                                                 
+"GOMF_EXTRACELLULAR_MATRIX_STRUCTURAL_CONSTITUENT",                                                  
+"GOMF_PHOSPHOLIPID_BINDING",                                                                         
+"GOMF_LIPID_BINDING",                                                                                
+"GOMF_ACTIN_FILAMENT_BINDING",                                                                       
+"GOMF_MONOCARBOXYLIC_ACID_BINDING",                                                                  
+"GOMF_UBIQUITIN_BINDING",                                                                            
+"GOMF_ANTIOXIDANT_ACTIVITY",                                                                         
+"GOMF_FATTY_ACID_BINDING",                                                                           
+"GOMF_DNA_HELICASE_ACTIVITY",                                                                        
+"GOMF_CYTOSKELETAL_PROTEIN_BINDING",                                                                 
+"GOMF_SCAFFOLD_PROTEIN_BINDING",                                                                     
+"GOMF_UBIQUITIN_LIKE_PROTEIN_TRANSFERASE_ACTIVITY",                                                  
+"GOMF_ENDOPEPTIDASE_REGULATOR_ACTIVITY",                                                             
+"GOMF_ENZYME_REGULATOR_ACTIVITY",                                                                    
+"GOMF_PROTEIN_DIMERIZATION_ACTIVITY",                                                                
+"GOMF_UBIQUITIN_LIKE_PROTEIN_BINDING",                                                               
+"GOMF_PHOSPHOPROTEIN_PHOSPHATASE_ACTIVITY",                                                          
+"GOMF_MAGNESIUM_ION_BINDING",                                                                        
+"GOMF_ATP_DEPENDENT_ACTIVITY_ACTING_ON_DNA",                                                         
+"GOMF_PHOSPHATASE_ACTIVITY",                                                                         
+"GOMF_CLATHRIN_BINDING",                                                                             
+"GOMF_ENZYME_INHIBITOR_ACTIVITY",                                                                    
+"GOMF_PHOSPHATIDYLINOSITOL_BINDING",                                                                 
+"GOMF_PROTEIN_TYROSINE_KINASE_BINDING",                                                              
+"GOMF_TRANSCRIPTION_COREGULATOR_BINDING",                                                            
+"GOMF_PHOSPHATIDYLINOSITOL_BISPHOSPHATE_BINDING",                                                    
+"GOMF_OXIDOREDUCTASE_ACTIVITY_ACTING_ON_CH_OH_GROUP_OF_DONORS",                                      
+"GOMF_PHOSPHORIC_ESTER_HYDROLASE_ACTIVITY",                                                          
+"GOMF_ENZYME_ACTIVATOR_ACTIVITY",                                                                    
+"GOMF_CALCIUM_DEPENDENT_PROTEIN_BINDING",                                                            
+"GOMF_HELICASE_ACTIVITY",                                                                            
+"GOMF_PROTEIN_PHOSPHATASE_BINDING",                                                                  
+"GOMF_DISORDERED_DOMAIN_SPECIFIC_BINDING", 
+"GOMF_STRUCTURAL_CONSTITUENT_OF_RIBOSOME",                             
+"GOMF_MRNA_3_UTR_BINDING",                                             
+"GOMF_RRNA_BINDING",                                                   
+"GOMF_OXIDOREDUCTION_DRIVEN_ACTIVE_TRANSMEMBRANE_TRANSPORTER_ACTIVITY",
+"GOMF_MRNA_BINDING",                                                   
+"GOMF_PRE_MRNA_BINDING",                                               
+"GOMF_ACTIVE_TRANSMEMBRANE_TRANSPORTER_ACTIVITY",                      
+"GOMF_NUCLEOSOME_BINDING",                                             
+"GOMF_PRIMARY_ACTIVE_TRANSMEMBRANE_TRANSPORTER_ACTIVITY",              
+"GOMF_SINGLE_STRANDED_RNA_BINDING",                                    
+"GOMF_PROTON_TRANSMEMBRANE_TRANSPORTER_ACTIVITY",                      
+"GOMF_ACTIVE_ION_TRANSMEMBRANE_TRANSPORTER_ACTIVITY")) 
+
+plot_NES(filtered_df = GOMF_combined, plottitle = "Ramos et al (2022) data - Control vs Schizophrenia Organoids - GO Molecular Functions")  
