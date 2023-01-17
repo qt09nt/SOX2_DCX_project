@@ -6,6 +6,7 @@ source("R/perseus_functions.R")
 source("R/main_analysis_functions.R")
 source("R/protein_organoid_working_matrix_main_analysis_functions.R")
 
+library(VennDiagram)
 library(tidyverse)
 library(viridis)
 library(forcats)    #used for handling factors for gsea pathways dataframe & reordering by FDR.qvalue
@@ -516,3 +517,136 @@ GOMF_combined$Pathways<- factor(GOMF_combined$Pathways, levels =c(
 "GOMF_ACTIVE_ION_TRANSMEMBRANE_TRANSPORTER_ACTIVITY")) 
 
 plot_NES(filtered_df = GOMF_combined, plottitle = "Ramos et al (2022) data - Control vs Schizophrenia Organoids - GO Molecular Functions")  
+
+
+
+#################### January 17 2023
+
+#Venn diagram of overlapping proteins between Ramos et al (2022) control/schizophrenia organoids and Sofia's control/FABP7 treated organoids
+
+#read in the Ramos et al control and schizophrenia organoids dataset
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/schizophrenia/pathway analysis/")
+ramos_ctr_scz_organoids_data = read.table("organoids.gct.txt", stringsAsFactors = FALSE, quote = "", header = TRUE, sep = "\t", check.names = FALSE)
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/pathway analysis/results")
+sofia_ctr_fabp7<- read.table("FABP7_vehicle_control_data_processed.txt", stringsAsFactors = FALSE, sep = "\t", quote = "")
+
+colnames(ramos_ctr_scz_organoids_data)<-ramos_ctr_scz_organoids_data[1,]
+
+ramos_ctr_scz_organoids_data[,2]<- NULL
+
+sofia_ctr_fabp7$gene <- rownames(sofia_ctr_fabp7)
+colnames(ramos_ctr_scz_organoids_data)[1]<- "gene"
+  
+#find the number of common proteins between the Ramos dataset and Sofia's control/FABP7-treated organoids dataset
+ctr_fabp7_proteins <- rownames(sofia_ctr_fabp7)
+ctr_scz_organoid_proteins <- ramos_ctr_scz_organoids_data$NAME
+
+common_proteins<- Reduce(intersect, list(ctr_scz_organoid_proteins, ctr_fabp7_proteins))
+
+length(common_proteins)
+#1635
+
+#remove NA genes from the protein lists
+ctr_scz_organoid_proteins<- na.omit(ctr_scz_organoid_proteins)
+ctr_fabp7_proteins<-na.omit(ctr_fabp7_proteins)
+
+#find the proteins which are unique to Sofia's control/FABP7 treated organoids dataset
+sofia_ctr_fabp7_unique <- unique.comparisons(dataframe1 = sofia_ctr_fabp7, dataframe2 = ramos_ctr_scz_organoids_data)
+
+#see which proteins are unique to Ramos et al (2022) control dataset compared to Sofia's control/FABP7 treated organoids
+ramos_ctr_scz_organoids_data_unique <- unique.comparisons(dataframe1 = ramos_ctr_scz_organoids_data, dataframe2 = sofia_ctr_fabp7)
+
+# Prepare a palette of 3 colors with R colorbrewer:
+library(RColorBrewer)
+myCol <- brewer.pal(3, "Pastel2")
+myCol <-c("#B3E2CD", "#FDCDAC")
+
+# Generate 3 sets of 200 words
+set1 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+set2 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+set3 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+
+# Chart
+venn.diagram(
+  x = list(set1, set2, set3),
+  category.names = c("Set 1" , "Set 2 " , "Set 3"),
+  filename = '#14_venn_diagramm.png',
+  output=TRUE
+)
+
+
+
+venn.diagram(
+  x = list(ctr_fabp7_proteins, ctr_scz_organoid_proteins),
+  category.names = c(paste0("Melliou Proteins Dataset - ", "\n", "Control & FABP7-treated", "\n", "Organoids"), paste0("Ramos et al (2022)", "\n", "Proteins Dataset", "\n", "Control &", "\n",  "Schizophrenia", "\n", "Organoids")),
+  filename = "Proteins Control, FABP7-treated and Schizophrenia Organoids.png",
+  output = TRUE,
+  
+  # Output features
+  imagetype="png" ,
+  height = 480 , 
+  width = 700 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol,
+  
+  # Numbers
+  cex = .6,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 0.4,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 30),
+  cat.dist = c(0.055, 0.055),
+  cat.fontfamily = "sans"
+)
+
+
+
+venn.diagram(
+  x = list(set1, set2, set3),
+  category.names = c("Set 1" , "Set 2 " , "Set 3"),
+  filename = '#14_venn_diagramm.png',
+  output=TRUE,
+  
+  # Output features
+  imagetype="png" ,
+  height = 480 , 
+  width = 480 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol,
+  
+  # Numbers
+  cex = .6,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 0.6,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-27, 27, 135),
+  cat.dist = c(0.055, 0.055, 0.085),
+  cat.fontfamily = "sans",
+  rotation = 1
+)
+
+
+### re-do Venn diagrams excluding control samples - inlcude only FABP7 and Schizophrenia organoids
+
+sofia_ctr <- sofia_ctr_fabp7[,1:5]
+ramos_ctr <- ramos_ctr_scz_organoids_data[,c(1, 15:22)]
