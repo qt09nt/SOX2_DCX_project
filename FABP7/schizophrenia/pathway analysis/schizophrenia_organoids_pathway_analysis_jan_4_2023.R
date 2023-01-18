@@ -541,7 +541,7 @@ colnames(ramos_ctr_scz_organoids_data)[1]<- "gene"
   
 #find the number of common proteins between the Ramos dataset and Sofia's control/FABP7-treated organoids dataset
 ctr_fabp7_proteins <- rownames(sofia_ctr_fabp7)
-ctr_scz_organoid_proteins <- ramos_ctr_scz_organoids_data$NAME
+ctr_scz_organoid_proteins <- ramos_ctr_scz_organoids_data$gene
 
 common_proteins<- Reduce(intersect, list(ctr_scz_organoid_proteins, ctr_fabp7_proteins))
 
@@ -646,7 +646,63 @@ venn.diagram(
 )
 
 
-### re-do Venn diagrams excluding control samples - inlcude only FABP7 and Schizophrenia organoids
+### re-do Venn diagrams excluding control samples - include only FABP7 and Schizophrenia organoids
+#and NOT control samples
 
-sofia_ctr <- sofia_ctr_fabp7[,1:5]
-ramos_ctr <- ramos_ctr_scz_organoids_data[,c(1, 15:22)]
+sofia_fabp7 <- sofia_ctr_fabp7[,1:5]
+ramos_scz <- ramos_ctr_scz_organoids_data[,c(1, 15:22)]
+
+#filter out genes which do not have any expression in any of the samples
+sofia.filtered <<- sofia_fabp7[rowSums(sofia_fabp7 == 0) != ncol(sofia_fabp7),]
+ramos.filtered <<- ramos_scz[rowSums(ramos_scz == 0) != ncol(ramos_scz),]
+
+#filter Ramos et al schizophrenia proteins to remove genes which are expressed in less than 1/3 of schizophrenia samples
+#ramos.filtered.2 <- ramos.filtered[rowSums(ramos.filtered == 0) <= 0.33333*ncol(ramos.filtered), ]
+#1942 proteins in schizophrenia samples remain after filtering 
+
+#count the number of proteins common between Sofia's FABP7-treated samples and the schizophrenia proteins in Ramos et al (2022)
+common_proteins_treatment<- Reduce(intersect, list(ramos.filtered.2$gene, row.names(sofia.filtered)))
+
+length(common_proteins_treatment)
+#[1] 1483 proteins in common between FABP7-treated organoids and schizophrenia organoids
+
+#get proteins list
+scz_filtered <- ramos.filtered$gene
+fabp7_filtered <- row.names(sofia.filtered)
+  
+#remove NA genes from the protein lists
+scz_filtered <- na.omit(scz_filtered)
+fabp7_filtered <-na.omit(fabp7_filtered)
+
+
+venn.diagram(
+  x = list(fabp7_filtered, scz_filtered),
+  category.names = c(paste0("Melliou Proteins Dataset - ", "\n", "FABP7-treated", "\n", "Organoids"), paste0("Ramos et al (2022)", "\n", "Proteins Dataset", "\n", "Schizophrenia", "\n", "Organoids")),
+  filename = "Proteins venn-diagram Melliou FABP7-treated and Ramos et al. (2022)Schizophrenia Organoids.png",
+  output = TRUE,
+  
+  # Output features
+  imagetype="png" ,
+  height = 530 , 
+  width = 750 , 
+  resolution = 300,
+  compression = "lzw",
+  
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = myCol,
+  
+  # Numbers
+  cex = .6,
+  fontface = "bold",
+  fontfamily = "sans",
+  
+  # Set names
+  cat.cex = 0.4,
+  cat.fontface = "bold",
+  cat.default.pos = "outer",
+  cat.pos = c(-30, 30),
+  cat.dist = c(0.055, 0.055),
+  cat.fontfamily = "sans"
+)
