@@ -38,11 +38,11 @@ require(downloader)
 
 #https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM6720862&format=file&file=GSM6720862%5F34C%5Fbarcodes%2Etsv%2Egz
 
-for (i in 25:nrow(samples)) {
+for (i in 1:nrow(samples)) {
   filename = samples[i,1]
   id = samples[i, 2]
-  #download.file(paste(url, filename, "/ScoringFiles/", filename, ".txt.gz", sep = ""), paste(getwd(), "/", filename, ".txt.gz", sep =""))
-  download(url = (paste(url, filename, "&format=file&file=", filename, id, "barcodes.tsv.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, ".tsv.gz", sep = "")), mode = "wb")
+
+  download(url = (paste(url, filename, "&format=file&file=", filename, id, "barcodes.tsv.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, "_barcodes.tsv.gz", sep = "")), mode = "wb")
   download(url = (paste(url, filename, "&format=file&file=", filename, id,"features.tsv.gz", sep = "")),  destfile = (paste(getwd(), "/", filename, id, ".tsv.gz", sep = "")), mode = "wb")
   download(url = (paste(url, filename, "&format=file&file=", filename, id, "matrix.mtx.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, ".mtx.gz", sep = "")), mode = "wb")
   
