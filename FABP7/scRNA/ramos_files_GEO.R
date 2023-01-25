@@ -49,10 +49,11 @@ setwd("D:/raw")
 for (i in 1:nrow(samples)) {
   filename = samples[i,1]
   id = samples[i, 2]
-
-  download(url = (paste(url, filename, "&format=file&file=", filename, id, "barcodes.tsv.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, "_barcodes.tsv.gz", sep = "")), mode = "wb")
-  download(url = (paste(url, filename, "&format=file&file=", filename, id,"features.tsv.gz", sep = "")),  destfile = (paste(getwd(), "/", filename, id, "features.tsv.gz", sep = "")), mode = "wb")
-  download(url = (paste(url, filename, "&format=file&file=", filename, id, "matrix.mtx.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, "matrix.mtx.gz", sep = "")), mode = "wb")
+  dir.create(paste(filename))
+  setwd(paste0("D:/raw/", filename))
+  download(url = (paste(url, filename, "&format=file&file=", filename, id, "barcodes.tsv.gz", sep = "")), destfile = (paste(getwd(), "/", "barcodes.tsv.gz", sep = "")), mode = "wb")
+  download(url = (paste(url, filename, "&format=file&file=", filename, id,"features.tsv.gz", sep = "")),  destfile = (paste(getwd(), "/","features.tsv.gz", sep = "")), mode = "wb")
+  download(url = (paste(url, filename, "&format=file&file=", filename, id, "matrix.mtx.gz", sep = "")), destfile = (paste(getwd(), "/", "matrix.mtx.gz", sep = "")), mode = "wb")
   
 }
 
