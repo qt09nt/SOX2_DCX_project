@@ -7,9 +7,13 @@ library(downloader)
 url = "http://www.ncbi.nlm.nih.gov/geo/download/?acc="
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/late prenatal human neurodevelopment resolved by single nucleus transcriptomics")
 
-samples <- read.table(file = "samples.txt", sep = '\t', header = FALSE, fill = TRUE)
+samples <- read.table(file = "samples2.txt", sep = '\t', header = FALSE, fill = TRUE)
+
+#samples <- read.csv("samples.csv", header = FALSE)
 
 samples<-as.data.frame(samples)
+
+#keep just the first 10 chraracters of the samples names
 samples[,1]<-substr(samples[,1], 1, 10)
 
 samples[,2]<-c("_11C_", "_11G_", "_56C_", "_56G_","_34C_", "_34G_", "_30C_", "_30G_", "_63C_", "_63G_", "_23C_",
@@ -36,15 +40,26 @@ samples[,2]<-c("_11C_", "_11G_", "_56C_", "_56G_","_34C_", "_34G_", "_30C_", "_3
 
 require(downloader)
 
+write.csv(samples, "samples.csv")
+
 #https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM6720862&format=file&file=GSM6720862%5F34C%5Fbarcodes%2Etsv%2Egz
+
+setwd("D:/raw")
 
 for (i in 1:nrow(samples)) {
   filename = samples[i,1]
   id = samples[i, 2]
 
   download(url = (paste(url, filename, "&format=file&file=", filename, id, "barcodes.tsv.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, "_barcodes.tsv.gz", sep = "")), mode = "wb")
-  download(url = (paste(url, filename, "&format=file&file=", filename, id,"features.tsv.gz", sep = "")),  destfile = (paste(getwd(), "/", filename, id, ".tsv.gz", sep = "")), mode = "wb")
-  download(url = (paste(url, filename, "&format=file&file=", filename, id, "matrix.mtx.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, ".mtx.gz", sep = "")), mode = "wb")
+  download(url = (paste(url, filename, "&format=file&file=", filename, id,"features.tsv.gz", sep = "")),  destfile = (paste(getwd(), "/", filename, id, "features.tsv.gz", sep = "")), mode = "wb")
+  download(url = (paste(url, filename, "&format=file&file=", filename, id, "matrix.mtx.gz", sep = "")), destfile = (paste(getwd(), "/", filename, id, "matrix.mtx.gz", sep = "")), mode = "wb")
   
 }
+
+#create a new folder for each sample
+for (i in 3:nrow(samples)) {
+  filename = samples[i,1]
+  dir.create(paste(filename))
+}
+
 
