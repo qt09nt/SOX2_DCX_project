@@ -6,6 +6,12 @@
 #January 19 2023
 
 library(Seurat)
+library(umap)
+library(dplyr)
+library(cowplot)
+library(ggplot2)
+library(M3C)  
+library(stringr)
 
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/late prenatal human neurodevelopment resolved by single nucleus transcriptomics/processed/")
 
@@ -144,4 +150,204 @@ head(GSM6720852@meta.data, 5)
 
 #Visualize QC metrics as a violin plot
 VlnPlot(GSM6720852, features = c("nFeature_RNA","nCount_RNA", "percent.mt"), ncol = 3)
+
+# FeatureScatter is typically used to visualize feature-feature relationships, but can be used
+# for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+plot1 <- FeatureScatter(GSM6720852, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(GSM6720852, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+
+GSM6720852 <- subset(GSM6720852, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+
+
+
+
+# January 26, 2023
+################################ working with the supplemental Combined_log-normalized_AveExp_snRNAseq_Human.xlsx file 
+# downloaded from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM6720852
+
+setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/late prenatal human neurodevelopment resolved by single nucleus transcriptomics/supplemental")
+
+abbreviations <- read.csv("abbreviations.csv")
+
+#load data for Processed, log-normalized average gene expression data calculated for
+#each of the following integrated objects: all prenatal germinal matrix samples
+prenatal_gm_all <-read.csv("prenatal_gm_all.csv")
+
+colnames(prenatal_gm_all)[1]<-"gene"
+
+colnames(abbreviations)[1]<-"abbreviation"
+
+#split the abbreviations column into "abbreviation" and "name"
+abbreviations[c("abbrev","name")]<- str_split_fixed(abbreviations$abbreviation, " = ", 2)
+
+#https://cran.r-project.org/web/packages/umap/vignettes/umap.html
+
+
+#remove duplicated gene IDs 
+prenatal_gm_all = prenatal_gm_all[!duplicated(prenatal_gm_all$gene),]
+row.names(prenatal_gm_all)<-prenatal_gm_all$gene
+
+#remove redundant gene column
+prenatal_gm_all$gene <- NULL
+
+#get cell types of the normalized samples
+cell_type<- colnames(prenatal_gm_all)
+cell_type <- as.data.frame(cell_type)
+
+#keep just the cell type part of the name
+cell_type[,1]<-gsub(".*\\.","", cell_type[,1])
+
+#label the cell type of the samples with the full name cell type labels
+cell_type$cell_type_name <- "NA"
+
+table(cell_type$cell_type)
+# AC  BVC   CP  CPN gIPC   IN   MG  MSN nIPC  OPC  SPN  TAC   UD 
+# 4    1    1   11    1    7    1    2    2    1    3    1    3 
+
+#fill in cell type name based on condition
+cell_type$cell_type_name[cell_type$cell_type == "AC"] <- "Astrocyte"
+cell_type$cell_type_name[cell_type$cell_type == "BVC"] <- "Blood vessel cell (endothelium+pericytes)"
+cell_type$cell_type_name[cell_type$cell_type == "CP"] <- "Choroid plexus"
+cell_type$cell_type_name[cell_type$cell_type == "CPN"] <- "Cortical projection neuron"
+cell_type$cell_type_name[cell_type$cell_type == "gIPC"] <- "Glial intermediate progenitor cell"
+cell_type$cell_type_name[cell_type$cell_type == "IN"] <- "Interneuron"
+cell_type$cell_type_name[cell_type$cell_type == "MG"] <- "Microglila"
+cell_type$cell_type_name[cell_type$cell_type == "MSN"] <- "Medium spiny neuron (D1 or D2)"
+cell_type$cell_type_name[cell_type$cell_type == "nIPC"] <- "Neuronal intermediate progenitor cell"
+cell_type$cell_type_name[cell_type$cell_type == "OPC"] <- "Oligodendrocyte progenitor/precursor cell"
+cell_type$cell_type_name[cell_type$cell_type == "SPN"] <- "Subplate neuron"
+cell_type$cell_type_name[cell_type$cell_type == "TAC"] <- "transit amplifying cell / cycling progenitor"
+cell_type$cell_type_name[cell_type$cell_type == "UD"] <- "Undefined cell type or lineage"
+
+cell_type$cell_type_name<- as.factor(cell_type$cell_type_name)
+
+#create list object with the prenatal_gm_all expression data and the cell type labels
+prenatal_gm_all_combined <- list(expr = prenatal_gm_all, cellnames = cell_type$cell_type_name)
+
+as.matrix(names(prenatal_gm_all)[colSums(is.na(prenatal_gm_all))!=0]) 
+# [,1]             
+# [1,] "RNA.24.L2.3.CPN"
+
+#apparently there is a NA in this column
+
+sum(is.na(prenatal_gm_all$RNA.24.L2.3.CPN))
+#1
+
+#keep complete cases only (ie. omit the row with the NA)
+prenatal_gm_all_full <- prenatal_gm_all[complete.cases(prenatal_gm_all),]
+
+#create list object with the prenatal_gm_all expression data and the cell type labels
+prenatal_gm_all_combined <- list(expr = prenatal_gm_all_full, cellnames = cell_type$cell_type_name)
+
+library(umap)
+
+#note if M3C not loaded, umap default library will just run UMAP without plotting
+umap(pollen$data,labels=as.factor(pollen$celltypes),controlscale=TRUE,scale=3)
+
+umap(prenatal_gm_all_combined$expr, labels=as.factor(prenatal_gm_all_combined$cellnames), controlscale=TRUE, scale=3)
+
+prenatal_gm_all.umap <-umap(prenatal_gm_all_combined$expr, labels=as.factor(prenatal_gm_all_combined$cellnames), controlscale=TRUE, scale=3)
+
+#run this command if error "Error in app$vspace(new_style$`margin-top` %||% 0)
+#: attempt to apply non-function" pops up
+install.packages("cli")
+install.packages("palmerpenguins")
+
+library(tidyverse)
+library(palmerpenguins)
+
+#https://datavizpyr.com/how-to-make-umap-plot-in-r/
+
+penguins <- penguins %>% 
+  drop_na() %>%
+  select(-year)%>%
+  mutate(ID=row_number()) 
+
+penguins_meta <- penguins %>%
+  select(ID, species, island, sex)
+
+
+############## try with the penguin method
+
+prenatal_gm_t<- t(prenatal_gm_all_full)
+
+prenatal_gm_t<-as.data.frame(prenatal_gm_t)
+
+prenatal_gm_t$sample <- row.names(prenatal_gm_t)
+prenatal_gm_t$celltype<-cell_type$cell_type_name
+
+prenatal_gm_t <- prenatal_gm_t %>%
+  drop_na() %>%
+  mutate(ID = row_number())
+
+prenatal_gm_meta <- prenatal_gm_t %>%
+  select(ID, sample, celltype)
+
+row.names(prenatal_gm_meta)<-NULL
+
+#perform UMAP
+
+row.names(prenatal_gm_t) <- NULL
+
+set.seed(142)
+
+# umap_prenatal_gm <-prenatal_gm_t%>%
+#   select(where(is.numeric)) %>%
+#   column_to_rownames("ID") %>%
+#   scale() %>%
+#   umap()
+#   
+
+prenatal_gm_t <- prenatal_gm_t[,1:27612]
+prenatal_gm_t_scaled <- scale(prenatal_gm_t)
+
+prenatal_gm_all_combined <- list(expr = prenatal_gm_t, cellnames = cell_type$cell_type_name)
+
+prenatal_gm_umap <-umap(prenatal_gm_all_combined$expr, labels=as.factor(prenatal_gm_all_combined$cellnames), controlscale=TRUE, scale=3)
+
+umap_df <- prenatal_gm_umap$layout %>%
+  as.data.frame()%>%
+  rename(UMAP1="V1",
+         UMAP2="V2") %>%
+  mutate(ID=row_number())%>%
+  inner_join(prenatal_gm_meta, by="ID")
+
+umap_df %>% head()
+
+#         UMAP1      UMAP2 ID         sample                       celltype
+# 1 -0.72393588  0.3250972  1       RNA.0.UD Undefined cell type or lineage
+# 2  2.27413533 -0.2562321  2       RNA.1.IN                    Interneuron
+# 3  0.06718826  0.1993333  3 RNA.2.L2.3.CPN     Cortical projection neuron
+# 4  2.30525370 -0.8130698  4       RNA.3.IN                    Interneuron
+# 5  2.68479496 -0.3473288  5       RNA.4.IN                    Interneuron
+# 6  1.69470744 -0.5814841  6       RNA.5.IN                    Interneuron
+
+umap_df %>%
+  ggplot(aes(x = UMAP1, 
+             y = UMAP2, 
+             color = celltype
+             ))+
+  geom_point()+
+  labs(x = "UMAP1",
+       y = "UMAP2",
+       subtitle = "Prenatal GM All UMAP plot")
+ggsave("UMAP_plot_prenatal_gm_all.png")
+
+FABP7_expr <-prenatal_gm_t[,"FABP7"]
+
+FABP7_expr<- as.data.frame(FABP7_expr)
+
+combined_umap_df<-cbind(umap_df, FABP7_expr)
+
+combined_umap_df %>%
+  ggplot(aes(x = UMAP1, 
+             y = UMAP2, 
+             color = FABP7_expr
+  ))+
+    geom_point()+
+    labs(x = "UMAP1",
+         y = "UMAP2",
+         subtitle = "FABP7 Expression in Ramos Prenatal GM All UMAP plot")
 
