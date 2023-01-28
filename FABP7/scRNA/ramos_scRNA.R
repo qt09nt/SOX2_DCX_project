@@ -12,6 +12,7 @@ library(cowplot)
 library(ggplot2)
 library(M3C)  
 library(stringr)
+library(patchwork)
 
 setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/Sofia/late prenatal human neurodevelopment resolved by single nucleus transcriptomics/processed/")
 
@@ -100,9 +101,7 @@ seurat_object[['Protein']] = CreateAssayObject(counts = data$`Antibody Capture`)
 ############ Seurat tutorial 
 #https://satijalab.org/seurat/articles/pbmc3k_tutorial.html
 
-library(dplyr)
-library(Seurat)
-library(patchwork)
+
 
 #Load data from Ramos et al 36 samples raw files
 setwd("D:/Technical Analyst I UHN May 4 2021/organoid group/Sofia/raw/GSM6720852")
@@ -174,8 +173,18 @@ abbreviations <- read.csv("abbreviations.csv")
 #load data for Processed, log-normalized average gene expression data calculated for
 #each of the following integrated objects: all prenatal germinal matrix samples
 prenatal_gm_all <-read.csv("prenatal_gm_all.csv")
+prenatal_cp_all <-read.csv("prenatal_cp_all.csv")
+adult_svz_caudate <- read.csv("adult_svz_caudate.csv")
+adult_neocortex <-read.csv("adult_neocortex.csv")
+prenatal_gm_subclustered<-read.csv("prenatal_gm_subclustered.csv")
+prenatal_cp_subclust <- read.csv("prenatal_cp_subclustered.csv")
 
 colnames(prenatal_gm_all)[1]<-"gene"
+colnames(prenatal_cp_all)[1]<-"gene"
+colnames(adult_svz_caudate)[1]<- "gene"
+colnames(adult_neocortex)[1]<-"gene"
+colnames(prenatal_gm_subclustered)[1]<-"gene"
+colnames(prenatal_cp_subclust)[1]<-"gene"
 
 colnames(abbreviations)[1]<-"abbreviation"
 
@@ -187,14 +196,45 @@ abbreviations[c("abbrev","name")]<- str_split_fixed(abbreviations$abbreviation, 
 
 #remove duplicated gene IDs 
 prenatal_gm_all = prenatal_gm_all[!duplicated(prenatal_gm_all$gene),]
+prenatal_cp_all = prenatal_cp_all[!duplicated(prenatal_cp_all$gene),]
+adult_svz_caudate = adult_svz_caudate[!duplicated(adult_svz_caudate$gene),]
+adult_neocortex = adult_neocortex[!duplicated(adult_neocortex$gene),]
+prenatal_gm_subclustered = prenatal_gm_subclustered[!duplicated(prenatal_gm_subclustered$gene),]
+prenatal_cp_subclust = prenatal_cp_subclust[!duplicated(prenatal_cp_subclust$gene),]
+
 row.names(prenatal_gm_all)<-prenatal_gm_all$gene
+row.names(prenatal_cp_all)<-prenatal_cp_all$gene
+row.names(adult_svz_caudate)<-adult_svz_caudate$gene
+row.names(adult_neocortex)<-adult_neocortex$gene
+row.names(prenatal_gm_subclustered)<-prenatal_gm_subclustered$gene
+row.names(prenatal_cp_subclust)<-prenatal_cp_subclust$gene
 
 #remove redundant gene column
 prenatal_gm_all$gene <- NULL
+prenatal_cp_all$gene <- NULL
+adult_svz_caudate$gene <- NULL
+adult_neocortex$gene<- NULL
+prenatal_gm_subclustered$gene<- NULL
+prenatal_cp_subclust$gene<-NULL
 
 #get cell types of the normalized samples
 cell_type<- colnames(prenatal_gm_all)
 cell_type <- as.data.frame(cell_type)
+
+cell_type<-colnames(prenatal_cp_all)
+cell_type<- as.data.frame(cell_type)
+
+cell_type<-colnames(adult_svz_caudate)
+cell_type<- as.data.frame(cell_type)
+
+cell_type<-colnames(adult_neocortex)
+cell_type<- as.data.frame(cell_type)
+
+cell_type<-colnames(prenatal_gm_subclustered)
+cell_type<- as.data.frame(cell_type)
+
+cell_type<-colnames(prenatal_cp_subclust)
+cell_type<- as.data.frame(cell_type)
 
 #keep just the cell type part of the name
 cell_type[,1]<-gsub(".*\\.","", cell_type[,1])
@@ -220,11 +260,51 @@ cell_type$cell_type_name[cell_type$cell_type == "OPC"] <- "Oligodendrocyte proge
 cell_type$cell_type_name[cell_type$cell_type == "SPN"] <- "Subplate neuron"
 cell_type$cell_type_name[cell_type$cell_type == "TAC"] <- "transit amplifying cell / cycling progenitor"
 cell_type$cell_type_name[cell_type$cell_type == "UD"] <- "Undefined cell type or lineage"
+cell_type$cell_type_name[cell_type$cell_type == "EN"] <- "Excitatory neuron"
+cell_type$cell_type_name[cell_type$cell_type == "CRN"] <- "Cajal Retzius cell"
+cell_type$cell_type_name[cell_type$cell_type == "OL"] <-"Oligodendrocyte"
+cell_type$cell_type_name[cell_type$cell_type == "EPD"] <-"Ependymal cell"
+cell_type$cell_type_name[cell_type$cell_type == "p"] <-"Astrocyte, protoplasmic type"
+cell_type$cell_type_name[cell_type$cell_type == "pv"] <-"Interneuron.pv"
+cell_type$cell_type_name[cell_type$cell_type == "5ht"] <-"Interneuron.5ht"
+cell_type$cell_type_name[cell_type$cell_type == "f"] <-"Astrocyte, fibrous type"
+cell_type$cell_type_name[cell_type$cell_type == "som"] <-"Interneuron.som"
+cell_type$cell_type_name[cell_type$cell_type == "Tcell"] <- "T-lymphocyte"
+cell_type$cell_type_name[cell_type$cell_type =="preOL"] <-"Premyelinating / early myelinating BCAS1+ oligodendrocyte"
+cell_type$cell_type_name[cell_type$cell_type =="oRG"] <- "Outer radial glia"
+cell_type$cell_type_name[cell_type$cell_type == "mIPC"]<- "multipotent intermediate progenitor cell"
+cell_type$cell_type_name[cell_type$cell_type == "O"]<- "Glial intermediate progenitor cell, OPC bias"
+cell_type$cell_type_name[cell_type$cell_type == "A"]<-"Glial intermediate progenitor cell, Astrocyte bias"
+cell_type$cell_type_name[cell_type$cell_type == "tRG"]<-"Truncated radial glia"
+
 
 cell_type$cell_type_name<- as.factor(cell_type$cell_type_name)
 
+#keep complete cases only (ie. omit the row with the NA)
+prenatal_gm_all_full <- prenatal_gm_all[complete.cases(prenatal_gm_all),]
+prenatal_cp_all_full <- prenatal_cp_all[complete.cases(prenatal_cp_all),]
+adult_svz_caudate_full <- adult_svz_caudate[complete.cases(adult_svz_caudate),]
+adult_neocortex_full <- adult_neocortex[complete.cases(adult_neocortex),]
+prenatal_gm_subclust_full <- prenatal_gm_subclustered[complete.cases(prenatal_gm_subclustered),]
+prenatal_cp_subclust_full <- prenatal_cp_subclust[complete.cases(prenatal_cp_subclust),]
+
+#since prenatal_cp_subclust only has 14 samples, n_neighbors should be changed to a number less than 14
+custom.config<-umap.defaults
+custom.config$n_neighbors <- 13
+prenatal_cp_subclust_t<-t(prenatal_cp_subclust_full)
+prenatal_cp_subclust.umap<-umap(prenatal_cp_subclust_t, config = custom.config)
+
 #create list object with the prenatal_gm_all expression data and the cell type labels
 prenatal_gm_all_combined <- list(expr = prenatal_gm_all, cellnames = cell_type$cell_type_name)
+
+prenatal_cp_all_combined <- list(expr = prenatal_cp_all_full, cellnames = cell_type$cell_type_name)
+adult_svz_caudate_combined <- list(expr = adult_svz_caudate_full, cellnames = cell_type$cell_type_name)
+
+adult_neocortex_combined <- list(expr = adult_neocortex_full, cellnames = cell_type$cell_type_name)
+
+prenatal_gm_subclust_combined <- list(expr = prenatal_gm_subclust_full, cellnames = cell_type$cell_type_name)
+
+#prenatal_cp_subclust_combined <-list(expr = prenatal_cp_subclust_full, cellnames = cell_type$cell_type_name)
 
 as.matrix(names(prenatal_gm_all)[colSums(is.na(prenatal_gm_all))!=0]) 
 # [,1]             
@@ -235,8 +315,7 @@ as.matrix(names(prenatal_gm_all)[colSums(is.na(prenatal_gm_all))!=0])
 sum(is.na(prenatal_gm_all$RNA.24.L2.3.CPN))
 #1
 
-#keep complete cases only (ie. omit the row with the NA)
-prenatal_gm_all_full <- prenatal_gm_all[complete.cases(prenatal_gm_all),]
+
 
 #create list object with the prenatal_gm_all expression data and the cell type labels
 prenatal_gm_all_combined <- list(expr = prenatal_gm_all_full, cellnames = cell_type$cell_type_name)
@@ -249,6 +328,125 @@ umap(pollen$data,labels=as.factor(pollen$celltypes),controlscale=TRUE,scale=3)
 umap(prenatal_gm_all_combined$expr, labels=as.factor(prenatal_gm_all_combined$cellnames), controlscale=TRUE, scale=3)
 
 prenatal_gm_all.umap <-umap(prenatal_gm_all_combined$expr, labels=as.factor(prenatal_gm_all_combined$cellnames), controlscale=TRUE, scale=3)
+
+prenatal_cp_all.umap <- umap(prenatal_cp_all_combined$expr, labels = as.factor(prenatal_cp_all_combined$cellnames), controlscale = TRUE, scale =3)
+adult_svz_caudate.umap <- umap(adult_svz_caudate_combined$expr, labels = as.factor(adult_svz_caudate_combined$cellnames), controlscale = TRUE, scale =3 )
+
+adult_neocortex.umap <- umap(adult_neocortex_combined$expr, labels = as.factor(adult_neocortex_combined$cellnames), controlscale = TRUE, scale =3 )
+
+prenatal_gm_subclust.umap<-umap(prenatal_gm_subclust_combined$expr, labels = as.factor(prenatal_gm_subclust_combined$cellnames), controlscale = TRUE, scale =3)
+
+
+prenatal_cp_subclust.umap<-umap(prenatal_cp_subclust_combined$expr, config=custom.config, labels = as.factor(prenatal_cp_subclust_combined$cellnames), controlscale = TRUE, scale =3)
+
+#prenatal_cp_subclust.umap<-umap(prenatal_cp_subclust_combined$expr, labels = as.factor(prenatal_cp_subclust_combined$cellnames), controlscale = TRUE, scale =3)
+
+
+#get umap coordinates into a df
+prenatal_cp_all_umap_coordinates<- prenatal_cp_all.umap[["data"]]
+row.names(cell_type)<-row.names(prenatal_cp_all_umap_coordinates)
+
+adult_svz_caudate_umap_coordinates <- adult_svz_caudate.umap[["data"]]
+row.names(cell_type)<-row.names(adult_svz_caudate_umap_coordinates)
+
+adult_neocortex_umap_coordinates <-adult_neocortex.umap[["data"]]
+row.names(cell_type)<-row.names(adult_neocortex_umap_coordinates)
+
+prenatal_gm_subclust_umap_coordinates <- prenatal_gm_subclust.umap[["data"]]
+row.names(cell_type)<- row.names(prenatal_gm_subclust_umap_coordinates)
+
+prenatal_cp_subclust_umap_coordinates <- prenatal_cp_subclust.umap[["layout"]]
+prenatal_cp_subclust_umap_coordinates<-as.data.frame(prenatal_cp_subclust_umap_coordinates)
+row.names(cell_type)<- row.names(prenatal_gm_subclust_umap_coordinates)
+
+#merge UMAP coordinates and cell type annotations
+combined <- cbind(prenatal_cp_all_umap_coordinates, cell_type)
+combined <- cbind(adult_svz_caudate_umap_coordinates, cell_type)
+combined <- cbind(adult_neocortex_umap_coordinates, cell_type)
+combined <- cbind(prenatal_gm_subclust_umap_coordinates, cell_type)
+combined <- cbind(prenatal_cp_subclust_umap_coordinates, cell_type)
+
+colnames(combined)[1]<-"UMAP1"
+colnames(combined)[2]<-"UMAP2"
+
+#function for plotting coordinates of umap plot where input umap_df is the dataframe
+#holding UMAP x coordinates in column UMAP1 and umap Y coordinates in UMAP2
+#plottitle is plot title
+#color_var is variable for color ie. cell_type_name (cell type label) or FABP7 expression
+plot_umap <-function (umap_df, plottitle){
+   p <- umap_df %>%
+    ggplot(aes(x = UMAP1, 
+               y = UMAP2, 
+               color = cell_type_name
+    ))+
+    geom_point()+
+    labs(x = "UMAP1",
+         y = "UMAP2",
+         subtitle = paste(plottitle))
+   plot(p)
+   
+  #ggsave(paste(plottitle, ".png"))
+   #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
+   png(filename=paste(plottitle,".png"), width=2650, height=2000, res=300)
+   #function that makes the plot
+   plot(p)
+   dev.off()
+}
+
+plot_umap_FABP7 <-function (umap_df, plottitle){
+  p <- umap_df %>%
+    ggplot(aes(x = UMAP1, 
+               y = UMAP2, 
+               color = FABP7
+    ))+
+    geom_point()+
+    labs(x = "UMAP1",
+         y = "UMAP2",
+         subtitle = paste(plottitle))
+  plot(p)
+  
+  #ggsave(paste(plottitle, ".png"))
+  #save as png file, to save as pdf write "pdf", or jpg, write "jpg"; res = resolution
+  png(filename=paste(plottitle,".png"), width=2650, height=2000, res=300)
+  #function that makes the plot
+  plot(p)
+  dev.off()
+}
+
+plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) All Prenatal Cortical Plate UMAP")
+plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Adult SVZ+caudate samples UMAP")
+plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Adult Neocortex samples UMAP")
+plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Prenatal Germinal Matrix Subclustered UMAP")
+plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Prenatal Cortical Plate Subclustered UMAP")
+
+
+#plot FABP7 expression over the UMAP plot
+FABP7_prenatal_cp <- as.data.frame(prenatal_cp_all_full["FABP7",])
+FABP7_prenatal_cp_t <- t(FABP7_prenatal_cp)
+
+FABP7_prenatal_cp_all <- cbind(combined, FABP7_prenatal_cp_t)
+
+plot_umap(umap_df = FABP7_prenatal_cp_all, plottitle = "Ramos et al. (2022) All Prenatal Cortical Plate UMAP - FABP7 Expression")
+
+FABP7_adult_svz_caudate <- adult_svz_caudate["FABP7",]
+FABP7_adult_svz_caudate_t <- t(FABP7_adult_svz_caudate)
+FABP7_adult_sv_caudate <- cbind(combined, FABP7_adult_svz_caudate_t)
+plot_umap_FABP7(umap_df = FABP7_adult_sv_caudate, plottitle = "Ramos et al. (2022) Adult SVZ + Caudate UMAP - FABP7 Expression")
+
+FABP7_adult_neocortex <-adult_neocortex["FABP7",]
+FABP7_adult_neocortex_t <-t(FABP7_adult_neocortex)
+FABP7_adult_neocortex <- cbind(combined, FABP7_adult_neocortex_t)
+plot_umap_FABP7(umap_df = FABP7_adult_neocortex, plottitle = "Ramos et al. (2022) Adult Neocortex UMAP - FABP7 Expression")
+
+FABP7_prenatal_gm_subclust <-prenatal_gm_subclust_full["FABP7",]
+FABP7_prenatal_gm_subclust_t <-t(FABP7_prenatal_gm_subclust)
+FABP7_prenatal_gm_subclust <- cbind(combined, FABP7_prenatal_gm_subclust_t)
+plot_umap_FABP7(umap_df = FABP7_prenatal_gm_subclust, plottitle = "Ramos et al. (2022) Prenatal Germinal Matrix Subclustered - FABP7 Expression")
+
+FABP7_prenatal_cp_subclust <- prenatal_cp_subclust["FABP7",]
+FABP7<- t(FABP7_prenatal_cp_subclust)
+FABP7_prenatal_cp_subclust<- cbind(combined, FABP7)
+plot_umap_FABP7(umap_df = FABP7_prenatal_cp_subclust, plottitle = "Ramos et al. (2022) Prenatal Cortical Plate Subclustered - FABP7 Expression")
 
 #run this command if error "Error in app$vspace(new_style$`margin-top` %||% 0)
 #: attempt to apply non-function" pops up
@@ -299,6 +497,10 @@ set.seed(142)
 #   scale() %>%
 #   umap()
 #   
+
+
+
+
 
 prenatal_gm_t <- prenatal_gm_t[,1:27612]
 prenatal_gm_t_scaled <- scale(prenatal_gm_t)
