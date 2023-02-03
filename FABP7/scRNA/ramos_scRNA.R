@@ -219,22 +219,22 @@ prenatal_cp_subclust$gene<-NULL
 
 #get cell types of the normalized samples
 cell_type<- colnames(prenatal_gm_all)
-cell_type <- as.data.frame(cell_type)
+cell_type_prenatal_gm_all <- as.data.frame(cell_type)
 
 cell_type<-colnames(prenatal_cp_all)
-cell_type<- as.data.frame(cell_type)
+cell_type_prenatal_cp_all<- as.data.frame(cell_type)
 
 cell_type<-colnames(adult_svz_caudate)
-cell_type<- as.data.frame(cell_type)
+cell_type_adult_svz_caudate<- as.data.frame(cell_type)
 
 cell_type<-colnames(adult_neocortex)
-cell_type<- as.data.frame(cell_type)
+cell_type_adult_neocortex<- as.data.frame(cell_type)
 
 cell_type<-colnames(prenatal_gm_subclustered)
-cell_type<- as.data.frame(cell_type)
+cell_type_prenatal_gm_subclustered<- as.data.frame(cell_type)
 
 cell_type<-colnames(prenatal_cp_subclust)
-cell_type<- as.data.frame(cell_type)
+cell_type_prenatal_cp_subclust<- as.data.frame(cell_type)
 
 #keep just the cell type part of the name
 cell_type[,1]<-gsub(".*\\.","", cell_type[,1])
@@ -242,40 +242,66 @@ cell_type[,1]<-gsub(".*\\.","", cell_type[,1])
 #label the cell type of the samples with the full name cell type labels
 cell_type$cell_type_name <- "NA"
 
+
+#function for processing the cell type dataframe
+process_celltype <-function(cell_type_df){
+  
+  cell_type<-as.data.frame(cell_type_df)
+  
+  #keep just the cell type part of the name
+  cell_type[,1]<-gsub(".*\\.","", cell_type[,1])
+  
+  #label the cell type of the samples with the full name cell type labels
+  cell_type$cell_type_name <- "NA"
+  
+  
+  #fill in cell type name based on condition
+  cell_type$cell_type_name[cell_type$cell_type == "AC"] <- "Astrocyte"
+  cell_type$cell_type_name[cell_type$cell_type == "BVC"] <- "Blood vessel cell (endothelium+pericytes)"
+  cell_type$cell_type_name[cell_type$cell_type == "CP"] <- "Choroid plexus"
+  cell_type$cell_type_name[cell_type$cell_type == "CPN"] <- "Cortical projection neuron"
+  cell_type$cell_type_name[cell_type$cell_type == "gIPC"] <- "Glial intermediate progenitor cell"
+  cell_type$cell_type_name[cell_type$cell_type == "IN"] <- "Interneuron"
+  cell_type$cell_type_name[cell_type$cell_type == "MG"] <- "Microglila"
+  cell_type$cell_type_name[cell_type$cell_type == "MSN"] <- "Medium spiny neuron (D1 or D2)"
+  cell_type$cell_type_name[cell_type$cell_type == "nIPC"] <- "Neuronal intermediate progenitor cell"
+  cell_type$cell_type_name[cell_type$cell_type == "OPC"] <- "Oligodendrocyte progenitor/precursor cell"
+  cell_type$cell_type_name[cell_type$cell_type == "SPN"] <- "Subplate neuron"
+  cell_type$cell_type_name[cell_type$cell_type == "TAC"] <- "transit amplifying cell / cycling progenitor"
+  cell_type$cell_type_name[cell_type$cell_type == "UD"] <- "Undefined cell type or lineage"
+  cell_type$cell_type_name[cell_type$cell_type == "EN"] <- "Excitatory neuron"
+  cell_type$cell_type_name[cell_type$cell_type == "CRN"] <- "Cajal Retzius cell"
+  cell_type$cell_type_name[cell_type$cell_type == "OL"] <-"Oligodendrocyte"
+  cell_type$cell_type_name[cell_type$cell_type == "EPD"] <-"Ependymal cell"
+  cell_type$cell_type_name[cell_type$cell_type == "p"] <-"Astrocyte, protoplasmic type"
+  cell_type$cell_type_name[cell_type$cell_type == "pv"] <-"Interneuron.pv"
+  cell_type$cell_type_name[cell_type$cell_type == "5ht"] <-"Interneuron.5ht"
+  cell_type$cell_type_name[cell_type$cell_type == "f"] <-"Astrocyte, fibrous type"
+  cell_type$cell_type_name[cell_type$cell_type == "som"] <-"Interneuron.som"
+  cell_type$cell_type_name[cell_type$cell_type == "Tcell"] <- "T-lymphocyte"
+  cell_type$cell_type_name[cell_type$cell_type =="preOL"] <-"Premyelinating / early myelinating BCAS1+ oligodendrocyte"
+  cell_type$cell_type_name[cell_type$cell_type =="oRG"] <- "Outer radial glia"
+  cell_type$cell_type_name[cell_type$cell_type == "mIPC"]<- "multipotent intermediate progenitor cell"
+  cell_type$cell_type_name[cell_type$cell_type == "O"]<- "Glial intermediate progenitor cell, OPC bias"
+  cell_type$cell_type_name[cell_type$cell_type == "A"]<-"Glial intermediate progenitor cell, Astrocyte bias"
+  cell_type$cell_type_name[cell_type$cell_type == "tRG"]<-"Truncated radial glia"
+  
+  #write cell type to global env
+  cell_type<<-cell_type
+}
+
+cell_type_adult_neocortex<-process_celltype(cell_type_adult_neocortex)
+cell_type_adult_svz_caudate<-process_celltype(cell_type_adult_svz_caudate)
+cell_type_prenatal_cp_all<-process_celltype(cell_type_prenatal_cp_all)
+cell_type_prenatal_cp_subclust<-process_celltype(cell_type_prenatal_cp_subclust)
+cell_type_prenatal_gm_all<-process_celltype(cell_type_prenatal_gm_all)
+cell_type_prenatal_gm_subclustered<-process_celltype(cell_type_prenatal_gm_subclustered)
+
+
 table(cell_type$cell_type)
 # AC  BVC   CP  CPN gIPC   IN   MG  MSN nIPC  OPC  SPN  TAC   UD 
 # 4    1    1   11    1    7    1    2    2    1    3    1    3 
 
-#fill in cell type name based on condition
-cell_type$cell_type_name[cell_type$cell_type == "AC"] <- "Astrocyte"
-cell_type$cell_type_name[cell_type$cell_type == "BVC"] <- "Blood vessel cell (endothelium+pericytes)"
-cell_type$cell_type_name[cell_type$cell_type == "CP"] <- "Choroid plexus"
-cell_type$cell_type_name[cell_type$cell_type == "CPN"] <- "Cortical projection neuron"
-cell_type$cell_type_name[cell_type$cell_type == "gIPC"] <- "Glial intermediate progenitor cell"
-cell_type$cell_type_name[cell_type$cell_type == "IN"] <- "Interneuron"
-cell_type$cell_type_name[cell_type$cell_type == "MG"] <- "Microglila"
-cell_type$cell_type_name[cell_type$cell_type == "MSN"] <- "Medium spiny neuron (D1 or D2)"
-cell_type$cell_type_name[cell_type$cell_type == "nIPC"] <- "Neuronal intermediate progenitor cell"
-cell_type$cell_type_name[cell_type$cell_type == "OPC"] <- "Oligodendrocyte progenitor/precursor cell"
-cell_type$cell_type_name[cell_type$cell_type == "SPN"] <- "Subplate neuron"
-cell_type$cell_type_name[cell_type$cell_type == "TAC"] <- "transit amplifying cell / cycling progenitor"
-cell_type$cell_type_name[cell_type$cell_type == "UD"] <- "Undefined cell type or lineage"
-cell_type$cell_type_name[cell_type$cell_type == "EN"] <- "Excitatory neuron"
-cell_type$cell_type_name[cell_type$cell_type == "CRN"] <- "Cajal Retzius cell"
-cell_type$cell_type_name[cell_type$cell_type == "OL"] <-"Oligodendrocyte"
-cell_type$cell_type_name[cell_type$cell_type == "EPD"] <-"Ependymal cell"
-cell_type$cell_type_name[cell_type$cell_type == "p"] <-"Astrocyte, protoplasmic type"
-cell_type$cell_type_name[cell_type$cell_type == "pv"] <-"Interneuron.pv"
-cell_type$cell_type_name[cell_type$cell_type == "5ht"] <-"Interneuron.5ht"
-cell_type$cell_type_name[cell_type$cell_type == "f"] <-"Astrocyte, fibrous type"
-cell_type$cell_type_name[cell_type$cell_type == "som"] <-"Interneuron.som"
-cell_type$cell_type_name[cell_type$cell_type == "Tcell"] <- "T-lymphocyte"
-cell_type$cell_type_name[cell_type$cell_type =="preOL"] <-"Premyelinating / early myelinating BCAS1+ oligodendrocyte"
-cell_type$cell_type_name[cell_type$cell_type =="oRG"] <- "Outer radial glia"
-cell_type$cell_type_name[cell_type$cell_type == "mIPC"]<- "multipotent intermediate progenitor cell"
-cell_type$cell_type_name[cell_type$cell_type == "O"]<- "Glial intermediate progenitor cell, OPC bias"
-cell_type$cell_type_name[cell_type$cell_type == "A"]<-"Glial intermediate progenitor cell, Astrocyte bias"
-cell_type$cell_type_name[cell_type$cell_type == "tRG"]<-"Truncated radial glia"
 
 
 cell_type$cell_type_name<- as.factor(cell_type$cell_type_name)
@@ -418,6 +444,61 @@ plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Adult SVZ+caudate
 plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Adult Neocortex samples UMAP")
 plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Prenatal Germinal Matrix Subclustered UMAP")
 plot_umap(umap_df = combined, plottitle = "Ramos et al. (2022) Prenatal Cortical Plate Subclustered UMAP")
+
+#function for extracting FABP7 expression from the RNA seq dataframes
+#and merging with the cell types dataframe
+#input rna_seq_df is the RNA seq dataframe ie. "prenatal_gm_all_full" dataframe
+#input cell_type_df is the cell type dataframe containing the cell types
+fabp7_processing<-function(rna_seq_df, cell_type_df){
+  FABP7<-as.data.frame(rna_seq_df["FABP7",])
+  FABP7_t <- t(FABP7)
+  row.names(cell_type_df)<- colnames(rna_seq_df)
+  combined <- cbind(FABP7_t, cell_type_df)
+  return(combined)
+}
+
+#extract FABP7 expression and combine cell type annotations
+combined_prenatal_cp_all <-fabp7_processing(rna_seq_df = prenatal_cp_all_full, cell_type_df = cell_type_prenatal_cp_all)
+combined_prenatal_cp_subclustered <- fabp7_processing(rna_seq_df = prenatal_cp_subclust_full, cell_type_df = cell_type_prenatal_cp_subclust)
+combined_prenatal_gm_all <- fabp7_processing(rna_seq_df = prenatal_gm_all_full, cell_type_df = cell_type_prenatal_gm_all)
+combined_prenatal_gm_subclust<- fabp7_processing(rna_seq_df = prenatal_gm_subclust_full, cell_type_df = cell_type_prenatal_gm_subclustered)
+combined_adult_neocortex<-fabp7_processing(rna_seq_df = adult_neocortex_full, cell_type_df = cell_type_adult_neocortex)
+combined_adult_svz_caudate <- fabp7_processing(rna_seq_df = adult_svz_caudate_full, cell_type_df = cell_type_adult_svz_caudate)
+
+#function for plotting FABP7 histogram from the different Ramos et al scRNA seq matrices
+#input combined_fabp7 is the dataframe extracted for FABP7 expression and which also contains a column
+#for cell type
+plot_fabp7_histogram<-function(combined_fabp7, plottitle){
+  p <-ggplot(combined_fabp7, aes(x = cell_type_name, 
+                                           y = FABP7, color = cell_type_name))+
+    geom_boxplot()+
+    geom_jitter(color = "black", size = 0.7, alpha=0.9) +
+    labs(x = "Cell Type",
+         y = "FABP7 Expression (Combined Log-Normalized Average Expression)",
+         subtitle = paste(plottitle))
+  
+  plot(p) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+}
+
+#plot FABP7 
+plot_fabp7_histogram(combined_fabp7 = combined_prenatal_gm_all, plottitle = "Ramos et al (2022) FABP7 Expression in Prenatal Germinal Matrix All")
+plot_fabp7_histogram(combined_fabp7 = combined_prenatal_gm_subclust, plottitle = "Ramos et al (2022) FABP7 Expression in Prenatal Germinal Matrix Subclustered")
+plot_fabp7_histogram(combined_fabp7 = combined_prenatal_cp_subclustered, plottitle = "Ramos et al (2022) FABP7 Expression in Prenatal Cortical Plate Subclustered")
+plot_fabp7_histogram(combined_fabp7 = combined_prenatal_cp_all, plottitle = "Ramos et al (2022) FABP7 Expression in Prenatal Cortical Plate All")
+plot_fabp7_histogram(combined_fabp7 = combined_adult_neocortex, plottitle = "Ramos et al (2022) FABP7 Expression in Adult Neocortex")
+plot_fabp7_histogram(combined_fabp7 = combined_adult_svz_caudate, plottitle = "Ramos et al (2022) FABP7 Expression in Adult Subventricular Zone + Caudate")
+
+ 
+p <-ggplot(combined_prenatal_gm_all, aes(x = cell_type_name, 
+                           y = FABP7, color = cell_type_name))+
+  geom_boxplot()+
+  geom_jitter(color = "black", size = 0.7, alpha=0.9) +
+  labs(x = "Cell Type",
+       y = "FABP7 Expression (Combined Log-Normalized Average Expression",
+       subtitle = paste("Ramos et al (2022) FABP7 Expression in Prenatal Germinal Matrix All"))
+
+plot(p) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
 #plot FABP7 expression over the UMAP plot
