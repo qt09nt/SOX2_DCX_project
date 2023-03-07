@@ -343,8 +343,10 @@ head(cluster10.markers, n = 5)
 GSM6720852.markers <- FindAllMarkers(GSM6720852, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 
 saveRDS(GSM6720852.markers, "GSM6720852_markers_march_1_settings.rds")
+GSM6720852.markers <-readRDS("GSM6720852_markers_march_1_settings.rds")
 
-GSM6720852.markers <- FindAllMarkers(GSM6720852, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 2)
+
+#GSM6720852.markers <- FindAllMarkers(GSM6720852, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 2)
 
 GSM6720852.markers %>%
   group_by(cluster) %>%
@@ -421,6 +423,16 @@ GSM6720852_top10_markers <-GSM6720852.markers %>%
 
 #write these results to a file
 write.csv(GSM6720852_top10_markers, "GSM6720852_top10_markers.csv", quote = F)
+
+#March 6 Try looking at top 20 genes per cluster to better annotate cluster types 
+#return top 10 markers for clusters 1:20 and create a dataframe
+GSM6720852_top20_markers <-GSM6720852.markers %>%
+  group_by(cluster) %>%
+  slice_max(n =20, order_by = avg_log2FC) %>%    #10 gene markers per cluster
+  print(n = 400)                                 #10 genes x 21 clusters = 210
+
+write.csv(GSM6720852_top20_markers, "GSM6720852_top20_markers.csv", quote = F)
+
 
 # A tibble: 42 x 7
 # Groups:   cluster [21]
@@ -523,4 +535,51 @@ FeaturePlot(GSM6720852, features=c("FABP7"))
 
 #Assigning Cell Type Identity to Clusters
 
+GSM6720852_top10_markers<- read.csv("GSM6720852_top10_markers.csv")
 
+GSM6720852_top10_markers[1]<-NULL
+
+GSM6720852_top10_markers %>%
+  group_by(cluster, cell_type) %>%
+  summarise() %>%
+  print(n = 21)
+
+# A tibble: 21 x 2
+# # Groups:   cluster [21]
+#   cluster cell_type
+# <int> <chr>    
+# 1       0 mIPCs    
+# 2       1 gIPC     
+# 3       2 UD       
+# 4       3 UD       
+# 5       4 gIPC-A   
+# 6       5 UD       
+# 7       6 L2/L3 CPN
+# 8       7 CPN      
+# 9       8 UD       
+# 10      9 UD       
+# 11      10 UD       
+# 12      11 mIPCs    
+# 13      12 UD       
+# 14      13 TAC      
+# 15      14 IN       
+# 16      15 AC       
+# 17      16 UD       
+# 18      17 gIPC-O   
+# 19      18 gIPC-O   
+# 20      19 UD       
+# 21      20 UD   
+
+#look up in what type of cells in RNA single cell atlas the top 20 gene markers are expressed
+#to help identify the cells for cluster annotation
+
+#rename cluster 5 cell type to "OPC"
+GSM6720852_top10_markers$cell_type[GSM6720852_top10_markers$cluster == "OPC"]<-"OPC"
+GSM6720852_top10_markers$cluster[GSM6720852_top10_markers$cluster == "OPC"]<-"5"
+
+#rename cluster 8 to microglial cells/"MG"
+GSM6720852_top10_markers$cell_type[GSM6720852_top10_markers$cluster == 8]<-"MG"
+
+
+
+df$id[df$id == 40] <- 55
