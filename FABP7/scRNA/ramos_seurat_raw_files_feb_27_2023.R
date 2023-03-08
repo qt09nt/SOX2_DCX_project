@@ -433,6 +433,7 @@ GSM6720852_top20_markers <-GSM6720852.markers %>%
 
 write.csv(GSM6720852_top20_markers, "GSM6720852_top20_markers.csv", quote = F)
 
+GSM6720852_top20_markers<-read.csv("GSM6720852_top20_markers.csv")
 
 # A tibble: 42 x 7
 # Groups:   cluster [21]
@@ -539,7 +540,7 @@ GSM6720852_top10_markers<- read.csv("GSM6720852_top10_markers.csv")
 
 GSM6720852_top10_markers[1]<-NULL
 
-GSM6720852_top10_markers %>%
+cluster_annotations <-GSM6720852_top10_markers %>%
   group_by(cluster, cell_type) %>%
   summarise() %>%
   print(n = 21)
@@ -574,12 +575,75 @@ GSM6720852_top10_markers %>%
 #to help identify the cells for cluster annotation
 
 #rename cluster 5 cell type to "OPC"
-GSM6720852_top10_markers$cell_type[GSM6720852_top10_markers$cluster == "OPC"]<-"OPC"
-GSM6720852_top10_markers$cluster[GSM6720852_top10_markers$cluster == "OPC"]<-"5"
+cluster_annotations$cell_type[cluster_annotations$cluster == "5"]<-"OPC"
 
 #rename cluster 8 to microglial cells/"MG"
-GSM6720852_top10_markers$cell_type[GSM6720852_top10_markers$cluster == 8]<-"MG"
+cluster_annotations$cell_type[cluster_annotations$cluster == "8"]<- "MG"
+
+#rename cluster 10 to subplate neurons
+cluster_annotations$cell_type[cluster_annotations$cluster == "9"]<- "UD"
+cluster_annotations$cell_type[cluster_annotations$cluster == "10"]<- "CPN, SPN, CRN"
+
+#Rename cluster 12 to gIPC, since one of its differentiated gene markers is 
+#SLC24A3 (figure 2C)
+cluster_annotations$cell_type[cluster_annotations$cluster == "12"]<- "gIPC"
+
+#rename cluster 16 to Radial Glia according to Enrichr Cell Type
+cluster_annotations$cell_type[cluster_annotations$cluster == "16"]<- "RG"
+
+#rename cluster 19 to Astrocytes from Enrichr Cell Type results
+cluster_annotations$cell_type[cluster_annotations$cluster == "19"]<- "AC"
+
+#rename cluster 20 to Microglial cell from Enricher Cell Type results
+cluster_annotations$cell_type[cluster_annotations$cluster == "20"]<- "MG"
+
+#cluster 2 Cajal-Retzius Cells at adj pvalue of 0.01423 from PanglaoDB Augmented 2021
+#or Oligodendrocyte:Brain at adj p value of 0.009727 from CellMarker Augmented 2021  
+#at Enrichr 
+#maybe leave as undefined for now
+#cluster_annotations$cell_type[cluster_annotations$cluster == "2"]
+
+#cluster 3 Cajal-Retzius cells at adj pvalue of 0.01753 from PanglaoDB Augmented 2021 EnrichR
+cluster_annotations$cell_type[cluster_annotations$cluster == "3"]<- "CPN, SPN, CRN"
+
+#create a column for cell type names in full
+# [1] "mIPCs"         "gIPC"          "UD"            "CPN, SPN, CRN" "gIPC-A"       
+# [6] "OPC"           "L2/L3 CPN"     "CPN"           "MG"            "UD"           
+# [11] "CPN, SPN, CRN" "mIPCs"         "gIPC"          "TAC"           "IN"           
+# [16] "AC"            "RG"            "gIPC-O"        "gIPC-O"        "AC"           
+# [21] "MG"   
+
+cluster_annotations$cell_name <- c("multipotent intermediate progenitor cell", "glial intermediate progenitor cell", "undefined", "cortical projection neuron, subplate neuron, Cajal Retzius cell", 
+                                   "glial intermediate progenitor cell - astrocytic", "oligodendrocyte progenitor cell",
+                                   "L2/L3 neocortical layers 2/3", "cortical projection neuron", "microglia", "undefined",
+                                   "Cajal Retzius cell,  cortical projection neuron, subplate neuron", "multipotent intermediate progenitor neurons",
+                                   "glial intermediate progenitor neurons", "transit-amplifying cell/cycling progenitor", "interneuron",
+                                   "astrocyte", "radial glia", "glial intermediate progenitor cell - oligodendrocyte", 
+                                   "glial intermediate progenitor cell - oligodendrocyte", "astrocyte", "microglia")
+
+cluster_annotations$cell_type
 
 
+write.csv(cluster_annotations, "GSM6720852_cluster_annotations.csv")
 
-df$id[df$id == 40] <- 55
+cluster_annotations <- read.csv("GSM6720852_cluster_annotations.csv")
+
+names(GSM6720852.cluster.ids) <- levels(GSM6720852)
+GSM6720852 <- RenameIdents(GSM6720852, GSM6720852.cluster.ids)
+DimPlot(GSM6720852, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+
+#name clusters by cell type full names
+GSM6720852.cluster.ids <- cluster_annotations$cell_name
+
+#name clusters by cell type abbreviations
+cluster_annotations$cell_type
+
+GSM6720852.cluster.ids.abbrevs <- c("mIPCs", "gIPC", "UD", "CPN, SPN, CRN", "gIPC-A",       
+                                    "OPC",           "L2/L3 CPN",     "CPN",           "MG",            "UD",           
+                                    "CPN, SPN, CRN", "mIPCs",         "gIPC",          "TAC",           "IN",           
+                                    "AC",            "RG",            "gIPC-O",        "gIPC-O",        "AC",           
+                                    "MG")
+
+names(GSM6720852.cluster.ids.abbrevs) <- levels(GSM6720852)
+GSM6720852 <- RenameIdents(GSM6720852, GSM6720852.cluster.ids.abbrevs)
+DimPlot(GSM6720852, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
