@@ -1,6 +1,4 @@
 #written by Alberto Leon
-#modified by Queenie Tsang 
-#march 14 2023
 
 #curl --remote-name --remote-time ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE174nnn/GSE174554/suppl/GSE174554_RAW.tar
 #mkdir GSE174554_RAW && tar xf GSE174554_RAW.tar -C GSE174554_RAW
