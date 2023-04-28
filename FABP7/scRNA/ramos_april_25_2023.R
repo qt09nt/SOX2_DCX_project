@@ -198,22 +198,32 @@ for(sample.curr in samples){
     pbmc<-RenameIdents(pbmc, new.cluster.ids.azimuth)
     DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5)
     
-    ####Perform Differential Expression Analysis between clusters where FABP7 expression is 
-    #relatively high (0, 1, 2, 3, 4, 7, 22, 26) with other clusters that are the same cell type 
-    #but have low FABP7 expression (11, 8, 16, 12, 18)
+    ####Perform Differential Expression Analysis between Glutamatergic neuron clusters where FABP7 expression is 
+    #relatively high (0, 1, 2, 3, 4, 6, 7, 22, 26) with other clusters that are the same cell type Glutamatergic neurons
+    #that have low FABP7 expression (11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13)
+    #https://satijalab.org/seurat/articles/de_vignette.html  
     
     cluster11.markers <- FindMarkers(pbmc, ident.1 = 11, ident.2 = c(0, 1,2, 3, 4, 7, 22, 26), min.pct =0.25)
     
     #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
-    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18), ident.2 = c(0,1,2,3,4,7,22,26), min.pct =0.25)
+    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), ident.2 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), min.pct =0.25)
     
-    #differential expression analysis of 
-    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18), ident.2 = c(0,1,2,3,4,7,22,26), min.pct =0.25)
+    #differential expression analysis of low FABP7 clusters of glutamatergic neurons, report only positive  ones (only.pos = TRUE)
+    clusterFABP7_low_pos.markers <- FindMarkers(pbmc, only.pos = TRUE, ident.1 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), ident.2 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), min.pct =0.25)
+    
+    ####### to do: do some pre-filtering for the differential expression analysis
     
     
+    #view results 
+    head(clusterFABP7_low.markers)
     
-    
-    
+    # The results data frame has the following columns :
+    #   
+    # p_val : p_val (unadjusted)
+    # avg_log2FC : log fold-change of the average expression between the two groups. Positive values indicate that the feature is more highly expressed in the first group.
+    # pct.1 : The percentage of cells where the feature is detected in the first group
+    # pct.2 : The percentage of cells where the feature is detected in the second group
+    # p_val_adj : Adjusted p-value, based on Bonferroni correction using all features in the dataset.
     
     
     
