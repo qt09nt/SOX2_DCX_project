@@ -103,9 +103,15 @@ for(sample.curr in samples){
     saveRDS(pbmc, "GSM6720853.rds")
     pbmc<-readRDS("GSM6720853.rds")
     
-    #optional do a heatmap for top 10 genes per cluster
+   
+    ## find markers for every cluster compared to all remaining cells, 
+    #report only the positive # ones
     pbmc.markers <- FindAllMarkers(pbmc, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
     
+    #save the cluster marker genes as RDS file
+    saveRDS(pbmc.markers, "GSM6720853_markers.rds")
+    
+    #heatmap for top 5 genes per cluster
     pbmc.markers %>%
       group_by(cluster) %>%
       top_n(n = 5, wt = avg_log2FC) -> top5
@@ -118,9 +124,12 @@ for(sample.curr in samples){
     pdf(file = paste0("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/", sample.curr, "_top5_gene_markers.pdf"),
         width = 12, height = 8)
     
-    
+############################# Cell Type Annotations    
     #April 25, 2023 try labelling with one databases' results at a time
    #PanglaoDB Augmented 2021
+    #April 27 2023 EDIT: PanglaoDB annotations are not as relevant for this dataset
+    #since Purkinje Fiber Cells are part of the Cerebellum and this sample is taken from the
+    #germinal matrix
     new.cluster.ids.panglaoDB<-c("Purkinje Fiber Cells",	
                                  "Purkinje Fiber Cells",	
                                  "Purkinje Fiber Cells",	
@@ -188,6 +197,29 @@ for(sample.curr in samples){
     names(new.cluster.ids.azimuth)<-levels(pbmc)
     pbmc<-RenameIdents(pbmc, new.cluster.ids.azimuth)
     DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5)
+    
+    ####Perform Differential Expression Analysis between clusters where FABP7 expression is 
+    #relatively high (0, 1, 2, 3, 4, 7, 22, 26) with other clusters that are the same cell type 
+    #but have low FABP7 expression (11, 8, 16, 12, 18)
+    
+    cluster11.markers <- FindMarkers(pbmc, ident.1 = 11, ident.2 = c(0, 1,2, 3, 4, 7, 22, 26), min.pct =0.25)
+    
+    #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
+    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18), ident.2 = c(0,1,2,3,4,7,22,26), min.pct =0.25)
+    
+    #differential expression analysis of 
+    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18), ident.2 = c(0,1,2,3,4,7,22,26), min.pct =0.25)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     seurat.clust<-pbmc@meta.data$seurat_clusters
