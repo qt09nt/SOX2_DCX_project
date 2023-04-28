@@ -213,6 +213,11 @@ for(sample.curr in samples){
     
     ####### to do: do some pre-filtering for the differential expression analysis
     
+    #save DE analysis results between FABP7 low Glutamatergic neurons vs the high FABP7 glutamatergic neurons
+    #unfiltered DE results
+    saveRDS(clusterFABP7_low.markers, "clusterFABP7_low.markers_unfiltered.rds")
+    saveRDS(clusterFABP7_low_pos.markers, "clusterFABP7_low_pos.markers_unfiltered.rds")
+    
     
     #view results 
     head(clusterFABP7_low.markers)
