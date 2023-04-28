@@ -6,6 +6,11 @@ library(ggplot2)
 library(data.table)
 library(tidyr)
 library(Matrix)
+library(ggrepel)
+
+setwd("C:/Users/Diamandis Lab II/Documents/Queenie")
+
+source("ramos_functions.R")
 
 #install.packages("enrichR")
 
@@ -203,6 +208,13 @@ for(sample.curr in samples){
     #that have low FABP7 expression (11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13)
     #https://satijalab.org/seurat/articles/de_vignette.html  
     
+    # Perform default differential expression tests
+    # 
+    # The bulk of Seurat’s differential expression features can be accessed through the FindMarkers() function. As a default,
+    # Seurat performs differential expression based on the non-parametric Wilcoxon rank sum test. This replaces the previous 
+    # default test (‘bimod’). To test for differential expression between two specific groups of cells, specify the ident.1 and
+    # ident.2 parameters.
+    
     cluster11.markers <- FindMarkers(pbmc, ident.1 = 11, ident.2 = c(0, 1,2, 3, 4, 7, 22, 26), min.pct =0.25)
     
     #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
@@ -222,20 +234,46 @@ for(sample.curr in samples){
     #view results 
     head(clusterFABP7_low.markers)
     
+    # Prefilter features or cells to increase the speed of DE testing
+    # 
+    # To increase the speed of marker discovery, particularly for large datasets, Seurat allows for pre-filtering of 
+    # features or cells. For example, features that are very infrequently detected in either group of cells, or features
+    # that are expressed at similar average levels, are unlikely to be differentially expressed. Example use cases of 
+    # the min.pct, logfc.threshold, min.diff.pct, and max.cells.per.ident parameters are demonstrated below.
+    
     # The results data frame has the following columns :
     #   
     # p_val : p_val (unadjusted)
-    # avg_log2FC : log fold-change of the average expression between the two groups. Positive values indicate that the feature is more highly expressed in the first group.
+    # avg_log2FC : log fold-change of the average expression between the two groups. 
+    # Positive values indicate that the feature is more highly expressed in the first group.
     # pct.1 : The percentage of cells where the feature is detected in the first group
     # pct.2 : The percentage of cells where the feature is detected in the second group
     # p_val_adj : Adjusted p-value, based on Bonferroni correction using all features in the dataset.
     
     
+    #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
+    #filter features that have less than a two-fold change betwen the average expression of low FABP7 glutamatergic
+    #neurons and the high FABP7 glutamatergic neurons
+    #log2(2) = 1
+    clusterFABP7_low_log2.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), 
+                                            ident.2 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), min.pct =0.25, logfc.threshold = log(2) )
     
     
     
+    #### try pathway analysis 
+    #https://jackbibby1.github.io/SCPA/index.html
+    
+    colnames(clusterFABP7_low_log2.markers)
+    #"p_val"      "avg_log2FC" "pct.1"      "pct.2"      "p_val_adj"
+    
+    #make a column for the genes
+    clusterFABP7_low_log2.markers$gene <-row.names(clusterFABP7_low_log2.markers)
+    
+    saveRDS(clusterFABP7_low_log2.markers, "clusterFABP7_low_log2.markers.RDS")
     
     
+    #plot the differentially expressed genes on a volcano plot
+    volcano_ggplot(top_table = clusterFABP7_low_log2.markers, p_value_cutoff = 0.1, subtitle="")
     
     seurat.clust<-pbmc@meta.data$seurat_clusters
     
