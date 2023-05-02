@@ -7,6 +7,13 @@ library(data.table)
 library(tidyr)
 library(Matrix)
 library(ggrepel)
+library(EnhancedVolcano)
+
+
+if (!requireNamespace('BiocManager', quietly = TRUE))
+  install.packages('BiocManager')
+
+BiocManager::install('EnhancedVolcano')
 
 setwd("C:/Users/Diamandis Lab II/Documents/Queenie")
 
@@ -231,6 +238,7 @@ for(sample.curr in samples){
     saveRDS(clusterFABP7_low_pos.markers, "clusterFABP7_low_pos.markers_unfiltered.rds")
     
     
+    
     #view results 
     head(clusterFABP7_low.markers)
     
@@ -252,12 +260,20 @@ for(sample.curr in samples){
     
     
     #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
-    #filter features that have less than a two-fold change betwen the average expression of low FABP7 glutamatergic
+    #filter features that have less than a two-fold change between the average expression of low FABP7 glutamatergic
     #neurons and the high FABP7 glutamatergic neurons
     #log2(2) = 1
     clusterFABP7_low_log2.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), 
                                             ident.2 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), min.pct =0.25, logfc.threshold = log(2) )
     
+    #try to see if can compare the group of low FABP7 clusters to the higher FABP7 clusters Glutamatergic neurons
+    #Pre-filter features that are detected at <25% frequency in either low FABP7 Glutamatergic neurons or higher FABP7 Glutamatergic neurons
+    clusterFABP7_low.markers <- FindMarkers(pbmc, ident.1 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), ident.2 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), min.pct =0.25)
+    
+    #compare high FABP7 expression glutamatergic neurons clusters with clusters of low FABP7 expression  glutamatergic neurons
+    clusterFABP7_high.markers <- FindMarkers(pbmc, ident.1 =c(0, 1, 2, 3, 4, 6, 7, 22, 26), ident.2 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), min.pct =0.25)
+    
+    saveRDS(clusterFABP7_high.markers, "clusterFABP7_high.markers.rds")
     
     
     #### try pathway analysis 
@@ -270,10 +286,44 @@ for(sample.curr in samples){
     clusterFABP7_low_log2.markers$gene <-row.names(clusterFABP7_low_log2.markers)
     
     saveRDS(clusterFABP7_low_log2.markers, "clusterFABP7_low_log2.markers.RDS")
+    readRDS("clusterFABP7_low_log2.markers.RDS")
+    
+    options(ggrepel.max.overlaps = Inf)
     
     
     #plot the differentially expressed genes on a volcano plot
-    volcano_ggplot(top_table = clusterFABP7_low_log2.markers, p_value_cutoff = 0.1, subtitle="")
+    #https://bioconductor.org/packages/devel/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html
+    
+    volcano_ggplot(top_table = clusterFABP7_low_log2.markers, p_value_cutoff = 0.1, subtitle="") 
+    
+    #######try plotting with Enhanced Volcano Plot package instead
+    EnhancedVolcano(clusterFABP7_low_log2.markers,
+                    lab = rownames(clusterFABP7_low_log2.markers),
+                    subtitle = "Ramos et al (2022) GSM6720853", 
+                    title = "low FABP7 expression Glutamatergic Neuron Clusters vs high FABP7 Glutamatergic Neuron Clusters ",
+                    FCcutoff = 0.5,
+                    x = 'avg_log2FC',
+                    y = 'p_val_adj')
+    
+    EnhancedVolcano(clusterFABP7_low.markers,
+                    lab = rownames(clusterFABP7_low.markers),
+                    subtitle = "Ramos et al (2022) GSM6720853", 
+                    title = "low FABP7 expression Glutamatergic Neuron Clusters vs high FABP7 Glutamatergic Neuron Clusters ",
+                    FCcutoff = 0.5,
+                    pCutoff = 0.05,
+                    x = 'avg_log2FC',
+                    y = 'p_val_adj')
+    
+    #plot the volcano plot of diff expr between high FABP7 glutamatergic neuron clusters vs low FABP7 glutamatergic neuron clusters
+    EnhancedVolcano(clusterFABP7_low.markers,
+                    lab = rownames(clusterFABP7_high.markers),
+                    subtitle = "Ramos et al (2022) GSM6720853", 
+                    title = "high FABP7 expression Glutamatergic Neuron Clusters vs low FABP7 Glutamatergic Neuron Clusters ",
+                    FCcutoff = 0.5,
+                    pCutoff = 0.05,
+                    x = 'avg_log2FC',
+                    y = 'p_val_adj')
+    
     
     seurat.clust<-pbmc@meta.data$seurat_clusters
     
