@@ -137,6 +137,11 @@ for(sample.curr in samples){
         width = 12, height = 8)
     
 ############################# Cell Type Annotations    
+    #The list of 500 most differentially expressed genes were calculated for each cluster from lines 331 to 
+    #lines 338.
+    #This list of genes for each cluster was then input into Enrichr at https://maayanlab.cloud/Enrichr/
+    #Cell Type Annotations were retrieved from the Cell Types tab results page for the different databases
+    
     #April 25, 2023 try labelling with one databases' results at a time
    #PanglaoDB Augmented 2021
     #April 27 2023 EDIT: PanglaoDB annotations are not as relevant for this dataset
@@ -274,7 +279,12 @@ for(sample.curr in samples){
     clusterFABP7_high.markers <- FindMarkers(pbmc, ident.1 =c(0, 1, 2, 3, 4, 6, 7, 22, 26), ident.2 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), min.pct =0.25)
     
     saveRDS(clusterFABP7_high.markers, "clusterFABP7_high.markers.rds")
+    clusterFABP7_high.markers <-readRDS("clusterFABP7_high.markers.rds")
     
+    #results of diff expr wilcoxon rank sum test
+    write.csv(clusterFABP7_high.markers, "clusterFABP7_high.markers.csv")
+    
+    write.csv(clusterFABP7_high_markers_t_test, "clusterFABP7_high_markers_t_test.csv")
     
     #### try pathway analysis 
     #https://jackbibby1.github.io/SCPA/index.html
@@ -285,10 +295,14 @@ for(sample.curr in samples){
     #make a column for the genes
     clusterFABP7_low_log2.markers$gene <-row.names(clusterFABP7_low_log2.markers)
     
+    
     saveRDS(clusterFABP7_low_log2.markers, "clusterFABP7_low_log2.markers.RDS")
     readRDS("clusterFABP7_low_log2.markers.RDS")
     
     options(ggrepel.max.overlaps = Inf)
+    
+    #try to do the differential express test using t-test instead of the default Wilcoxon Rank Sum
+    clusterFABP7_high_markers_t_test<-FindMarkers(pbmc, ident.1 = c(0, 1, 2, 3, 4, 6, 7, 22, 26), ident.2 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), test.use = "t")
     
     
     #plot the differentially expressed genes on a volcano plot
@@ -315,14 +329,41 @@ for(sample.curr in samples){
                     y = 'p_val_adj')
     
     #plot the volcano plot of diff expr between high FABP7 glutamatergic neuron clusters vs low FABP7 glutamatergic neuron clusters
-    EnhancedVolcano(clusterFABP7_low.markers,
+    EnhancedVolcano(clusterFABP7_high.markers,
                     lab = rownames(clusterFABP7_high.markers),
                     subtitle = "Ramos et al (2022) GSM6720853", 
                     title = "high FABP7 expression Glutamatergic Neuron Clusters vs low FABP7 Glutamatergic Neuron Clusters ",
                     FCcutoff = 0.5,
                     pCutoff = 0.05,
                     x = 'avg_log2FC',
-                    y = 'p_val_adj')
+                    y = 'p_val_adj',
+                    ylim = c(-5, 400))
+    
+    #plot differentially expressed genes between high FABP7 expression glutamatergic neuron clusters
+    #and low FABP7 expression glutamatergic neuron clusters using Seurat FindMarkers() t-test
+    enhanced_volcano(diff_expr_table = clusterFABP7_high_markers_t_test)
+    
+    #try to do pathway analysis on the FABP7 low expression glutamatergic neuron clusters and the 
+    #high FABP7 expression glutamatergic neuron clusters
+    #https://bioconductor.org/packages/release/bioc/vignettes/ReactomeGSA/inst/doc/analysing-scRNAseq.html
+    
+    #Visualize the expression of the differentially expressed genes which are high in the high FABP7 glutamatergic neuron clusters
+    FeaturePlot(pbmc, features = c("STMN1", "RPL13", "MARCKSL1", "MT-CYB", "HSP90AA1", "PSIP1", "SOX4"), cols =c("darkgreen", "red"))
+    
+    #Visualize the expression of the differentially expressed genes which are high in the low FABP7 glutamatergic neuron clusters
+    FeaturePlot(pbmc, features = c("UBE4B", "RERE", "RGS7", "MSRA", "RBFOX1", "LRP1B", "ANK2", "PBX1", "SSBP2", "LRRC4C", "LSAMP"), cols =c("darkgreen", "red"))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     seurat.clust<-pbmc@meta.data$seurat_clusters
