@@ -279,6 +279,9 @@ for(sample.curr in samples){
     clusterFABP7_high.markers <- FindMarkers(pbmc, ident.1 =c(0, 1, 2, 3, 4, 6, 7, 22, 26), ident.2 = c(11, 8, 16, 12, 18, 9, 20, 25, 19, 23, 13, 5), min.pct =0.25)
     
     saveRDS(clusterFABP7_high.markers, "clusterFABP7_high.markers.rds")
+    
+    clusterFABP7_high.markers<-readRDS("clusterFABP7_high.markers.rds")
+    
     clusterFABP7_high.markers <-readRDS("clusterFABP7_high.markers.rds")
     
     #results of diff expr wilcoxon rank sum test
@@ -337,7 +340,23 @@ for(sample.curr in samples){
                     pCutoff = 0.05,
                     x = 'avg_log2FC',
                     y = 'p_val_adj',
+                    ylab = bquote(~-Log[10] ~ italic("adjusted p-value")),  #label the y axis label as -log10(adjusted p-value)
                     ylim = c(-5, 400))
+    
+    #
+    #plot differentially expressed genes between high FABP7 expression glutamatergic neuron clusters
+    #and low FABP7 expression glutamatergic neuron clusters using Seurat FindMarkers() Wilcoxon rank sum test
+    #on y axis plot the original p values 
+    enhanced_volcano(diff_expr_table = clusterFABP7_high.markers)
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     #plot differentially expressed genes between high FABP7 expression glutamatergic neuron clusters
     #and low FABP7 expression glutamatergic neuron clusters using Seurat FindMarkers() t-test
@@ -347,23 +366,74 @@ for(sample.curr in samples){
     #high FABP7 expression glutamatergic neuron clusters
     #https://bioconductor.org/packages/release/bioc/vignettes/ReactomeGSA/inst/doc/analysing-scRNAseq.html
     
-    #Visualize the expression of the differentially expressed genes which are high in the high FABP7 glutamatergic neuron clusters
+    #Visualize the expression of the differentially expressed genes which are high in the high FABP7 glutamatergic neuron clusters on UMAP plots
     FeaturePlot(pbmc, features = c("STMN1", "RPL13", "MARCKSL1", "MT-CYB", "HSP90AA1", "PSIP1", "SOX4"), cols =c("darkgreen", "red"))
     
-    #Visualize the expression of the differentially expressed genes which are high in the low FABP7 glutamatergic neuron clusters
+    #Visualize the expression of the differentially expressed genes which are high in the low FABP7 glutamatergic neuron clusters on UMAP plots
     FeaturePlot(pbmc, features = c("UBE4B", "RERE", "RGS7", "MSRA", "RBFOX1", "LRP1B", "ANK2", "PBX1", "SSBP2", "LRRC4C", "LSAMP"), cols =c("darkgreen", "red"))
     
+    features.low <-c("UBE4B", "RERE", "RGS7", "MSRA", "RBFOX1", "LRP1B")
+      
+    ## try out different visualization methods May 5 2023
+    RidgePlot(pbmc, features = features.low, ncol = 2)
+    
+    #################Pathway Analysis
+    ################## get list of genes upregulated in the FABP7 high expression glutamatergic neurons group
+    #sort by log 2 FC 
+    
+    websiteLive <- getOption("enrichR.live")
+    if (websiteLive) {
+      listEnrichrSites()
+      setEnrichrSite("Enrichr") # Human genes   
+    }
+    
+    high_FABP7_genes <- clusterFABP7_high.markers[clusterFABP7_high.markers$avg_log2FC >= 0.5, ]
+    
+    low_FABP7_genes <- clusterFABP7_high.markers[clusterFABP7_high.markers$avg_log2FC <= -0.5, ]
+    
+    high_FABP7_genes_list<-row.names(high_FABP7_genes)
+    low_FABP7_genes_list<-row.names(low_FABP7_genes)
     
     
+    #select favourite databases
+    dbs <- c("GO_Molecular_Function_2015", "GO_Cellular_Component_2015", "GO_Biological_Process_2015")
+    
+    #query Enrichr with the genes upregulated in the FABP7 high expression glutamatergic neurons clusters
+    if (websiteLive) {
+      enriched.highFABP7 <- enrichr(high_FABP7_genes_list, dbs)
+    }
+    
+    saveRDS(enriched.highFABP7, "enriched.highFABP7.rds")
     
     
+    #View results table
+    gsm6720853_high_fabp7_GOBP_enrichr <-if (websiteLive) enriched[["GO_Biological_Process_2015"]]
+    
+    saveRDS(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.RDS")
+    
+    write.csv(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.csv")
     
     
+    #Plot Enrichr GO-BP output for high FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
+    
+    #Plot Enrichr GOBP for high FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
+    
+    #Plot Enrichr GOMF for high FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched[[1]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
     
     
-    
-    
-    
+    #Plot Enrichr GOCC for high FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched[[2]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
     
     
     seurat.clust<-pbmc@meta.data$seurat_clusters
