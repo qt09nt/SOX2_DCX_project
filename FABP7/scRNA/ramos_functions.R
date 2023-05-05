@@ -11,5 +11,21 @@ volcano_ggplot <- function(top_table, p_value_cutoff, subtitle){
     geom_hline(yintercept=-log10(p_value_cutoff), col="red") +
     labs(title = 'Ramos et al (2022) GSM6720853 Glutamatergic Neurons with high FABP7 vs Glutamatergic Neurons with low FABP7',
          subtitle=paste0(subtitle, " p. adj. value cut-off = ", p_value_cutoff),
-         x = 'log2 Fold Change')
+         x = 'log2 Fold Change') 
+}
+
+#Volcano Plot using  Enhanced Volcano Plot Package
+#input is the top table from Seurat FindMarkers() function which contains the columns
+# "p_val"      "avg_log2FC" "pct.1"      "pct.2"      "p_val_adj" 
+#ie. clusterFABP7_low.markers
+#input parameter "pvalue_type" should specify for either "p_val" or "p_val_adj" 
+enhanced_volcano <-function(diff_expr_table, pvalue_type){
+  EnhancedVolcano(diff_expr_table,
+                lab = rownames(diff_expr_table),
+                subtitle = "Ramos et al (2022) GSM6720853", 
+                title = "low FABP7 expression Glutamatergic Neuron Clusters vs high FABP7 Glutamatergic Neuron Clusters - unadjusted pvalues",
+                FCcutoff = 0.5,
+                pCutoff = 0.05,
+                x = 'avg_log2FC',
+                y = 'p_val')
 }
