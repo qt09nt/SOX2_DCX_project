@@ -282,8 +282,6 @@ for(sample.curr in samples){
     
     clusterFABP7_high.markers<-readRDS("clusterFABP7_high.markers.rds")
     
-    clusterFABP7_high.markers <-readRDS("clusterFABP7_high.markers.rds")
-    
     #results of diff expr wilcoxon rank sum test
     write.csv(clusterFABP7_high.markers, "clusterFABP7_high.markers.csv")
     
@@ -348,15 +346,7 @@ for(sample.curr in samples){
     #and low FABP7 expression glutamatergic neuron clusters using Seurat FindMarkers() Wilcoxon rank sum test
     #on y axis plot the original p values 
     enhanced_volcano(diff_expr_table = clusterFABP7_high.markers)
-    
-    
-    
-    
-    
-    
-    
-    
-    
+  
     
     #plot differentially expressed genes between high FABP7 expression glutamatergic neuron clusters
     #and low FABP7 expression glutamatergic neuron clusters using Seurat FindMarkers() t-test
@@ -387,9 +377,15 @@ for(sample.curr in samples){
       setEnrichrSite("Enrichr") # Human genes   
     }
     
+    #filter for the high FABP7 Glutamatergic Neuron group differentially expressed genes based on
+    #log2 Fold Change greater than 0.5 
     high_FABP7_genes <- clusterFABP7_high.markers[clusterFABP7_high.markers$avg_log2FC >= 0.5, ]
-    
     low_FABP7_genes <- clusterFABP7_high.markers[clusterFABP7_high.markers$avg_log2FC <= -0.5, ]
+    
+    #filter the high FABP7 Glutamatergic Neuron group differentially expressed genes further, 
+    #based on adjusted pvalue < 0.05
+    high_FABP7_genes <- high_FABP7_genes[high_FABP7_genes$p_val_adj <= 0.05, ]
+    low_FABP7_genes<- low_FABP7_genes[low_FABP7_genes$p_val_adj <= 0.05, ] 
     
     high_FABP7_genes_list<-row.names(high_FABP7_genes)
     low_FABP7_genes_list<-row.names(low_FABP7_genes)
@@ -405,34 +401,61 @@ for(sample.curr in samples){
     
     saveRDS(enriched.highFABP7, "enriched.highFABP7.rds")
     
+    #query Enrichr for genes upregulated in the low FABP7 expression glutamatergic neurons
+    if (websiteLive) {
+      enriched.lowFABP7 <- enrichr(low_FABP7_genes_list, dbs)
+    }
+    
+    setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
+    
+    saveRDS(enriched.lowFABP7, "enriched.lowFABP7.rds")
     
     #View results table
-    gsm6720853_high_fabp7_GOBP_enrichr <-if (websiteLive) enriched[["GO_Biological_Process_2015"]]
-    
+    gsm6720853_high_fabp7_GOBP_enrichr <-if (websiteLive) enriched.highFABP7[["GO_Biological_Process_2015"]]
     saveRDS(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.RDS")
-    
     write.csv(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.csv")
     
+    gsm6720853_low_fabp7_GOBP_enrichr <-if (websiteLive) enriched.lowFABP7[["GO_Biological_Process_2015"]]
+    saveRDS(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.RDS")
+    write.csv(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.csv")
     
-    #Plot Enrichr GO-BP output for high FABP7 expression Glutamatergic Neurons
+    
+    
+    #Plot Enrichr GOBP output for high FABP7 expression Glutamatergic Neurons
     if (websiteLive){
-      plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+      plotEnrich(enriched.highFABP7[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
     }
     
-    #Plot Enrichr GOBP for high FABP7 expression Glutamatergic Neurons
-    if (websiteLive){
-      plotEnrich(enriched[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
-    }
-    
+  
     #Plot Enrichr GOMF for high FABP7 expression Glutamatergic Neurons
     if (websiteLive){
-      plotEnrich(enriched[[1]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+      plotEnrich(enriched.highFABP7[[1]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
     }
     
     
     #Plot Enrichr GOCC for high FABP7 expression Glutamatergic Neurons
     if (websiteLive){
-      plotEnrich(enriched[[2]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+      plotEnrich(enriched.highFABP7[[2]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
+    
+    
+######### 
+    
+    #Plot Enrichr GOBP output for low FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched.lowFABP7[[3]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
+    
+    
+    #Plot Enrichr GOMF for low FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched.lowFABP7[[1]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    }
+    
+    
+    #Plot Enrichr GOCC for low FABP7 expression Glutamatergic Neurons
+    if (websiteLive){
+      plotEnrich(enriched.lowFABP7[[2]], showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
     }
     
     
