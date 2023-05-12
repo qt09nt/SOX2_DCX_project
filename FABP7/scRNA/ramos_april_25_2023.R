@@ -54,6 +54,8 @@ dir.raw<-file.path(project.name)
 
 sample.curr <- "GSM6720853"
 
+#read in the previously processed data for GSM6720853
+pbmc<-readRDS("GSM6720853.rds")
 
 # sample.curr<-samples[1]
 # 
@@ -113,9 +115,8 @@ for(sample.curr in samples){
     
   #April 19 2023 save progress
     saveRDS(pbmc, "GSM6720853.rds")
-    pbmc<-readRDS("GSM6720853.rds")
     
-   
+  
     ## find markers for every cluster compared to all remaining cells, 
     #report only the positive # ones
     pbmc.markers <- FindAllMarkers(pbmc, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
@@ -280,6 +281,7 @@ for(sample.curr in samples){
     
     saveRDS(clusterFABP7_high.markers, "clusterFABP7_high.markers.rds")
     
+    setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
     clusterFABP7_high.markers<-readRDS("clusterFABP7_high.markers.rds")
     
     #results of diff expr wilcoxon rank sum test
@@ -390,6 +392,38 @@ for(sample.curr in samples){
     high_FABP7_genes_list<-row.names(high_FABP7_genes)
     low_FABP7_genes_list<-row.names(low_FABP7_genes)
     
+    #write out the list of differentially expressed genes in the high FABP7 glutamatergic neurons group
+    write.csv(high_FABP7_genes_list, "high_FABP7_genes_list.csv")
+    
+    #write out list of differentially expressed genes in the low FABP7 glutamatergic neurons group
+    write.csv(low_FABP7_genes_list, "low_FABP7_genes_list.csv")
+    
+    #^when the csv is open in excel, it looks some of the gene names are replaced by dates
+    #ie. 1-Mar in the list of low FABP7 genes group
+    
+    #so write out list as .txt files instead
+    write.table(high_FABP7_genes_list, file = "high_FABP7_genes_list.txt", sep = "\n", row.names = FALSE)
+    write.table(low_FABP7_genes_list, file = "low_FABP7_genes_list.txt", sep = "\n", row.names = FALSE )
+    
+    #looks like the high FABP7 genes list still contains some mitochondrial genes 
+    #ie. "MT-CO2"
+    #"MT-ATP6"
+    #"MT-CO3"
+    #"MT-ND3"
+    #"MT-ND4"
+    
+    #Cytochrome c oxidase subunit III
+    # Cytochrome c oxidase subunit III is an enzyme that in humans is encoded by the MT-CO3 gene. It is one of main 
+    # transmembrane subunits of cytochrome c oxidase. It is also one of the three mitochondrial DNA encoded subunits
+    # of respiratory complex IV
+    # 
+    
+    #MT-ND3 - MT Mitochondrially Encoded NADH:Ubiquinone Oxidoreductase Core Subunit 3
+    # Enables NADH dehydrogenase (ubiquinone) activity. Involved in mitochondrial electron transport, 
+    # NADH to ubiquinone. Part of mitochondrial respiratory chain complex I. Implicated in Leber hereditary 
+    # optic neuropathy; Leigh disease; and Parkinson's disease. 
+    # 
+    
     
     #select favourite databases
     dbs <- c("GO_Molecular_Function_2015", "GO_Cellular_Component_2015", "GO_Biological_Process_2015")
@@ -409,6 +443,9 @@ for(sample.curr in samples){
     setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
     
     saveRDS(enriched.lowFABP7, "enriched.lowFABP7.rds")
+    enriched.lowFABP7<-readRDS("enriched.lowFABP7.rds")
+    
+    enriched.highFABP7<-readRDS("enriched.highFABP7.rds")
     
     #View results table
     gsm6720853_high_fabp7_GOBP_enrichr <-if (websiteLive) enriched.highFABP7[["GO_Biological_Process_2015"]]
@@ -419,6 +456,10 @@ for(sample.curr in samples){
     saveRDS(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.RDS")
     write.csv(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.csv")
     
+    View(enriched.lowFABP7[["GO_Molecular_Function_2015"]])
+    
+    ##### View the Enrichr pahtway tables and see if there are redundant pathways to eliminate
+    enriched.highFABP7.GOBP <-enriched.highFABP7[["GO_Biological_Process_2015"]]
     
     
     #Plot Enrichr GOBP output for high FABP7 expression Glutamatergic Neurons
