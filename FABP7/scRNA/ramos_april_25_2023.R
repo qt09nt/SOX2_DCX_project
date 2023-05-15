@@ -54,11 +54,18 @@ dir.raw<-file.path(project.name)
 
 sample.curr <- "GSM6720853"
 
-#read in the previously processed data for GSM6720853
+#read in the previously processed data for GSM6720853 
+#FOR PROCESSED DATA PRIOR to May  15 2023
+#SKIP THIS step IF WANT TO READ IN RAW DATA
+
 pbmc<-readRDS("GSM6720853.rds")
 
 # sample.curr<-samples[1]
-# 
+
+#FOR READING IN RAW DATA 
+#CHANGE TO THE DIRECTORY WHERE THE RAW DATA IS STORED
+# ie. setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/GSM6720853")
+
 for(sample.curr in samples){
 
   setwd(paste0("D:/ramos/", sample.curr))
@@ -72,23 +79,92 @@ for(sample.curr in samples){
     pbmc <- CreateSeuratObject(counts = pbmc.data, project = "ramos", min.cells = 3, min.features = 200)
     pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
     
-    pbmc <- subset(pbmc, subset = nFeature_RNA > 500 & nFeature_RNA < 5000 & percent.mt < 5)
+    pbmc
+    
+    #look at data in count matrix format
+    pbmc.data[c("FABP7", "STMN1", "RBFOX1"), 1:30]
+    
+    #check size of dense matrix versus sparse matrix 
+    dense.size<- object.size(as.matrix(pbmc.data))
+    sparse.size <- object.size(pbmc.data)
+    sparse.size
+    
+    #QC and selecting cells for further analysis
+    #the [[ operator can add columns to object metadata. This is a great place to stash
+    #QC metrics for the first 5 cells
+    head(pbmc@meta.data, 5)
+    
+    
+    #Visualize QC metrics as a violin plot
+    #use these to filter the cells
+    
+    VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", ncol = 3))
+    
+    
+    #FeatureScatter is typically used to visualize feature-feature relationships but can be 
+    #used for anything by the object ie. columns in object metadata, PC score etc.
+    plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+    plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+    plot1 + plot2
+    
+    #filter cells that have unique features counts over 5000 or less than 500
+    #filter cells that have >10% mitochondrial counts
+    # May 15 2023 modified percentage of mitochondrial genes filter to 10% 
+    #we filter cells that have >10% mitochondrial counts
+    pbmc <- subset(pbmc, subset = nFeature_RNA > 500 & nFeature_RNA < 5000 & percent.mt < 10)
     
     
     # Visualize QC metrics as a violin plot
     #VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-    
+   
+  ######### Normalizing the Data  
     pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
     
-    
+    ########## Identification of highly variable features (feature selection)
     pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 5000)
     
+    #Identify the 10 most highly variable genes
+    top10 <- head(VariableFeatures(pbmc), 10)
+    
+    #plot variable features with and without labels
+    plot1 <- VariableFeaturePlot(pbmc)
+    plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+    plot1 + plot2
+    
+    ###### Scaling the Data 
+    #apply linear transformation (scaling) prior to dimensional reduction
+    
+    #use this version of scaling to begin with; if too many mitochondrial
+    #processes use the vars.to.regress = "percent.mt" paramater
     all.genes <- rownames(pbmc)
     pbmc <- ScaleData(pbmc, features = all.genes)
     
+    #Scale data and regress out mitochondrial contamination which
+    #gives unwanted sources of variation
+    pbmc <- ScaleData(pbmc, vars.to.regress = "percent.mt")
+    
+    #Remove Unwanted Sources of variation from mitochondrial contamination
     pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
     
- #optional
+    #examine and visualize PCA results in a few different ways
+    pca_table <- print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
+
+    print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
+    
+    VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+    DimPlot(pbmc, reduction = "pca")
+    
+    #Visualize heatmap of PC 1 genes
+    DimHeatmap(pbmc, dims =1, cells = 500, balanced = TRUE)
+    
+    DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
+    
+    
+    ###############\
+    
+    saveRDS(pbmc, "gsm6720853_may_15_2023.rds")
+    
+    #optional
     DimPlot(pbmc, reduction = "pca", label=TRUE)
     ElbowPlot(pbmc)
     
