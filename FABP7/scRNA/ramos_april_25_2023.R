@@ -37,6 +37,7 @@ setwd("C:/Users/qt09n/Desktop/Technical Analyst I UHN May 4 2021/organoid group/
 setwd("C:/Users/Diamandis Lab II/Documents/Queenie")
 
 setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/GSM6720853")
+setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
 
 ramos<- read.csv("samples_all.csv")
 id<-ramos$id
@@ -107,7 +108,11 @@ for(sample.curr in samples){
     plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
     plot1 + plot2
     
+    #remove unwanted cells from dataset
     #filter cells that have unique features counts over 5000 or less than 500
+    
+    #original analysis in APril has percent.mt < 5
+    
     #filter cells that have >10% mitochondrial counts
     # May 15 2023 modified percentage of mitochondrial genes filter to 10% 
     #we filter cells that have >10% mitochondrial counts
@@ -118,6 +123,9 @@ for(sample.curr in samples){
     #VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
    
   ######### Normalizing the Data  
+    #normalize using global-scaling normalization method "LogNormalize" that normalizes feature
+    #expression measurements for each cell by the total expression, multiplies this by a scale
+    #factor (10,000 by default) and log transforms the results 
     pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
     
     ########## Identification of highly variable features (feature selection)
@@ -133,18 +141,27 @@ for(sample.curr in samples){
     
     ###### Scaling the Data 
     #apply linear transformation (scaling) prior to dimensional reduction
-    
+    # Shifts the expression of each gene, so that the mean expression across cells is 0
+    # Scales the expression of each gene, so that the variance across cells is 1
+    # This step gives equal weight in downstream analyses, so that highly-expressed genes
+    #do not dominate
+    # The results of this are stored in pbmc[["RNA"]]@scale.data
     #use this version of scaling to begin with; if too many mitochondrial
-    #processes use the vars.to.regress = "percent.mt" paramater
-    all.genes <- rownames(pbmc)
-    pbmc <- ScaleData(pbmc, features = all.genes)
+    #processes use the vars.to.regress = "percent.mt" parameter
     
     #Scale data and regress out mitochondrial contamination which
     #gives unwanted sources of variation
-    pbmc <- ScaleData(pbmc, vars.to.regress = "percent.mt")
+    all.genes <- rownames(pbmc)
+    pbmc <- ScaleData(pbmc, features = all.genes, vars.to.regress = "percent.mt")
+    
+    #check results of scaling
+    pbmc[["RNA"]]@scale.data
     
     #Remove Unwanted Sources of variation from mitochondrial contamination
     pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+    
+    #may 16 2023
+    saveRDS(pbmc, "GSM6720853_may_16_2023.rds")
     
     #examine and visualize PCA results in a few different ways
     pca_table <- print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
@@ -157,28 +174,55 @@ for(sample.curr in samples){
     #Visualize heatmap of PC 1 genes
     DimHeatmap(pbmc, dims =1, cells = 500, balanced = TRUE)
     
+    #cells paramaters is the list of cells to plot; if numeric just plots the top cells
+    #balanced parameter = plot an equal number of genes with both + and - scores
     DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
     
     
     ###############\
     
+    #save progress may 15 2023
     saveRDS(pbmc, "gsm6720853_may_15_2023.rds")
     
+    pbmc<-readRDS("gsm6720853_may_15_2023.rds")
+    
     #optional
+    ####Determine the Dimensionality of the Data 
+    pbmc <- JackStraw(pbmc, num.replicate = 100)
+    pbmc <- ScoreJackStraw(pbmc, dims = 1:20)
+      
+    JackStrawPlot(pbmc, dims = 1:15)
+    JackStrawPlot(pbmc, dims = 1:20)
+    
     DimPlot(pbmc, reduction = "pca", label=TRUE)
+    
     ElbowPlot(pbmc)
     
-    pbmc <- FindNeighbors(pbmc, dims = 1:12)
+    pbmc <- FindNeighbors(pbmc, dims = 1:13)
+    
+    saveRDS(pbmc, "GSM6720853_may_16_2023_3PM.rds")
+    pbmc <- readRDS("GSM6720853_may_16_2023_3PM.rds")
+    
     #pbmc <- FindClusters(pbmc, resolution = 0.3)
     
   #optional for larger datasets increase the resolution value:  #changed from 2 to 4 for gsm6720853
     
     #(April 12 2023)
     #try out different values for resolution of gsm6730853 
-    pbmc <- FindClusters(pbmc, resolution = 1.5)
-    pbmc <- RunUMAP(pbmc, dims = 1:12)
+    #FindClusters() function implements modularity optimization technicques ie.
+    #Louvain algorithm (default) or SLM to iteratively group cells together
+    #with the goal of optimizing the standard modularity function
+    #the Resolution parameter sets the 'granularity' of the downstream clustering
+    #with increase values leading to a greater number of clusters
+    
+    #original analysis used resolution of 1.5 which gave 26 clusters;
+    #May 16 2023 analysis trying resolution 1.2, 1.3
+    pbmc <- FindClusters(pbmc, resolution = 1.3)
+    pbmc <- RunUMAP(pbmc, dims = 1:13)
    
-      
+     saveRDS(pbmc, "GSM6720583_mt_reg_may_16_2023_4PM_umap_res_1.3.rds")
+     pbmc<- readRDS("GSM6720583_mt_reg_may_16_2023_4PM_umap_res_1.3.rds")
+     
   #optional 
     DimPlot(pbmc, reduction = "umap", label = TRUE, label.size = 5)
     VlnPlot(pbmc, features = "FABP7")
@@ -187,7 +231,6 @@ for(sample.curr in samples){
     #adjust scale colours so none or low expression is closer to white;
     #high expression is blue
     FeaturePlot(pbmc, features = c("FABP7"), cols =c("darkgreen", "red"))
-    
     
   #April 19 2023 save progress
     saveRDS(pbmc, "GSM6720853.rds")
@@ -465,6 +508,8 @@ for(sample.curr in samples){
     high_FABP7_genes <- high_FABP7_genes[high_FABP7_genes$p_val_adj <= 0.05, ]
     low_FABP7_genes<- low_FABP7_genes[low_FABP7_genes$p_val_adj <= 0.05, ] 
     
+    #get the list of differentially expressed genes from the high FABP7 glutamatergic neuron grou
+    #and list of differentially expressed genes in the low FABP7 glutamatergic neuron group
     high_FABP7_genes_list<-row.names(high_FABP7_genes)
     low_FABP7_genes_list<-row.names(low_FABP7_genes)
     
@@ -524,13 +569,23 @@ for(sample.curr in samples){
     enriched.highFABP7<-readRDS("enriched.highFABP7.rds")
     
     #View results table
+    #Biological Processes Pathways for High FABP7 group
     gsm6720853_high_fabp7_GOBP_enrichr <-if (websiteLive) enriched.highFABP7[["GO_Biological_Process_2015"]]
     saveRDS(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.RDS")
     write.csv(gsm6720853_high_fabp7_GOBP_enrichr, "gsm6720853_high_fabp7_GOBP_enrichr.csv")
     
+    #write the enriched pathways to csv files
+    write.csv(enriched.highFABP7[["GO_Molecular_Function_2015"]], "gsm6720853_high_fabp7_GOMF_enrichr.csv")
+    write.csv(enriched.highFABP7[["GO_Cellular_Component_2015"]], "gsm6720853_high_fabp7_GOCC_enrichr.csv")
+    
+    
+    #look at the enriched pathways for the low FABP7 group
     gsm6720853_low_fabp7_GOBP_enrichr <-if (websiteLive) enriched.lowFABP7[["GO_Biological_Process_2015"]]
     saveRDS(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.RDS")
     write.csv(gsm6720853_low_fabp7_GOBP_enrichr, "gsm6720853_low_fabp7_GOBP_enrichr.csv")
+    
+    write.csv(enriched.lowFABP7[["GO_Molecular_Function_2015"]], "gsm6720853_low_fabp7_GOMF_enrichr.csv")
+    write.csv(enriched.lowFABP7[["GO_Cellular_Component_2015"]], "gsm6720853_low_fabp7_GOCC_enrichr.csv")
     
     View(enriched.lowFABP7[["GO_Molecular_Function_2015"]])
     
