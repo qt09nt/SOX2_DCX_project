@@ -174,6 +174,9 @@ for(sample.curr in samples){
     saveRDS(pbmc, "GSM6720853_may_16_2023.rds")
     
     #may 19 2023
+    
+    
+    
     saveRDS(pbmc, "GSM6720853_may_19_2023_12PM.rds")
     
     #examine and visualize PCA results in a few different ways
@@ -202,7 +205,7 @@ for(sample.curr in samples){
     g2m.genes <- cc.genes$g2m.genes
     
     #Assign Cell-Cycle Scores
-    # First, we assign each cell a score, based on its expression of G2/M and S phase markers. 
+    # "First, we assign each cell a score, based on its expression of G2/M and S phase markers. 
     # These marker sets should be anticorrelated in their expression levels, and cells expressing 
     # neither are likely not cycling and in G1 phase.
     # 
@@ -212,10 +215,12 @@ for(sample.curr in samples){
     # cell-cycle phase by passing set.ident = TRUE (the original identities are stored as 
     # old.ident). Please note that Seurat does not use the discrete classifications (G2M/G1/S)
     # in downstream cell cycle regression. Instead, it uses the quantitative scores for G2M and S
-    # phase. However, we provide our predicted classifications in case they are of interest.
+    # phase. However, we provide our predicted classifications in case they are of interest."
+    
     
     pbmc <- CellCycleScoring(pbmc, s.features = s.genes, g2m.features = g2m.genes,
                              set.ident = TRUE)
+    #try the Alernate Workflow https://satijalab.org/seurat/articles/cell_cycle_vignette.html
     
     #View cell cycle scores and phase assignments
     head(pbmc[[]])
@@ -236,10 +241,13 @@ for(sample.curr in samples){
     # AAACCCAAGATGCGAC-1  0.0325714428 -0.003753701     S     ramos
     ###############
     
+    
+    
+    
     # Visualize the distribution of cell cycle markers across
     RidgePlot(pbmc, features = c("PCNA", "TOP2A", "MCM6", "MKI67"), ncol = 2)
     
-    # Running a PCA on cell cycle genes reveals, unsurprisingly, that cells separate entirely by
+    # Running a PCA on cell cycle genes to see if cells separate entirely by
     # phase
     pbmc <- RunPCA(pbmc, features = c(s.genes, g2m.genes))
     DimPlot(pbmc)
@@ -258,16 +266,21 @@ for(sample.curr in samples){
     # uninteresting), will be regressed out of the data
     
     pbmc$CC.Difference <- pbmc$S.Score - pbmc$G2M.Score
+    
+    #this step takes several minutes (started at 11:12AM, finish at 1)
     pbmc <- ScaleData(pbmc, vars.to.regress = "CC.Difference", features = rownames(pbmc))
     
     # check cell cycle effects in PCA
-    pbmc <- RunPCA(pbmc, features = VariableFeatures(pbmc), nfeatures.print = 10)
+    pbmc <- RunPCA(pbmc, features = c(s.genes, g2m.genes))
+    DimPlot(pbmc)
+    
+    saveRDS(pbmc, "GSM6720853_may_26_CC.Difference_regressed.rds")
+    #pbmc <- RunPCA(pbmc, features = VariableFeatures(pbmc), nfeatures.print = 10)
     
     
     
-    
-    
-    
+    pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+    DimPlot(pbmc, reduction = "pca")
     
     #save progress may 15 2023
     saveRDS(pbmc, "gsm6720853_may_15_2023.rds")
@@ -286,10 +299,15 @@ for(sample.curr in samples){
     
     ElbowPlot(pbmc)
     
-    pbmc <- FindNeighbors(pbmc, dims = 1:13)
+    ############## Cluster the cells 
+    
+    pbmc <- FindNeighbors(pbmc, dims = 1:12)
     
     saveRDS(pbmc, "GSM6720853_may_16_2023_3PM.rds")
     pbmc <- readRDS("GSM6720853_may_16_2023_3PM.rds")
+    
+    
+    saveRDS(pbmc, "GSM6720853_cc.diff_regressed_may_26_2PM.rds")
     
     #pbmc <- FindClusters(pbmc, resolution = 0.3)
     
@@ -305,13 +323,15 @@ for(sample.curr in samples){
     
     #original analysis used resolution of 1.5 which gave 26 clusters;
     #May 16 2023 analysis trying resolution 1.2, 1.3
-    pbmc <- FindClusters(pbmc, resolution = 1.3)
+    pbmc <- FindClusters(pbmc, resolution = 1.2)
     pbmc <- RunUMAP(pbmc, dims = 1:13)
    
      saveRDS(pbmc, "GSM6720583_mt_reg_may_16_2023_4PM_umap_res_1.3.rds")
      pbmc<- readRDS("GSM6720583_mt_reg_may_16_2023_4PM_umap_res_1.3.rds")
      
-  #optional 
+     saveRDS(pbmc, "GSM6720853_CC.diff_regressed_res_1.2_dims_1_to_13_may_26.rds")
+  
+     #optional 
     DimPlot(pbmc, reduction = "umap", label = TRUE, label.size = 5)
     VlnPlot(pbmc, features = "FABP7")
     
@@ -334,6 +354,7 @@ for(sample.curr in samples){
     #save the cluster marker genes as RDS file
     saveRDS(pbmc.markers, "GSM6720853_markers.rds")
     
+    saveRDS(pbmc.markers, "GSM6720853_markers_cell_cycle_diff_regressed_may26.rds")
     
     saveRDS(pbmc, "GSM6720853_may_16_2023_5PM.rds")
     
