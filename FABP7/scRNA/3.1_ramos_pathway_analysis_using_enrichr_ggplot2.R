@@ -4,8 +4,14 @@
 #try to plot out the more interesting pathways from the Enrichr pathways table for 
 #Gene Ontology Molecular Pathways (GOMF), Gene Ontology Biological Processes(GOBP),
 #and Gene Ontology Cellular components (GOCC)
-
+ 
 setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
+
+setwd("C:/Users/Diamandis Lab II/Documents/Queenie")
+
+source("protein_organoid_working_matrix_main_analysis_functions.R")
+
+library(enrichR)
 
 #read in the results from Enrichr package 
 
@@ -15,10 +21,19 @@ enriched.lowFABP7 <- readRDS("enriched.lowFABP7.rds")
 #GO Biological Processes pathways for high FABP7 Glutamatergic neurons
 enriched.highFABP7.GOBP <- enriched.highFABP7[["GO_Biological_Process_2015"]]
 
+enriched.lowFABP7.GOBP <- enriched.lowFABP7[["GO_Biological_Process_2015"]]
+
+#do a comparisons test to see what pathways are unique to the high FABP7 glutamatergic neurons group
+high_FABP7_GOBP_unique <-unique.comparisons.enrichr(enriched.highFABP7.GOBP, enriched.lowFABP7.GOBP)
+
+#do a comparisons test to see what pathways are unique to the high FABP7 glutamatergic neurons group
+low_FABP7_GOBP_unique <-unique.comparisons.enrichr(enriched.lowFABP7.GOBP, enriched.highFABP7.GOBP)
+
+#find out pathways which are common to both high and low FABP7 glutamatergic neuron groups
+common_pathways_high_and_low_fabp7_glutamatergic_neurons<-common.comparisons.enrichr(enriched.highFABP7.GOBP, enriched.lowFABP7.GOBP)
 
 
 #pick out some of the more interesting pathways that show up in the results for plotting
-
 highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guidance (GO:0007411)",
                           "regulation of neuron projection development (GO:0010975)",
                           "regulation of actin polymerization or depolymerization (GO:0008064)",
@@ -149,7 +164,53 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "regulation of neurotransmitter secretion (GO:0046928)",
                           "positive regulation of axonogenesis (GO:0050772)",
                           "fatty-acyl-CoA biosynthetic process (GO:0046949)",
-                          "acetyl-CoA metabolic process (GO:0006084)"
+                          "acetyl-CoA metabolic process (GO:0006084)",
+                          "neutral lipid catabolic process (GO:0046461)",
+                          "glycerolipid catabolic process (GO:0046503)",
+                          "axon guidance (GO:0007411)",
+                          "neuron projection guidance (GO:0097485)",
+                          "regulation of cell projection organization (GO:0031344)"
                           )
 
 enriched.highFABP7.GOBP.selected <- enriched.highFABP7.GOBP[enriched.highFABP7.GOBP$Term %in% highFABP7.GOBP.terms,]
+
+#https://yulab-smu.top/biomedical-knowledge-mining-book/enrichplot.html
+
+plotEnrich(enriched.highFABP7.GOBP.selected, showTerms = 30, numChar = 50, y = "Count", orderBy = "P.value")
+
+enriched.lowFABP7.GOBP
+
+#pick out some of the more interesting pathways that show up in the results for plotting
+#for the low FABP7 Glutamatergic Neurons Cluster group
+enriched.lowFABP7.GOBP.terms <- (c("positive regulation of GTPase activity (GO:0043547)",
+                                   "regulation of cell projection organization (GO:0031344)",
+                                   "regulation of neuron differentiation (GO:0045664)",
+                                   "neuron projection guidance (GO:0097485)",
+                                   "axon guidance (GO:0007411)",
+                                   "synaptic transmission (GO:0007268)",
+                                   "regulation of cell morphogenesis involved in differentiation (GO:0010769)",
+                                   "cell projection morphogenesis (GO:0048858)",
+                                   "regulation of ion transmembrane transport (GO:0034765)",
+                                   "neuron recognition (GO:0008038)",
+                                   "neuron projection morphogenesis (GO:0048812)",
+                                   "calcium ion transmembrane transport (GO:0070588)",
+                                   "regulation of transmembrane transport (GO:0034762)",
+                                   "regulation of membrane potential (GO:0042391)",
+                                   "regulation of axonogenesis (GO:0050770)",
+                                   "axonogenesis (GO:0007409)",
+                                   "positive regulation of neuron differentiation (GO:0045666)",
+                                   "positive regulation of nervous system development (GO:0051962)",
+                                   "positive regulation of neurogenesis (GO:0050769)",
+                                   "calcium ion transport (GO:0006816)",
+                                   "positive regulation of cell projection organization (GO:0031346)",
+                                   "neurotrophin signaling pathway (GO:0038179)",
+                                   "positive regulation of neuron projection development (GO:0010976)",
+                                   "positive regulation of nervous system development (GO:0051962)",
+                                   "positive regulation of neurogenesis (GO:0050769)",
+                                   "calcium ion transport (GO:0006816)",
+                                   "regulation of synaptic transmission (GO:0050804)"
+                                   ))
+
+enriched.lowFABP7.GOBP.selected <- enriched.lowFABP7.GOBP[enriched.lowFABP7.GOBP$Term %in% enriched.lowFABP7.GOBP.terms,]
+
+plot(enriched.lowFABP7.GOBP.selected, showTerms = 30, numChar = 40, y = "Count", orderBy = "P.value")
