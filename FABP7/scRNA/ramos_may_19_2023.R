@@ -330,7 +330,9 @@ for(sample.curr in samples){
      pbmc<- readRDS("GSM6720583_mt_reg_may_16_2023_4PM_umap_res_1.3.rds")
      
      saveRDS(pbmc, "GSM6720853_CC.diff_regressed_res_1.2_dims_1_to_13_may_26.rds")
-  
+
+     pbmc <- readRDS("GSM6720853_CC.diff_regressed_res_1.2_dims_1_to_13_may_26.rds")
+     
      #optional 
     DimPlot(pbmc, reduction = "umap", label = TRUE, label.size = 5)
     VlnPlot(pbmc, features = "FABP7")
@@ -355,6 +357,8 @@ for(sample.curr in samples){
     saveRDS(pbmc.markers, "GSM6720853_markers.rds")
     
     saveRDS(pbmc.markers, "GSM6720853_markers_cell_cycle_diff_regressed_may26.rds")
+    pbmc.markers <- readRDS("GSM6720853_markers_cell_cycle_diff_regressed_may26.rds")
+    GSM6720853_cell_cycle_diff_markers_regressed <-readRDS("GSM6720853_markers_cell_cycle_diff_regressed_may26.rds")
     
     saveRDS(pbmc, "GSM6720853_may_16_2023_5PM.rds")
     
@@ -789,9 +793,17 @@ for(sample.curr in samples){
     df.genes <- df.genes[2:nrow(df.genes),]
     colnames(df.genes)<-clust.names
     df.genes <- as.data.frame(df.genes)
+    
+    #save the 500 differentially expressed genes csv for the clusters
+    #May 26 2023 version which has regressed out differences in cell cycle score between the G2M and S phase scores  
+    write.table(df.genes, file=paste0("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/May 19 2023/GSM6720853_diff_expr_genes.csv"),quote=FALSE,row.names=FALSE,sep=",")
+    
     write.table(df.genes, file=paste0("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/02_genes/",sample.curr,".csv"),quote=FALSE,row.names=FALSE,sep=",")
     
     saveRDS(clust.avg, file=paste0("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/02_cluster_expr/",sample.curr,".rds"))
+    
+    #save the top 500 differentially expressed genes for the version where cell cycle scores differences  between the G2M and S phase scores  have been regressed
+    saveRDS(df.genes,"C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/May 19 2023/GSM6720853_diff_expr_genes_cell_cycle_scoring.rds")
     
     #  })
     #}
