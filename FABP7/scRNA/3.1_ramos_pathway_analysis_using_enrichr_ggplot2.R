@@ -5,7 +5,6 @@
 #Gene Ontology Molecular Pathways (GOMF), Gene Ontology Biological Processes(GOBP),
 #and Gene Ontology Cellular components (GOCC)
  
-setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
 
 setwd("C:/Users/Diamandis Lab II/Documents/Queenie")
 
@@ -14,6 +13,7 @@ source("protein_organoid_working_matrix_main_analysis_functions.R")
 library(enrichR)
 
 #read in the results from Enrichr package 
+setwd("C:/Users/Diamandis Lab II/Documents/Queenie/ramos/output/March 23 2023/GSM6720853/differential expression")
 
 enriched.highFABP7 <-readRDS("enriched.highFABP7.rds")
 enriched.lowFABP7 <- readRDS("enriched.lowFABP7.rds")
@@ -37,12 +37,10 @@ common_pathways_high_and_low_fabp7_glutamatergic_neurons<-common.comparisons.enr
 highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guidance (GO:0007411)",
                           "regulation of neuron projection development (GO:0010975)",
                           "regulation of actin polymerization or depolymerization (GO:0008064)",
-                          "negative regulation of neuron projection development (GO:0010977)",
                           "regulation of neuron differentiation (GO:0045664)",
                           "negative regulation of ERBB signaling pathway (GO:1901185)",
                           "positive regulation of protein complex assembly (GO:0031334)",
                           "cerebral cortex radially oriented cell migration (GO:0021799)",
-                          "spinal cord development (GO:0021510)",
                           "neurotrophin TRK receptor signaling pathway (GO:0048011)",
                           "actin cytoskeleton organization (GO:0030036)",
                           "dendrite morphogenesis (GO:0048813)",
@@ -61,21 +59,15 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "anterograde axon cargo transport (GO:0008089)",
                           "negative regulation of neuron apoptotic process (GO:0043524)",
                           "regulation of oligodendrocyte differentiation (GO:0048713)",
-                          "negative regulation of cell morphogenesis involved in differentiation (GO:0010771)",
-                          "protein-DNA complex subunit organization (GO:0071824)",
-                          "negative regulation of oligodendrocyte differentiation (GO:0048715)",
                           "neural tube formation (GO:0001841)",
                           "cell morphogenesis involved in neuron differentiation (GO:0048667)",
-                          "glycogen biosynthetic process (GO:0005978)",
                           "astrocyte development (GO:0014002)",
                           "positive regulation of neuron projection development (GO:0010976)",
                           "regulation of neuron death (GO:1901214)",
                           "neuron development (GO:0048666)",
                           "positive regulation of nervous system development (GO:0051962)",
                           "neuroepithelial cell differentiation (GO:0060563)",
-                          "negative regulation of gliogenesis (GO:0014014)",
                           "neuron recognition (GO:0008038)",
-                          "dentate gyrus development (GO:0021542)",
                           "positive regulation of neuron differentiation (GO:0045666)",
                           "fatty acid biosynthetic process (GO:0006633)",
                           "cell differentiation in spinal cord (GO:0021515)",
@@ -86,13 +78,9 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "dendritic cell migration (GO:0036336)",
                           "regulation of gliogenesis (GO:0014013)",
                           "regulation of synaptic plasticity (GO:0048167)",
-                          "oligodendrocyte development (GO:0014003)",
-                          "negative regulation of axon extension (GO:0030517)",
                           "spinal cord motor neuron differentiation (GO:0021522)",
                           "regulation of neuronal synaptic plasticity (GO:0048168)",
-                          "negative regulation of glial cell differentiation (GO:0045686)",
                           "regulation of glial cell differentiation (GO:0045685)",
-                          "positive regulation of glial cell differentiation (GO:0045687)",
                           "positive regulation of lipid kinase activity (GO:0090218)",
                           "protein localization to plasma membrane (GO:0072659)",
                           "positive regulation of transmembrane transport (GO:0034764)",
@@ -100,7 +88,6 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "cellular response to fatty acid (GO:0071398)",
                           "cell projection morphogenesis (GO:0048858)",
                           "glycerolipid catabolic process (GO:0046503)",
-                          "axon extension (GO:0048675)",
                           "negative regulation of calcium ion-dependent exocytosis (GO:0045955)",
                           "synaptic vesicle maturation (GO:0016188)",
                           "regulation of low-density lipoprotein particle receptor biosynthetic process (GO:0045714)",
@@ -109,17 +96,14 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "neuron-neuron synaptic transmission (GO:0007270)",
                           "neuron migration (GO:0001764)",
                           "germinal center formation (GO:0002467)",
-                          "negative regulation of glial cell proliferation (GO:0060253)",
                           "positive regulation of astrocyte differentiation (GO:0048711)",
                           "neuron fate determination (GO:0048664)",
                           "positive regulation of potassium ion transmembrane transporter activity (GO:1901018)",
-                          "negative regulation of cell growth (GO:0030308)",
                           "regulation of neurotransmitter levels (GO:0001505)",
                           "regulation of dendritic spine development (GO:0060998)",
                           "regulation of calcineurin-NFAT signaling cascade (GO:0070884)",
                           "positive regulation of cAMP biosynthetic process (GO:0030819)",
                           "establishment of vesicle localization (GO:0051650)",
-                          "vesicle organization (GO:0016050)",
                           "positive regulation of fat cell differentiation (GO:0045600)",
                           "cellular response to calcium ion (GO:0071277)",
                           "positive regulation of oligodendrocyte differentiation (GO:0048714)",
@@ -163,7 +147,6 @@ highFABP7.GOBP.terms <- c("neuron projection guidance (GO:0097485)", "axon guida
                           "response to fatty acid (GO:0070542)",
                           "regulation of neurotransmitter secretion (GO:0046928)",
                           "positive regulation of axonogenesis (GO:0050772)",
-                          "fatty-acyl-CoA biosynthetic process (GO:0046949)",
                           "acetyl-CoA metabolic process (GO:0006084)",
                           "neutral lipid catabolic process (GO:0046461)",
                           "glycerolipid catabolic process (GO:0046503)",
@@ -176,7 +159,7 @@ enriched.highFABP7.GOBP.selected <- enriched.highFABP7.GOBP[enriched.highFABP7.G
 
 #https://yulab-smu.top/biomedical-knowledge-mining-book/enrichplot.html
 
-plotEnrich(enriched.highFABP7.GOBP.selected, showTerms = 30, numChar = 50, y = "Count", orderBy = "P.value")
+plotEnrich(enriched.highFABP7.GOBP.selected, showTerms = 50, numChar = 50, y = "Count", orderBy = "P.value")
 
 enriched.lowFABP7.GOBP
 
@@ -184,7 +167,6 @@ enriched.lowFABP7.GOBP
 #for the low FABP7 Glutamatergic Neurons Cluster group
 enriched.lowFABP7.GOBP.terms <- (c("positive regulation of GTPase activity (GO:0043547)",
                                    "regulation of cell projection organization (GO:0031344)",
-                                   "regulation of neuron differentiation (GO:0045664)",
                                    "neuron projection guidance (GO:0097485)",
                                    "axon guidance (GO:0007411)",
                                    "synaptic transmission (GO:0007268)",
@@ -206,11 +188,17 @@ enriched.lowFABP7.GOBP.terms <- (c("positive regulation of GTPase activity (GO:0
                                    "neurotrophin signaling pathway (GO:0038179)",
                                    "positive regulation of neuron projection development (GO:0010976)",
                                    "positive regulation of nervous system development (GO:0051962)",
+                                   "regulation of synaptic transmission (GO:0050804)",
+                                   "axonogenesis (GO:0007409)",
+                                   "positive regulation of neuron projection development (GO:0010976)",
+                                   "regulation of membrane potential (GO:0042391)",
                                    "positive regulation of neurogenesis (GO:0050769)",
-                                   "calcium ion transport (GO:0006816)",
-                                   "regulation of synaptic transmission (GO:0050804)"
+                                   "regulation of cell-substrate adhesion (GO:0010810)",
+                                   "regulation of cell junction assembly (GO:1901888)",
+                                   "synapse organization (GO:0050808)"
                                    ))
 
 enriched.lowFABP7.GOBP.selected <- enriched.lowFABP7.GOBP[enriched.lowFABP7.GOBP$Term %in% enriched.lowFABP7.GOBP.terms,]
 
-plot(enriched.lowFABP7.GOBP.selected, showTerms = 30, numChar = 40, y = "Count", orderBy = "P.value")
+plotEnrich(enriched.lowFABP7.GOBP.selected, showTerms = 60, numChar = 50, y = "Count", orderBy = "P.value")
+
