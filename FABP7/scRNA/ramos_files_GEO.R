@@ -13,7 +13,7 @@ samples <- read.table(file = "samples2.txt", sep = '\t', header = FALSE, fill = 
 
 samples<-as.data.frame(samples)
 
-#keep just the first 10 chraracters of the samples names
+#keep just the first 10 characters of the samples names
 samples[,1]<-substr(samples[,1], 1, 10)
 
 samples[,2]<-c("_11C_", "_11G_", "_56C_", "_56G_","_34C_", "_34G_", "_30C_", "_30G_", "_63C_", "_63G_", "_23C_",
