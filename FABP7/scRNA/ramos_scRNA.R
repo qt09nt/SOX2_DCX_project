@@ -1,5 +1,12 @@
 #Analysis of FABP7 expression in  "Late prenatal human development single-nucleus 
-#transcriptomics" data from Ramos et al (2022) paper
+#transcriptomics" data from Ramos et al (2022) paper. This is the analysis done on the pre-processed data which is available in the Supplementary section of 
+#Ramos et al (2022) paper.
+
+#For these plots I worked with this file Combined_log-normalized_AveExp_snRNAseq_Human.xlsx found at https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM6720852: 
+#The file contains processed, log-normalized average gene expression data calculated for each of the following integrated objects: all prenatal germinal 
+#matrix samples, subclustered glia and progenitors from all prenatal germinal matrix samples, all prenatal cortical plate samples, subclustered glia and 
+#progenitors from 24-41gw samples, all adult SVZ+caudate samples, all adult neocortex samples. All clusters are also annotated by cell type / state. 
+#UMAPS of each object are included along with cell type abbreviations.
 
 #single cell data downloaded from https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE217511
 
