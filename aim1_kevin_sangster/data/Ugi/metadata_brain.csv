@@ -1,0 +1,33 @@
+ID,Sample Type,Gestational age (weeks),Age of mother (years),Post-mortem interval (day),Reason for post-mortem exam,Neuropathological exam
+1,VZ,16,38,0.5,Premature rupture of membranes (PROM),Normal 
+2,VZ,18,33,1,Chorioamminonitis,Normal 
+3,VZ,20,38,4,Congenital heart disease,Normal 
+4,VZ,22,31,2.75,Lower urinary tract obstruction,Normal 
+5,VZ,22.1,29,1,Preamature rupture of membranes (PROM),Normal 
+6,VZ,26,28,5,Intrauterine growth restriction (IUGR),Normal 
+7,VZ,26.1,33,4,Renal agenesis,Normal 
+8,VZ,36,27,1.3,Renal cystic dysplasia,Normal 
+9,IZ,16,38,0.5,Premature rupture of membranes (PROM),Normal 
+10,IZ,18,33,1,Chorioamminonitis,Normal 
+11,IZ,20,38,4,Congenital heart disease,Normal 
+12,IZ,22,31,2.75,Lower urinary tract obstruction,Normal 
+13,IZ,22.1,29,1,Preamature rupture of membranes (PROM),Normal 
+14,IZ,26,28,5,Intrauterine growth restriction (IUGR),Normal 
+15,IZ,26.1,33,4,Renal agenesis,Normal 
+16,IZ,36,27,1.3,Renal cystic dysplasia,Normal 
+17,SP,16,38,0.5,Premature rupture of membranes (PROM),Normal 
+18,SP,18,33,1,Chorioamminonitis,Normal 
+19,SP,20,38,4,Congenital heart disease,Normal 
+20,SP,22,31,2.75,Lower urinary tract obstruction,Normal 
+21,SP,22.1,29,1,Preamature rupture of membranes (PROM),Normal 
+22,SP,26,28,5,Intrauterine growth restriction (IUGR),Normal 
+23,SP,26.1,33,4,Renal agenesis,Normal 
+24,SP,36,27,1.3,Renal cystic dysplasia,Normal 
+25,Cortex,16,38,0.5,Premature rupture of membranes (PROM),Normal 
+26,Cortex,18,33,1,Chorioamminonitis,Normal 
+27,Cortex,20,38,4,Congenital heart disease,Normal 
+28,Cortex,22,31,2.75,Lower urinary tract obstruction,Normal 
+29,Cortex,22.1,29,1,Preamature rupture of membranes (PROM),Normal 
+30,Cortex,26,28,5,Intrauterine growth restriction (IUGR),Normal 
+31,Cortex,26.1,33,4,Renal agenesis,Normal 
+32,Cortex,36,27,1.3,Renal cystic dysplasia,Normal 
